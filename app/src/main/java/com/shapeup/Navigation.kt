@@ -1,7 +1,6 @@
 package com.shapeup
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,14 +14,16 @@ import com.shapeup.ui.viewModels.StartupViewModel
 fun App(
     navController: NavHostController = rememberNavController(),
 ) {
-    val viewModel = viewModel<StartupViewModel>()
+    val viewModel = StartupViewModel()
 
     NavHost(
         navController = navController,
         startDestination = Screens.Splash.name
     ) {
         composable(route = Screens.Splash.name) {
-            SplashScreen()
+            SplashScreen(navigateToMainScreen = {
+                navController.navigate(Screens.SignIn.name)
+            })
         }
         composable(route = Screens.SignIn.name) {
             SignInScreen()
