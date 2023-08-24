@@ -11,5 +11,4 @@ class StartupViewModel() : ViewModel() {
     fun updateText(value: String) {
         states["textCustom"] = value
     }
-
 }

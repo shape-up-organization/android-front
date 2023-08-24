@@ -5,9 +5,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
-import com.shapeup.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.shapeup.R
 
 val Ubuntu = FontFamily(
     Font(R.font.ubuntu_light, FontWeight.ExtraLight, FontStyle.Normal),
@@ -17,7 +17,7 @@ val Ubuntu = FontFamily(
     Font(R.font.ubuntu_light_italic, FontWeight.ExtraLight, FontStyle.Italic),
     Font(R.font.ubuntu_italic, FontWeight.Normal, FontStyle.Italic),
     Font(R.font.ubuntu_medium_italic, FontWeight.Medium, FontStyle.Italic),
-    Font(R.font.ubuntu_bold_italic, FontWeight.ExtraBold, FontStyle.Italic),
+    Font(R.font.ubuntu_bold_italic, FontWeight.ExtraBold, FontStyle.Italic)
 )
 
 val Typography = Typography(
@@ -125,5 +125,5 @@ val Typography = Typography(
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.sp
-    ),
+    )
 )

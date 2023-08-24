@@ -20,7 +20,6 @@ fun SignInPreview() {
     }
 }
 
-
 @Composable
 fun SignInScreen() {
     Column(

@@ -12,7 +12,7 @@ import com.shapeup.ui.viewModels.StartupViewModel
 
 @Composable
 fun App(
-    navController: NavHostController = rememberNavController(),
+    navController: NavHostController = rememberNavController()
 ) {
     val viewModel = StartupViewModel()
 

@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 @Composable
 fun ShapeUpTheme(
     useDarkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 ) {
     val colors = if (useDarkTheme) DarkSchema else LightSchema
 

@@ -15,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.tooling.preview.Preview
-import com.shapeup.App
 import com.shapeup.ui.theme.GradientLight
 import com.shapeup.ui.theme.ShapeUpTheme
 import kotlinx.coroutines.delay
@@ -52,7 +51,7 @@ fun SplashScreen(navigateToMainScreen: () -> Unit) {
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxSize()
-            .background(GradientLight),
+            .background(GradientLight)
     ) {
         Text(
             color = MaterialTheme.colorScheme.primary,
