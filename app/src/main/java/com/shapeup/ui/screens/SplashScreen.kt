@@ -14,8 +14,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.tooling.preview.Preview
+import com.shapeup.App
 import com.shapeup.ui.theme.GradientLight
+import com.shapeup.ui.theme.ShapeUpTheme
 import kotlinx.coroutines.delay
+
+@Preview
+@Composable
+fun SplashScreenPreview() {
+    ShapeUpTheme {
+        SplashScreen {}
+    }
+}
 
 @Composable
 fun SplashScreen(navigateToMainScreen: () -> Unit) {
