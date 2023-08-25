@@ -11,27 +11,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.Lock
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Share
-import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,13 +33,18 @@ import com.shapeup.ui.theme.ShapeUpTheme
 @Composable
 fun WelcomeScreenPreview() {
     ShapeUpTheme {
-        WelcomeScreen()
+        WelcomeScreen(
+            navigateToSignIn = {},
+            navigateToSignUp = {}
+        )
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WelcomeScreen() {
+fun WelcomeScreen(
+    navigateToSignIn: () -> Unit,
+    navigateToSignUp: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -64,29 +60,34 @@ fun WelcomeScreen() {
         )
 
         Image(
-            painter = painterResource(id = R.drawable.girl_welcome),
+            painter = painterResource(id = R.drawable.img_girl_welcome),
             contentDescription = "Girl"
         )
 
         Column() {
             Button(
-                onClick = { /*Todo*/ },
+                onClick = navigateToSignIn,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text = "Sign In")
             }
 
             OutlinedButton(
-                onClick = { /*TODO*/ },
+                onClick = navigateToSignUp,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text = "Sign Up")
             }
         }
     }
-    val scope = rememberCoroutineScope()
-    val scaffoldState = rememberBottomSheetScaffoldState()
 
+    BottomSheet()
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BottomSheet() {
+    val scaffoldState = rememberBottomSheetScaffoldState()
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
         sheetPeekHeight = BottomSheetDefaults.SheetPeekHeight,
@@ -101,31 +102,45 @@ fun WelcomeScreen() {
                 Text(text = "About")
 
                 Image(
-                    painter = painterResource(id = R.drawable.big_foot),
+                    painter = painterResource(id = R.drawable.img_big_foot),
                     contentDescription = "Big_foot"
                 )
                 Spacer(Modifier.height(72.dp))
 
-                Row(verticalAlignment = Alignment.CenterVertically ) {
-                    Icon(Icons.Outlined.Share, modifier = Modifier.background(color = MaterialTheme.colorScheme.primary), contentDescription = "Icon Share groups")
-                    Text(text = "Share your progress with your friends")
-                }
+                RowIcon(
+                    text = "Share your progress",
+                    icon = R.drawable.icon_groups,
+                    contentDescription = "Icon groups"
+                )
 
-                Row {
-                    Icon(Icons.Outlined.Star, contentDescription = "Icon Game mode")
-                    Text(text = "A gamified social network")
-                }
+                Spacer(modifier = Modifier.height(24.dp))
 
-                Row {
-                    Icon(Icons.Outlined.CheckCircle, contentDescription = "Icon training")
-                    Text(text = "Plan your trainings")
-                }
+                RowIcon(
+                    text = "A gamified social network",
+                    icon = R.drawable.icon_sports_joystick,
+                    contentDescription = "Icon joystick"
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                RowIcon(
+                    text = "Plan your trainings",
+                    icon = R.drawable.icon_fitness_center,
+                    contentDescription = "Icon fitness center"
+                )
             }
         }
     ) {}
 }
 
 @Composable
-fun RowIcon(text:String,icon:ImageVector){
-
+fun RowIcon(text: String, icon: Int, contentDescription: String) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Image(
+            painterResource(id = icon),
+            contentDescription = contentDescription
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = text, style = MaterialTheme.typography.bodyLarge)
+    }
 }
