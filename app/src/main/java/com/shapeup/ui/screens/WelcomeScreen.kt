@@ -1,5 +1,6 @@
 package com.shapeup.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -64,19 +65,32 @@ fun WelcomeScreen(
             contentDescription = "Girl"
         )
 
-        Column() {
+        Column {
             Button(
                 onClick = navigateToSignIn,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Sign In")
+                Text(
+                    text = "Sign in",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .padding(vertical = 12.dp)
+                )
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
 
             OutlinedButton(
                 onClick = navigateToSignUp,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
             ) {
-                Text(text = "Sign Up")
+                Text(
+                    text = "Sign up",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .padding(vertical = 12.dp)
+                )
             }
         }
     }
