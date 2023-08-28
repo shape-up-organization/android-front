@@ -5,12 +5,14 @@ import androidx.compose.material3.lightColorScheme
 
 val LightSchema = lightColorScheme(
     primary = GreenLight,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    secondary = BlackText,
+    tertiary = Pink40,
+    background = BackgroundWhite,
+    primaryContainer = BackgroundSecondaryWhite
 )
 
 val DarkSchema = darkColorScheme(
     primary = GreenDark,
-    secondary = PurpleGrey80,
+    secondary = WhiteText,
     tertiary = Pink80
 )

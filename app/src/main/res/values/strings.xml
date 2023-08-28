@@ -4,4 +4,7 @@
     <string name="sign_in_screen">SignInScreen</string>
     <string name="welcome_screen">WelcomeScreen</string>
     <string name="sign_up_screen">SignUpScreen</string>
+    <string name="forgot_password_screen">ForgotPasswordScreen</string>
+    <string name="verification_code_screen">VerificationCodeScreen</string>
+    <string name="change_password_screen">ChangePasswordScreen</string>
 </resources>

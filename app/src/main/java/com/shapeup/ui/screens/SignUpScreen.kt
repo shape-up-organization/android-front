@@ -5,6 +5,5 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun SignUpScreen() {
-
     Text(text = "SignUp in ShapeUp")
 }
