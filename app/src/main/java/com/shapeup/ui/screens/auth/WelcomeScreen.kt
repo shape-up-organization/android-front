@@ -1,4 +1,4 @@
-package com.shapeup.ui.screens
+package com.shapeup.ui.screens.auth
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -23,33 +23,33 @@ import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.shapeup.R
 import com.shapeup.ui.theme.ShapeUpTheme
+import com.shapeup.ui.utils.constants.Icon
+import com.shapeup.ui.utils.constants.Image
+import com.shapeup.ui.utils.constants.Screen
+import com.shapeup.ui.utils.helpers.Navigator
 
 @Preview
 @Composable
 fun WelcomeScreenPreview() {
     ShapeUpTheme {
         WelcomeScreen(
-            navigateToSignIn = {},
-            navigateToSignUp = {}
+            navigator = Navigator()
         )
     }
 }
 
 @Composable
 fun WelcomeScreen(
-    navigateToSignIn: () -> Unit,
-    navigateToSignUp: () -> Unit
+    navigator: Navigator
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
             .padding(24.dp),
         verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -61,13 +61,13 @@ fun WelcomeScreen(
         )
 
         Image(
-            painter = painterResource(id = R.drawable.img_girl_welcome),
+            painter = painterResource(id = Image.GirlWelcome.value),
             contentDescription = "Girl"
         )
 
         Column {
             Button(
-                onClick = navigateToSignIn,
+                onClick = { navigator.navigateClean(Screen.SignIn) },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
@@ -81,7 +81,7 @@ fun WelcomeScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             OutlinedButton(
-                onClick = navigateToSignUp,
+                onClick = { navigator.navigateClean(Screen.SignUp) },
                 modifier = Modifier.fillMaxWidth(),
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
             ) {
@@ -104,6 +104,7 @@ fun BottomSheet() {
     val scaffoldState = rememberBottomSheetScaffoldState()
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
+        sheetContainerColor = MaterialTheme.colorScheme.primaryContainer,
         sheetPeekHeight = BottomSheetDefaults.SheetPeekHeight,
         sheetContent = {
             Column(
@@ -116,14 +117,14 @@ fun BottomSheet() {
                 Text(text = "About")
 
                 Image(
-                    painter = painterResource(id = R.drawable.img_big_foot),
+                    painter = painterResource(id = Image.BigFoot.value),
                     contentDescription = "Big_foot"
                 )
                 Spacer(Modifier.height(72.dp))
 
                 RowIcon(
                     text = "Share your progress",
-                    icon = R.drawable.icon_groups,
+                    icon = Icon.Groups,
                     contentDescription = "Icon groups"
                 )
 
@@ -131,7 +132,7 @@ fun BottomSheet() {
 
                 RowIcon(
                     text = "A gamified social network",
-                    icon = R.drawable.icon_sports_joystick,
+                    icon = Icon.SportsJoystick,
                     contentDescription = "Icon joystick"
                 )
 
@@ -139,7 +140,7 @@ fun BottomSheet() {
 
                 RowIcon(
                     text = "Plan your trainings",
-                    icon = R.drawable.icon_fitness_center,
+                    icon = Icon.FitnessCenter,
                     contentDescription = "Icon fitness center"
                 )
             }
@@ -148,10 +149,10 @@ fun BottomSheet() {
 }
 
 @Composable
-fun RowIcon(text: String, icon: Int, contentDescription: String) {
+fun RowIcon(text: String, icon: Icon, contentDescription: String? = "") {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Image(
-            painterResource(id = icon),
+            painterResource(id = icon.value),
             contentDescription = contentDescription
         )
         Spacer(modifier = Modifier.width(8.dp))

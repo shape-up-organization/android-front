@@ -1,9 +1,8 @@
-package com.shapeup.ui.screens.forgotPassword
+package com.shapeup.ui.screens.auth.forgotPassword
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,22 +19,23 @@ import androidx.compose.ui.unit.dp
 import com.shapeup.ui.components.FormField
 import com.shapeup.ui.components.Header
 import com.shapeup.ui.theme.ShapeUpTheme
+import com.shapeup.ui.utils.constants.Icon
+import com.shapeup.ui.utils.constants.Screen
+import com.shapeup.ui.utils.helpers.Navigator
 
 @Preview
 @Composable
-fun ForgotPasswordPreview() {
+fun ChangePasswordPreview() {
     ShapeUpTheme {
-        ForgotPasswordScreen(
-            navigateToSignIn = {},
-            navigateToVerificationCode = {}
+        ChangePasswordScreen(
+            navigator = Navigator()
         )
     }
 }
 
 @Composable
-fun ForgotPasswordScreen(
-    navigateToSignIn: () -> Unit,
-    navigateToVerificationCode: () -> Unit
+fun ChangePasswordScreen(
+    navigator: Navigator
 ) {
     Column(
         modifier = Modifier
@@ -44,11 +44,11 @@ fun ForgotPasswordScreen(
             .padding(24.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Header(navigateToSignIn)
+        Header { navigator.navigate(Screen.ForgotPassword) }
 
         Content()
 
-        Footer(navigateToVerificationCode)
+        Footer()
     }
 }
 
@@ -63,45 +63,42 @@ private fun Content() {
         Text(
             color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.headlineMedium,
-            text = "Forgot Password?"
+            text = "Change Password"
         )
 
         Spacer(modifier = Modifier.height(48.dp))
 
-        Row(
-            Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .fillMaxWidth()
-                .padding(vertical = 24.dp),
-            horizontalArrangement = Arrangement.Center
+        Column(
+            horizontalAlignment = Alignment.End
         ) {
-            Text(
-                text = "we will send you a code in your e-mail adress",
-                style = MaterialTheme.typography.bodyMedium
+            FormField(
+                label = "New Password",
+                value = "",
+                supportingText = "",
+                onValueChange = {},
+                trailingIcon = Icon.EyeOpen,
+                iconDescription = "Show password icon"
+            )
+            FormField(
+                label = "Confirm Password",
+                value = "",
+                supportingText = "",
+                onValueChange = {},
+                trailingIcon = Icon.EyeOpen,
+                iconDescription = "Show password icon"
             )
         }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        FormField(
-            labelText = "E-mail",
-            value = "",
-            supportingText = "",
-            onValueChange = {}
-        )
     }
 }
 
 @Composable
-private fun Footer(
-    navigateToVerificationCode: () -> Unit
-) {
+private fun Footer() {
     Button(
-        onClick = navigateToVerificationCode,
+        onClick = { /*TODO*/ },
         Modifier.fillMaxWidth()
     ) {
         Text(
-            text = "Send",
+            text = "Finish",
             Modifier
                 .padding(vertical = 12.dp),
             style = MaterialTheme.typography.bodyLarge

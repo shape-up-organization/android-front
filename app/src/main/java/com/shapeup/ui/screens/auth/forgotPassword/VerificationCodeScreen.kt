@@ -1,4 +1,4 @@
-package com.shapeup.ui.screens.forgotPassword
+package com.shapeup.ui.screens.auth.forgotPassword
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,22 +20,22 @@ import androidx.compose.ui.unit.dp
 import com.shapeup.ui.components.FormField
 import com.shapeup.ui.components.Header
 import com.shapeup.ui.theme.ShapeUpTheme
+import com.shapeup.ui.utils.constants.Screen
+import com.shapeup.ui.utils.helpers.Navigator
 
 @Preview
 @Composable
 fun VerificationCodePreview() {
     ShapeUpTheme {
         VerificationCodeScreen(
-            navigateToForgotPassword = {},
-            navigateToChangePassword = {}
+            navigator = Navigator()
         )
     }
 }
 
 @Composable
 fun VerificationCodeScreen(
-    navigateToForgotPassword: () -> Unit,
-    navigateToChangePassword: () -> Unit
+    navigator: Navigator
 ) {
     Column(
         modifier = Modifier
@@ -44,11 +44,11 @@ fun VerificationCodeScreen(
             .padding(24.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Header(navigateToForgotPassword)
+        Header { navigator.navigate(Screen.ForgotPassword) }
 
         Content()
 
-        Footer(navigateToChangePassword)
+        Footer { navigator.navigate(Screen.ChangePassword) }
     }
 }
 
@@ -72,7 +72,7 @@ private fun Content() {
             horizontalAlignment = Alignment.End
         ) {
             FormField(
-                labelText = "Verification Code",
+                label = "Verification Code",
                 value = "",
                 supportingText = "",
                 onValueChange = {}

@@ -4,6 +4,7 @@ import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -15,20 +16,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.tooling.preview.Preview
+import com.shapeup.ui.theme.GradientDark
 import com.shapeup.ui.theme.GradientLight
 import com.shapeup.ui.theme.ShapeUpTheme
+import com.shapeup.ui.utils.constants.Screen
+import com.shapeup.ui.utils.helpers.Navigator
 import kotlinx.coroutines.delay
 
 @Preview
 @Composable
 fun SplashScreenPreview() {
     ShapeUpTheme {
-        SplashScreen {}
+        SplashScreen(navigator = Navigator())
     }
 }
 
 @Composable
-fun SplashScreen(navigateToMainScreen: () -> Unit) {
+fun SplashScreen(navigator: Navigator) {
     val scale = remember {
         Animatable(0.3f)
     }
@@ -44,14 +48,19 @@ fun SplashScreen(navigateToMainScreen: () -> Unit) {
             )
         )
         delay(2000L)
-        navigateToMainScreen()
+        navigator.navigateClean(Screen.Welcome)
     }
 
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxSize()
-            .background(GradientLight)
+            .background(
+                when {
+                    isSystemInDarkTheme() -> GradientDark
+                    else -> GradientLight
+                }
+            )
     ) {
         Text(
             color = MaterialTheme.colorScheme.primary,

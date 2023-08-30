@@ -1,39 +1,43 @@
-package com.shapeup.ui.screens.forgotPassword
+package com.shapeup.ui.screens.auth.forgotPassword
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.shapeup.R
-import com.shapeup.ui.components.FormFieldWithIcon
+import com.shapeup.ui.components.FormField
 import com.shapeup.ui.components.Header
 import com.shapeup.ui.theme.ShapeUpTheme
+import com.shapeup.ui.utils.constants.Screen
+import com.shapeup.ui.utils.helpers.Navigator
 
 @Preview
 @Composable
-fun ChangePasswordPreview() {
+fun ForgotPasswordPreview() {
     ShapeUpTheme {
-        ChangePasswordScreen(
-            navigateToVerificationCode = {}
+        ForgotPasswordScreen(
+            navigator = Navigator()
         )
     }
 }
 
 @Composable
-fun ChangePasswordScreen(
-    navigateToVerificationCode: () -> Unit
+fun ForgotPasswordScreen(
+    navigator: Navigator
 ) {
     Column(
         modifier = Modifier
@@ -42,11 +46,11 @@ fun ChangePasswordScreen(
             .padding(24.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Header(navigateToVerificationCode)
+        Header { navigator.navigate(Screen.SignIn) }
 
         Content()
 
-        Footer()
+        Footer { navigator.navigate(Screen.VerificationCode) }
     }
 }
 
@@ -61,42 +65,47 @@ private fun Content() {
         Text(
             color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.headlineMedium,
-            text = "Change Password"
+            text = "Forgot Password?"
         )
 
         Spacer(modifier = Modifier.height(48.dp))
 
-        Column(
-            horizontalAlignment = Alignment.End
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .clip(shape = RoundedCornerShape(16.dp))
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .padding(vertical = 24.dp),
+            horizontalArrangement = Arrangement.Center
         ) {
-            FormFieldWithIcon(
-                labelText = "New Password",
-                value = "",
-                supportingText = "",
-                onValueChange = {},
-                trailingIcon = R.drawable.icon_open_eye,
-                iconDescription = "Show password icon"
-            )
-            FormFieldWithIcon(
-                labelText = "Confirm Password",
-                value = "",
-                supportingText = "",
-                onValueChange = {},
-                trailingIcon = R.drawable.icon_open_eye,
-                iconDescription = "Show password icon"
+            Text(
+                text = "we will send you a code in your e-mail address",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        FormField(
+            label = "E-mail",
+            value = "",
+            supportingText = "",
+            onValueChange = {}
+        )
     }
 }
 
 @Composable
-private fun Footer() {
+private fun Footer(
+    navigateToVerificationCode: () -> Unit
+) {
     Button(
-        onClick = { /*TODO*/ },
+        onClick = navigateToVerificationCode,
         Modifier.fillMaxWidth()
     ) {
         Text(
-            text = "Finish",
+            text = "Send",
             Modifier
                 .padding(vertical = 12.dp),
             style = MaterialTheme.typography.bodyLarge

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -21,8 +22,9 @@ fun Header(
     ) {
         IconButton(onClick = navigateTo) {
             Icon(
+                contentDescription = "Icon arrow back",
                 painter = painterResource(id = R.drawable.icon_arrow_back),
-                contentDescription = "Icon arrow back"
+                tint = MaterialTheme.colorScheme.onBackground
             )
         }
     }
