@@ -1,5 +1,7 @@
 package com.shapeup.ui.screens.auth
 
+import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -9,14 +11,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.shapeup.ui.components.FormField
@@ -28,6 +35,7 @@ import com.shapeup.ui.utils.helpers.Navigator
 import com.shapeup.ui.viewModels.auth.SignInFormData
 import com.shapeup.ui.viewModels.auth.SignInFormHandlers
 
+@SuppressLint("UnrememberedMutableState")
 @Preview
 @Composable
 fun SignInPreview() {
@@ -35,13 +43,11 @@ fun SignInPreview() {
         SignInScreen(
             navigator = Navigator(),
             data = SignInFormData(
-                email = "",
-                password = ""
+                email = mutableStateOf(""),
+                password = mutableStateOf("")
             ),
             handlers = SignInFormHandlers(
-                signIn = {},
-                updateEmail = {},
-                updatePassword = {}
+                signIn = {}
             )
         )
     }
@@ -53,6 +59,12 @@ fun SignInScreen(
     handlers: SignInFormHandlers,
     navigator: Navigator
 ) {
+    val focusManager = LocalFocusManager.current
+
+    BackHandler {
+        navigator.navigateBack()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -62,8 +74,6 @@ fun SignInScreen(
     ) {
         Header {
             navigator.navigateClean(Screen.Welcome)
-            handlers.updateEmail("")
-            handlers.updatePassword("")
         }
 
         Column(
@@ -86,20 +96,30 @@ fun SignInScreen(
                     .fillMaxWidth()
             ) {
                 FormField(
+                    focusManager = focusManager,
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Next,
+                        keyboardType = KeyboardType.Email
+                    ),
                     label = "E-mail",
-                    onValueChange = handlers.updateEmail,
+                    onValueChange = { data.email.value = it },
                     supportingText = "",
-                    value = data.email
+                    value = data.email.value
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 FormField(
+                    focusManager = focusManager,
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done,
+                        keyboardType = KeyboardType.Password
+                    ),
                     label = "Password",
-                    onValueChange = handlers.updatePassword,
+                    onValueChange = { data.password.value = it },
                     supportingText = "",
                     type = FormFieldType.PASSWORD,
-                    value = data.password
+                    value = data.password.value
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -113,7 +133,6 @@ fun SignInScreen(
             }
         }
 
-        /*FOOTER*/
         Column(
             Modifier
                 .fillMaxWidth()
@@ -123,10 +142,10 @@ fun SignInScreen(
                 onClick = handlers.signIn
             ) {
                 Text(
-                    text = "Sign in",
-                    Modifier
+                    modifier = Modifier
                         .padding(vertical = 12.dp),
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    text = "Sign in"
                 )
             }
 
@@ -136,7 +155,7 @@ fun SignInScreen(
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                 modifier = Modifier
                     .fillMaxWidth(),
-                onClick = { navigator.navigate(Screen.SignUp) },
+                onClick = { navigator.navigate(Screen.SignUp) }
             ) {
                 Text(
                     modifier = Modifier

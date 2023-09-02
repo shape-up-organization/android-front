@@ -1,23 +1,12 @@
 package com.shapeup.ui.viewModels.auth
 
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
 class SignInViewModel : ViewModel() {
-    var email by mutableStateOf("")
-        private set
-    var password by mutableStateOf("")
-        private set
-
-    private fun updateEmail(value: String) {
-        email = value
-    }
-
-    private fun updatePassword(value: String) {
-        password = value
-    }
+    val email = mutableStateOf("")
+    val password = mutableStateOf("")
 
     private fun signIn() {
         println("email: $email")
@@ -25,19 +14,15 @@ class SignInViewModel : ViewModel() {
     }
 
     val handlers = SignInFormHandlers(
-        signIn = ::signIn,
-        updateEmail = ::updateEmail,
-        updatePassword = ::updatePassword
+        signIn = ::signIn
     )
 }
 
 class SignInFormData(
-    val email: String,
-    val password: String
+    val email: MutableState<String>,
+    val password: MutableState<String>
 )
 
 class SignInFormHandlers(
-    val signIn: () -> Unit,
-    val updateEmail: (String) -> Unit,
-    val updatePassword: (String) -> Unit
+    val signIn: () -> Unit
 )
