@@ -1,5 +1,6 @@
 package com.shapeup.ui.screens.auth
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -46,6 +47,10 @@ fun WelcomeScreenPreview() {
 fun WelcomeScreen(
     navigator: Navigator
 ) {
+    BackHandler {
+        navigator.navigateBack()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -67,7 +72,7 @@ fun WelcomeScreen(
 
         Column {
             Button(
-                onClick = { navigator.navigateClean(Screen.SignIn) },
+                onClick = { navigator.navigate(Screen.SignIn) },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
@@ -81,7 +86,7 @@ fun WelcomeScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             OutlinedButton(
-                onClick = { navigator.navigateClean(Screen.SignUp) },
+                onClick = { navigator.navigate(Screen.SignUp) },
                 modifier = Modifier.fillMaxWidth(),
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
             ) {

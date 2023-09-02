@@ -25,82 +25,68 @@ import com.shapeup.ui.utils.helpers.Navigator
 
 @Preview
 @Composable
-fun VerificationCodePreview() {
+fun SignInVerificationCodePreview() {
     ShapeUpTheme {
-        VerificationCodeScreen(
+        SignInVerificationCodeScreen(
             navigator = Navigator()
         )
     }
 }
 
 @Composable
-fun VerificationCodeScreen(
+fun SignInVerificationCodeScreen(
     navigator: Navigator
 ) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .fillMaxSize()
             .padding(24.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Header { navigator.navigate(Screen.ForgotPassword) }
-
-        Content()
-
-        Footer { navigator.navigateClean(Screen.ChangePassword) }
-    }
-}
-
-@Composable
-private fun Content() {
-    Column(
-        Modifier
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.headlineMedium,
-            text = "Verification Code"
-        )
-
-        Spacer(modifier = Modifier.height(48.dp))
+        Header { navigator.navigateBack() }
 
         Column(
-            horizontalAlignment = Alignment.End
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Center
         ) {
-            FormField(
-                label = "Verification Code",
-                value = "",
-                supportingText = "",
-                onValueChange = {}
+            Text(
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.headlineMedium,
+                text = "Verification Code"
             )
 
-            TextButton(onClick = {}) {
-                Text(
-                    text = "Resend the code",
-                    style = MaterialTheme.typography.bodyMedium
+            Spacer(modifier = Modifier.height(48.dp))
+
+            Column(
+                horizontalAlignment = Alignment.End
+            ) {
+                FormField(
+                    label = "Verification Code",
+                    onValueChange = {},
+                    supportingText = "",
+                    value = ""
                 )
+
+                TextButton(onClick = {}) {
+                    Text(
+                        style = MaterialTheme.typography.bodyMedium,
+                        text = "Resend the code"
+                    )
+                }
             }
         }
-    }
-}
 
-@Composable
-private fun Footer(
-    navigateToChangePassword: () -> Unit
-) {
-    Button(
-        onClick = navigateToChangePassword,
-        Modifier.fillMaxWidth()
-    ) {
-        Text(
-            text = "Send",
-            Modifier
-                .padding(vertical = 12.dp),
-            style = MaterialTheme.typography.bodyLarge
-        )
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { navigator.navigateClean(Screen.ChangePassword) }
+        ) {
+            Text(
+                modifier = Modifier.padding(vertical = 12.dp),
+                style = MaterialTheme.typography.bodyLarge,
+                text = "Send"
+            )
+        }
     }
 }

@@ -8,12 +8,18 @@ class SignInViewModel : ViewModel() {
     val email = mutableStateOf("")
     val password = mutableStateOf("")
 
+    private fun clearFormData() {
+        email.value = ""
+        password.value = ""
+    }
+
     private fun signIn() {
-        println("email: $email")
-        println("password: $password")
+        println("email: ${email.value}")
+        println("password: ${password.value}")
     }
 
     val handlers = SignInFormHandlers(
+        clearFormData = ::clearFormData,
         signIn = ::signIn
     )
 }
@@ -24,5 +30,6 @@ class SignInFormData(
 )
 
 class SignInFormHandlers(
+    val clearFormData: () -> Unit,
     val signIn: () -> Unit
 )

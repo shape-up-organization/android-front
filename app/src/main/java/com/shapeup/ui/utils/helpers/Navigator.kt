@@ -10,6 +10,7 @@ class Navigator(private val navController: NavController? = null) {
             popUpTo(screen.value) {
                 inclusive = true
             }
+            launchSingleTop = true
         }
     }
     val navigateBack = { navController?.popBackStack() }

@@ -47,6 +47,7 @@ fun SignInPreview() {
                 password = mutableStateOf("")
             ),
             handlers = SignInFormHandlers(
+                clearFormData = {},
                 signIn = {}
             )
         )
@@ -62,6 +63,7 @@ fun SignInScreen(
     val focusManager = LocalFocusManager.current
 
     BackHandler {
+        handlers.clearFormData()
         navigator.navigateBack()
     }
 
@@ -73,7 +75,8 @@ fun SignInScreen(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Header {
-            navigator.navigateClean(Screen.Welcome)
+            handlers.clearFormData()
+            navigator.navigateBack()
         }
 
         Column(

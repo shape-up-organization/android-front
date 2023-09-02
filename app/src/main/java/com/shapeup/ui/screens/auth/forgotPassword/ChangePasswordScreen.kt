@@ -44,69 +44,57 @@ fun ChangePasswordScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .fillMaxSize()
             .padding(24.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Header { navigator.navigate(Screen.ForgotPassword) }
-
-        Content()
-
-        Footer()
-    }
-}
-
-@Composable
-private fun Content() {
-    Column(
-        Modifier
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.headlineMedium,
-            text = "Change Password"
-        )
-
-        Spacer(modifier = Modifier.height(48.dp))
+        Header { navigator.navigateClean(Screen.ForgotPassword) }
 
         Column(
-            horizontalAlignment = Alignment.End
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Center
         ) {
-            FormField(
-                label = "New Password",
-                value = "",
-                supportingText = "",
-                onValueChange = {},
-                trailingIcon = Icon.EyeOpen,
-                iconDescription = "Show password icon"
+            Text(
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.headlineMedium,
+                text = "Change Password"
             )
-            FormField(
-                label = "Confirm Password",
-                value = "",
-                supportingText = "",
-                onValueChange = {},
-                trailingIcon = Icon.EyeOpen,
-                iconDescription = "Show password icon"
+
+            Spacer(modifier = Modifier.height(48.dp))
+
+            Column(
+                horizontalAlignment = Alignment.End
+            ) {
+                FormField(
+                    iconDescription = "Show password icon",
+                    label = "New Password",
+                    onValueChange = {},
+                    supportingText = "",
+                    trailingIcon = Icon.EyeOpen,
+                    value = ""
+                )
+                FormField(
+                    iconDescription = "Show password icon",
+                    label = "Confirm Password",
+                    onValueChange = {},
+                    supportingText = "",
+                    trailingIcon = Icon.EyeOpen,
+                    value = ""
+                )
+            }
+        }
+
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { /*TODO*/ }
+        ) {
+            Text(
+                modifier = Modifier.padding(vertical = 12.dp),
+                style = MaterialTheme.typography.bodyLarge,
+                text = "Finish"
             )
         }
-    }
-}
-
-@Composable
-private fun Footer() {
-    Button(
-        onClick = { /*TODO*/ },
-        Modifier.fillMaxWidth()
-    ) {
-        Text(
-            text = "Finish",
-            Modifier
-                .padding(vertical = 12.dp),
-            style = MaterialTheme.typography.bodyLarge
-        )
     }
 }

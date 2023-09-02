@@ -41,74 +41,60 @@ fun ForgotPasswordScreen(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .fillMaxSize()
             .padding(24.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Header { navigator.navigate(Screen.SignIn) }
+        Header { navigator.navigateBack() }
 
-        Content()
-
-        Footer { navigator.navigate(Screen.VerificationCode) }
-    }
-}
-
-@Composable
-private fun Content() {
-    Column(
-        Modifier
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.headlineMedium,
-            text = "Forgot Password?"
-        )
-
-        Spacer(modifier = Modifier.height(48.dp))
-
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .clip(shape = RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .padding(vertical = 24.dp),
-            horizontalArrangement = Arrangement.Center
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "we will send you a code in your e-mail address",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.headlineMedium,
+                text = "Forgot Password?"
+            )
+
+            Spacer(modifier = Modifier.height(48.dp))
+
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .clip(shape = RoundedCornerShape(16.dp))
+                    .fillMaxWidth()
+                    .padding(vertical = 24.dp)
+            ) {
+                Text(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.bodyMedium,
+                    text = "we will send you a code in your e-mail address"
+                )
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            FormField(
+                label = "E-mail",
+                onValueChange = {},
+                supportingText = "",
+                value = ""
             )
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
-
-        FormField(
-            label = "E-mail",
-            value = "",
-            supportingText = "",
-            onValueChange = {}
-        )
-    }
-}
-
-@Composable
-private fun Footer(
-    navigateToVerificationCode: () -> Unit
-) {
-    Button(
-        onClick = navigateToVerificationCode,
-        Modifier.fillMaxWidth()
-    ) {
-        Text(
-            text = "Send",
-            Modifier
-                .padding(vertical = 12.dp),
-            style = MaterialTheme.typography.bodyLarge
-        )
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { navigator.navigate(Screen.SignInVerificationCode) }
+        ) {
+            Text(
+                modifier = Modifier.padding(vertical = 12.dp),
+                style = MaterialTheme.typography.bodyLarge,
+                text = "Send"
+            )
+        }
     }
 }

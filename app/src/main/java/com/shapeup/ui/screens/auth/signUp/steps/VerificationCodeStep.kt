@@ -83,7 +83,7 @@ fun VerificationCodeStep(data: VerificationCodeStepFormData) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TextButton(onClick = { }) {
+        TextButton(onClick = { /*TODO*/ }) {
             Text(
                 style = MaterialTheme.typography.bodyMedium,
                 text = "Resend code"
