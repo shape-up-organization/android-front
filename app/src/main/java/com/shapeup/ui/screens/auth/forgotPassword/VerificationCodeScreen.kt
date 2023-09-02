@@ -48,7 +48,7 @@ fun VerificationCodeScreen(
 
         Content()
 
-        Footer { navigator.navigate(Screen.ChangePassword) }
+        Footer { navigator.navigateClean(Screen.ChangePassword) }
     }
 }
 
