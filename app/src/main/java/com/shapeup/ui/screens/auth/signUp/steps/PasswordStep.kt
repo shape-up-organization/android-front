@@ -9,10 +9,12 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.shapeup.R
 import com.shapeup.ui.components.FormField
 import com.shapeup.ui.components.FormFieldType
 import com.shapeup.ui.theme.ShapeUpTheme
@@ -46,7 +48,7 @@ fun PasswordStep(data: PasswordStepFormData) {
             imeAction = ImeAction.Next,
             keyboardType = KeyboardType.Password
         ),
-        label = "Password",
+        label = stringResource(R.string.txt_sign_up_screen_password_label),
         maxLines = 2,
         onValueChange = { data.password.value = it },
         supportingText = "",
@@ -62,7 +64,7 @@ fun PasswordStep(data: PasswordStepFormData) {
             imeAction = ImeAction.Done,
             keyboardType = KeyboardType.Password
         ),
-        label = "Confirm your password",
+        label = stringResource(R.string.txt_sign_up_screen_password_confirmation_label),
         maxLines = 2,
         onValueChange = { data.passwordConfirmation.value = it },
         supportingText = "",

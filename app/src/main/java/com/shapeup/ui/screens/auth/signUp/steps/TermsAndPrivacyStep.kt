@@ -25,13 +25,13 @@ fun TermsAndPrivacyStep() {
     Text(
         color = MaterialTheme.colorScheme.onBackground,
         style = MaterialTheme.typography.bodyLarge,
-        text = stringResource(id = R.string.terms_title)
+        text = stringResource(R.string.terms_title)
     )
     Spacer(modifier = Modifier.height(8.dp))
     Text(
         color = MaterialTheme.colorScheme.onBackground,
         style = MaterialTheme.typography.bodySmall,
-        text = stringResource(id = R.string.terms_body)
+        text = stringResource(R.string.terms_body)
     )
 
     Spacer(modifier = Modifier.height(24.dp))
@@ -39,12 +39,12 @@ fun TermsAndPrivacyStep() {
     Text(
         color = MaterialTheme.colorScheme.onBackground,
         style = MaterialTheme.typography.bodyLarge,
-        text = stringResource(id = R.string.privacy_title)
+        text = stringResource(R.string.privacy_title)
     )
     Spacer(modifier = Modifier.height(8.dp))
     Text(
         color = MaterialTheme.colorScheme.onBackground,
         style = MaterialTheme.typography.bodySmall,
-        text = stringResource(id = R.string.privacy_body)
+        text = stringResource(R.string.privacy_body)
     )
 }

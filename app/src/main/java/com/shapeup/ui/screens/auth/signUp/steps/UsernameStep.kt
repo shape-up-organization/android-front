@@ -6,9 +6,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import com.shapeup.R
 import com.shapeup.ui.components.FormField
 import com.shapeup.ui.theme.ShapeUpTheme
 
@@ -39,7 +41,7 @@ fun UsernameStep(data: UsernameStepFormData) {
             imeAction = ImeAction.Done,
             keyboardType = KeyboardType.Text
         ),
-        label = "Username",
+        label = stringResource(R.string.txt_sign_up_screen_username_label),
         onValueChange = { data.username.value = it },
         supportingText = "",
         value = data.username.value

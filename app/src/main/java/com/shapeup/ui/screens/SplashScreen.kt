@@ -15,7 +15,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.shapeup.R
 import com.shapeup.ui.theme.GradientDark
 import com.shapeup.ui.theme.GradientLight
 import com.shapeup.ui.theme.ShapeUpTheme
@@ -66,7 +68,7 @@ fun SplashScreen(navigator: Navigator) {
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.scale(scale.value),
             style = MaterialTheme.typography.displaySmall,
-            text = "ShapeUp"
+            text = stringResource(R.string.app_name)
         )
     }
 }

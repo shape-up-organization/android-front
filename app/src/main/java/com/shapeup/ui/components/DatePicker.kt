@@ -17,28 +17,29 @@ import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.TimeZone
+import com.shapeup.ui.utils.helpers.DateHelper
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePicker(
     label: String = "",
-    onDateSelected: (String) -> Unit = {}
+    onDateSelected: (String) -> Unit = {},
+    value: String = ""
 ) {
+    val dateHelper = DateHelper()
     val focusManager = LocalFocusManager.current
     val datePickerState = rememberDatePickerState()
 
     var showDatePickerDialog by remember { mutableStateOf(false) }
-    var selectedDate by remember { mutableStateOf("") }
+    var selectedDate by remember { mutableStateOf(value) }
 
     fun closeDialog() {
         showDatePickerDialog = false
     }
 
     if (showDatePickerDialog) {
+        focusManager.clearFocus(force = true)
+
         DatePickerDialog(
             onDismissRequest = { closeDialog() },
             confirmButton = {
@@ -46,7 +47,7 @@ fun DatePicker(
                     onClick = {
                         datePickerState
                             .selectedDateMillis?.let { millis ->
-                                selectedDate = millis.toBrazilianDateFormat()
+                                selectedDate = dateHelper.fromMillisToFormFieldDateString(millis)
                             }
 
                         onDateSelected(selectedDate)
@@ -75,22 +76,10 @@ fun DatePicker(
             .onFocusEvent {
                 if (it.isFocused) {
                     showDatePickerDialog = true
-                    focusManager.clearFocus(force = true)
                 }
             },
         readOnly = true,
         type = FormFieldType.DATE,
         value = selectedDate
     )
-}
-
-fun Long.toBrazilianDateFormat(
-    locale: String = "pt-br",
-    pattern: String = "dd/MM/yyyy"
-): String {
-    val formatter = SimpleDateFormat(pattern, Locale(locale)).apply {
-        timeZone = TimeZone.getTimeZone("GMT")
-    }
-
-    return formatter.format(Date(this))
 }

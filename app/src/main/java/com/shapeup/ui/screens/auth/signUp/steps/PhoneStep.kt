@@ -5,7 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.shapeup.R
 import com.shapeup.ui.components.FormField
 import com.shapeup.ui.components.FormFieldType
 import com.shapeup.ui.theme.ShapeUpTheme
@@ -33,7 +35,7 @@ fun PhoneStep(data: PhoneStepFormData) {
 
     FormField(
         focusManager = focusManager,
-        label = "Phone number",
+        label = stringResource(R.string.txt_sign_up_screen_phone_number_label),
         onValueChange = { data.phone.value = it },
         supportingText = "",
         type = FormFieldType.PHONE,

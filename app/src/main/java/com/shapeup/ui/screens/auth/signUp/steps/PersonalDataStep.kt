@@ -8,8 +8,10 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.shapeup.R
 import com.shapeup.ui.components.DatePicker
 import com.shapeup.ui.components.FormField
 import com.shapeup.ui.theme.ShapeUpTheme
@@ -41,7 +43,7 @@ fun PersonalDataStep(data: PersonalDataStepFormData) {
 
     FormField(
         focusManager = focusManager,
-        label = "First name",
+        label = stringResource(R.string.txt_sign_up_screen_first_name_label),
         onValueChange = { data.firstName.value = it },
         supportingText = "",
         value = data.firstName.value
@@ -51,7 +53,7 @@ fun PersonalDataStep(data: PersonalDataStepFormData) {
 
     FormField(
         focusManager = focusManager,
-        label = "Last name",
+        label = stringResource(R.string.txt_sign_up_screen_last_name_label),
         maxLines = 2,
         onValueChange = { data.lastName.value = it },
         supportingText = "",
@@ -61,7 +63,8 @@ fun PersonalDataStep(data: PersonalDataStepFormData) {
     Spacer(modifier = Modifier.height(8.dp))
 
     DatePicker(
-        label = "Birthday",
-        onDateSelected = { data.birthday.value = it }
+        label = stringResource(R.string.txt_sign_up_screen_birthday_label),
+        onDateSelected = { data.birthday.value = it },
+        value = data.birthday.value
     )
 }

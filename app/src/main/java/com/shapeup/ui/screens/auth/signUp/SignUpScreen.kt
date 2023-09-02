@@ -32,8 +32,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.shapeup.R
 import com.shapeup.ui.screens.auth.signUp.steps.EmailStep
 import com.shapeup.ui.screens.auth.signUp.steps.EmailStepFormData
 import com.shapeup.ui.screens.auth.signUp.steps.PasswordStep
@@ -90,7 +92,7 @@ fun SignUpScreen(
 ) {
     val animatedProgress by animateFloatAsState(
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
-        label = "Progress bar indicator",
+        label = stringResource(R.string.txt_sign_up_screen_progress_bar),
         targetValue = Step.getStepProgress(activeStep = activeStep.value)
     )
 
@@ -123,7 +125,12 @@ fun SignUpScreen(
                 )
             }) {
                 Icon(
-                    contentDescription = "Icon arrow back",
+                    contentDescription = stringResource(
+                        when (activeStep.value) {
+                            1 -> R.string.icon_close
+                            else -> R.string.icon_arrow_back
+                        }
+                    ),
                     painter = painterResource(
                         id = when (activeStep.value) {
                             1 -> Icon.Close.value
@@ -174,7 +181,12 @@ fun SignUpScreen(
                 modifier = Modifier
                     .padding(vertical = 12.dp),
                 style = MaterialTheme.typography.bodyLarge,
-                text = "Continue"
+                text = stringResource(
+                    when (activeStep.value < Step.getMaxSteps()) {
+                        true -> R.string.txt_sign_up_screen_continue_button
+                        else -> R.string.txt_sign_up_screen_finish_button
+                    }
+                )
             )
         }
     }
@@ -198,6 +210,7 @@ enum class Step(val step: Int, val composable: @Composable (data: SignUpFormData
     VerificationCode(step = 3, composable = {
         VerificationCodeStep(
             VerificationCodeStepFormData(
+                email = it.email,
                 verificationCode = it.verificationCode
             )
         )

@@ -19,18 +19,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.shapeup.R
 import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.helpers.PhoneNumberVisualTransformation
 
 @Composable
 fun FormField(
     focusManager: FocusManager? = null,
-    iconDescription: String = "",
     isPasswordHidden: MutableState<Boolean> = remember { mutableStateOf(true) },
     keyboardActions: KeyboardActions = KeyboardActions(
         onDone = { focusManager?.clearFocus() },
@@ -45,6 +46,7 @@ fun FormField(
     readOnly: Boolean = false,
     supportingText: String = "",
     trailingIcon: Icon? = null,
+    trailingIconDescription: String = "",
     type: FormFieldType = FormFieldType.DEFAULT,
     value: String = ""
 ) {
@@ -90,9 +92,16 @@ fun FormField(
         supportingText = { Text(supportingText) },
         trailingIcon = {
             when {
+                trailingIcon != null -> {
+                    Icon(
+                        painter = painterResource(id = trailingIcon.value),
+                        contentDescription = trailingIconDescription
+                    )
+                }
+
                 isDateType -> {
                     Icon(
-                        contentDescription = "Calendar icon",
+                        contentDescription = stringResource(R.string.icon_calendar),
                         painter = painterResource(id = Icon.Calendar.value)
                     )
                 }
@@ -104,11 +113,11 @@ fun FormField(
                     }
 
                     val contentDescription = buildString {
-                        append("Password ")
+                        append(R.string.txt_form_field_password_icon)
                         append(
                             when {
-                                (isPasswordHidden.value) -> "hidden"
-                                else -> "visible"
+                                (isPasswordHidden.value) -> stringResource(R.string.icon_eye_closed)
+                                else -> stringResource(R.string.icon_eye_open)
                             }
                         )
                     }
@@ -125,18 +134,9 @@ fun FormField(
 
                 isPhoneType -> {
                     Icon(
-                        contentDescription = "Phone field",
+                        contentDescription = stringResource(R.string.icon_phone),
                         painter = painterResource(id = Icon.Phone.value)
                     )
-                }
-
-                else -> {
-                    trailingIcon?.let { icon ->
-                        Icon(
-                            painter = painterResource(id = icon.value),
-                            contentDescription = iconDescription
-                        )
-                    }
                 }
             }
         },

@@ -1,7 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- IMAGES -->
+    <string name="img_girl_meditating">Girl meditating</string>
+    <string name="img_girl_welcome">Girl exercising</string>
+
+    <!-- ICONS -->
+    <string name="icon_arrow_back">Return arrow</string>
+    <string name="icon_calendar">Calendar</string>
+    <string name="icon_close">Close</string>
+    <string name="icon_eye_closed">Hidden</string>
+    <string name="icon_eye_open">Visible</string>
+    <string name="icon_fitness_center">Fitness</string>
+    <string name="icon_groups">Groups</string>
+    <string name="icon_joystick">Joystick</string>
+    <string name="icon_phone">Phone</string>
+
+    <!-- COMPONENTS -->
+    <string name="txt_form_field_password_icon">"Password "</string>
+
+    <!-- PAGES -->
+    <!-- WELCOME -->
+    <string name="txt_sign_in">Sign in</string>
+    <string name="txt_sign_up">Sign up</string>
+    <string name="txt_welcome_drawer_title">About</string>
+    <string name="txt_welcome_drawer_topic_1">Share your progress</string>
+    <string name="txt_welcome_drawer_topic_2">A gamified social network</string>
+    <string name="txt_welcome_drawer_topic_3">Plan your trainings</string>
+    <!-- SIGN IN -->
+    <string name="txt_sign_in_screen_sign_in">Sign in</string>
+    <string name="txt_sign_in_screen_sign_up">Sign up</string>
+    <string name="txt_sign_in_screen_password_input_label">Password</string>
+    <string name="txt_sign_in_screen_email_input_label">E-mail</string>
+    <string name="txt_sign_in_screen_title">Welcome Back</string>
+    <string name="txt_sign_in_screen_forgot_password">Forgot password?</string>
+    <!-- FORGOT PASSWORD -->
+    <string name="txt_forgot_password_screen_title">Forgot Password?</string>
+    <string name="txt_forgot_password_screen_email_input_label">E-mail</string>
+    <string name="txt_forgot_password_screen_info">we will send you a code in your e-mail address</string>
+    <string name="txt_forgot_password_screen_send">Send</string>
+    <!-- SIGN IN VERIFICATION CODE -->
+    <string name="txt_sign_in_verification_code_screen_title">Verification Code</string>
+    <string name="txt_sign_in_verification_code_screen_input_label">Verification code</string>
+    <string name="txt_sign_in_verification_code_screen_resend_code">Resend code</string>
+    <string name="txt_sign_in_verification_code_screen_verify">Verify</string>
+    <!-- CHANGE PASSWORD -->
+    <string name="txt_change_password_screen_title">Change Password</string>
+    <string name="txt_change_password_screen_new_password_label">New password</string>
+    <string name="txt_change_password_screen_password_confirmation_label">Confirm your password</string>
+    <string name="txt_change_password_screen_finish">Change password</string>
+    <!-- SIGN UP -->
+    <string name="txt_sign_up_screen_continue_button">Continue</string>
+    <string name="txt_sign_up_screen_finish_button">Create account</string>
+    <string name="txt_sign_up_screen_progress_bar">Progress bar</string>
+    <string name="txt_sign_up_screen_first_name_label">First name</string>
+    <string name="txt_sign_up_screen_last_name_label">Last name</string>
+    <string name="txt_sign_up_screen_birthday_label">Birthday</string>
+    <string name="txt_sign_up_screen_email_label">E-mail</string>
+    <string name="txt_sign_up_screen_verification_code_label">Verification code</string>
+    <string name="txt_sign_up_screen_send_code_warning">"we will send a verification code to your e-mail address "</string>
+    <string name="txt_sign_up_screen_phone_number_label">Phone number</string>
+    <string name="txt_sign_up_screen_username_label">Username</string>
+    <string name="txt_sign_up_screen_password_label">Password</string>
+    <string name="txt_sign_up_screen_password_confirmation_label">Confirm your password</string>
+    <!-- TERMS -->
     <string name="terms_title">Terms and Conditions</string>
     <string name="terms_body">" 1. Platform Usage\nYou are responsible for the proper use of our platform and must comply with all applicable laws and regulations. By using our services, you agree not to:\n\na) Post illegal, defamatory, offensive, obscene, threatening, or abusive content; \nb) Engage in fraudulent activities, such as phishing or identity fraud; \nc) Commit acts that could harm the platform or other users, such as using malware or spam; \nd) Violate the intellectual property rights of third parties; e) Access or attempt to access the platform through any means other than the interfaces provided by our social network.\n\n 2. User Account\nYou must have an account to use our services. By creating an account, you agree to provide accurate and up-to-date information and to keep it current. You also agree to protect your account and keep your password secure. We will not allow account sharing or the use of accounts by others.\n\n 3. Content Ownership\nYou retain ownership of the content you post on our platform, but you grant our social network a global, irrevocable, and non-exclusive license to use, reproduce, modify, publish, and distribute the content on our platform.\n\n 4. Modifications to Terms of Use\nWe may modify these terms of use at any time, and you will be notified of any significant changes. If you continue to use our services after the modification of the terms of use, it will be considered as your acceptance of the new terms.\n\n 5. Account Termination\nWe may terminate your account at any time, for any reason, without prior notice. You can terminate your account at any time by following the instructions on our platform.\n\n 6. Limitation of Liability\nWe are not responsible for any direct or indirect damages resulting from the use of our platform, including damages arising from errors, omissions, or interruptions of services.\n\n 7. Applicable Law and Jurisdiction\nThese terms of use are governed by the laws of the country where our social network is based, and any disputes will be exclusively resolved by the courts of that country. By using our services, you agree to comply with these terms of use. If you have any questions about these terms, please contact us.\n\n 8. Privacy\nWe collect and use information in accordance with our privacy policy."</string>
+    <!-- PRIVACY -->
     <string name="privacy_title">Privacy</string>
     <string name="privacy_body" tools:ignore="Typos">" 1. Information Collection\nWe may collect the following personal information when you use our services: a) Contact information, such as full name, email address, and phone number; b) Profile information, such as profile picture, date of birth, gender, location, and other profile information you choose to share; c) Information about your activity on our social network, including your posts, comments, and interactions with other users; d) Information about the device you use to access our services, such as device model, operating system, and IP address.\n\n 2. Use of Information\nWe use your personal information to provide and improve our services, including: a) Personalizing your experience on our platform; b) Providing customer support services; c) Sending relevant communications, such as service updates and promotions; d) Conducting data analysis to improve our services and understand the needs of our users.\n\n 3. Information Disclosure\nWe do not share your personal information with third parties, except in the following circumstances:\n\na) When we are required by law to disclose your information; b) When we believe that disclosure is necessary to protect our legal rights or those of third parties; c) When we provide information to service providers that assist us in delivering our services.\n\n 5. Information Protection\nWe take measures to protect your personal information against loss, misuse, unauthorized access, disclosure, or alteration.\n\n 6. Cookie Policy\nWe use cookies to enhance your experience on our platform. Cookies allow us to remember your preferences and personalize your experience. You can disable cookies in your browser, but this may affect your experience on our platform.\n\n 7. Privacy Rights\nYou have the right to access, correct, and delete your personal information, and we reserve the right to delete any type of content if it violates any terms.\n\n 8. Changes to Privacy Policy\nWe may modify this Privacy Policy at any time, and you will be notified of any significant changes. If you continue to use our services after the modification of this Privacy Policy, it will be considered as your acceptance of the new provisions.\n\nContact us if needed: shapeupcontact1@gmail.com"</string>
 </resources>

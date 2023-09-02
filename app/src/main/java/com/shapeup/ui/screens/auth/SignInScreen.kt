@@ -22,10 +22,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.shapeup.R
 import com.shapeup.ui.components.FormField
 import com.shapeup.ui.components.FormFieldType
 import com.shapeup.ui.components.Header
@@ -88,7 +90,7 @@ fun SignInScreen(
             Text(
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.headlineMedium,
-                text = "Welcome Back"
+                text = stringResource(R.string.txt_sign_in_screen_title)
             )
 
             Spacer(modifier = Modifier.height(48.dp))
@@ -104,7 +106,7 @@ fun SignInScreen(
                         imeAction = ImeAction.Next,
                         keyboardType = KeyboardType.Email
                     ),
-                    label = "E-mail",
+                    label = stringResource(R.string.txt_sign_in_screen_email_input_label),
                     onValueChange = { data.email.value = it },
                     supportingText = "",
                     value = data.email.value
@@ -118,7 +120,7 @@ fun SignInScreen(
                         imeAction = ImeAction.Done,
                         keyboardType = KeyboardType.Password
                     ),
-                    label = "Password",
+                    label = stringResource(R.string.txt_sign_in_screen_password_input_label),
                     onValueChange = { data.password.value = it },
                     supportingText = "",
                     type = FormFieldType.PASSWORD,
@@ -130,7 +132,7 @@ fun SignInScreen(
                 TextButton(onClick = { navigator.navigate(Screen.ForgotPassword) }) {
                     Text(
                         style = MaterialTheme.typography.bodyMedium,
-                        text = "Forgot password?"
+                        text = stringResource(R.string.txt_sign_in_screen_forgot_password)
                     )
                 }
             }
@@ -148,7 +150,7 @@ fun SignInScreen(
                     modifier = Modifier
                         .padding(vertical = 12.dp),
                     style = MaterialTheme.typography.bodyLarge,
-                    text = "Sign in"
+                    text = stringResource(R.string.txt_sign_in_screen_sign_in)
                 )
             }
 
@@ -164,7 +166,7 @@ fun SignInScreen(
                     modifier = Modifier
                         .padding(vertical = 12.dp),
                     style = MaterialTheme.typography.bodyLarge,
-                    text = "Sign up"
+                    text = stringResource(R.string.txt_sign_in_screen_sign_up)
                 )
             }
         }
