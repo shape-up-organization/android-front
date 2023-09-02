@@ -12,11 +12,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.shapeup.ui.screens.SplashScreen
 import com.shapeup.ui.screens.auth.SignInScreen
-import com.shapeup.ui.screens.auth.SignUpScreen
 import com.shapeup.ui.screens.auth.WelcomeScreen
 import com.shapeup.ui.screens.auth.forgotPassword.ChangePasswordScreen
 import com.shapeup.ui.screens.auth.forgotPassword.ForgotPasswordScreen
 import com.shapeup.ui.screens.auth.forgotPassword.VerificationCodeScreen
+import com.shapeup.ui.screens.auth.signUp.SignUpScreen
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Route
 import com.shapeup.ui.utils.constants.Screen
@@ -24,6 +24,8 @@ import com.shapeup.ui.utils.helpers.navigator
 import com.shapeup.ui.utils.helpers.viewModel
 import com.shapeup.ui.viewModels.auth.SignInFormData
 import com.shapeup.ui.viewModels.auth.SignInViewModel
+import com.shapeup.ui.viewModels.auth.SignUpFormData
+import com.shapeup.ui.viewModels.auth.SignUpViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,7 +97,24 @@ fun App(
             }
 
             composable(route = Screen.SignUp.value) {
-                SignUpScreen()
+                val viewModel = it.viewModel<SignUpViewModel>(navController)
+
+                SignUpScreen(
+                    activeStep = viewModel.activeStep,
+                    data = SignUpFormData(
+                        birthday = viewModel.birthday,
+                        email = viewModel.email,
+                        firstName = viewModel.firstName,
+                        lastName = viewModel.lastName,
+                        password = viewModel.password,
+                        passwordConfirmation = viewModel.passwordConfirmation,
+                        phone = viewModel.phone,
+                        username = viewModel.username,
+                        verificationCode = viewModel.verificationCode
+                    ),
+                    handlers = viewModel.handlers,
+                    navigator = navController.navigator
+                )
             }
         }
     }
