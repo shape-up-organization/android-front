@@ -1,5 +1,6 @@
 package com.shapeup.ui.screens.auth.forgotPassword
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,10 @@ fun ChangePasswordPreview() {
 fun ChangePasswordScreen(
     navigator: Navigator
 ) {
+    BackHandler {
+        navigator.navigateClean(Screen.ForgotPassword)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
