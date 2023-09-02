@@ -12,6 +12,7 @@ class Navigator(private val navController: NavController? = null) {
             }
         }
     }
+    val navigateBack = { navController?.popBackStack() }
 }
 
 val NavController.navigator: Navigator
