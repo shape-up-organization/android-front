@@ -9,7 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import com.shapeup.R
+import com.shapeup.ui.utils.constants.Icon
 
 @Composable
 fun Header(
@@ -23,7 +23,7 @@ fun Header(
         IconButton(onClick = navigateTo) {
             Icon(
                 contentDescription = "Icon arrow back",
-                painter = painterResource(id = R.drawable.icon_arrow_back),
+                painter = painterResource(id = Icon.ArrowBack.value),
                 tint = MaterialTheme.colorScheme.onBackground
             )
         }
