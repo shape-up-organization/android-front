@@ -47,7 +47,7 @@ fun SplashScreen(navigator: Navigator) {
                 }
             )
         )
-        delay(2000L)
+        delay(1000L)
         navigator.navigateClean(Screen.Welcome)
     }
 
