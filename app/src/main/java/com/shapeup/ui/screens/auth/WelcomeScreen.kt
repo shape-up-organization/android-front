@@ -1,5 +1,6 @@
-package com.shapeup.ui.screens
+package com.shapeup.ui.screens.auth
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,33 +24,39 @@ import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.shapeup.R
 import com.shapeup.ui.theme.ShapeUpTheme
+import com.shapeup.ui.utils.constants.Icon
+import com.shapeup.ui.utils.constants.Image
+import com.shapeup.ui.utils.constants.Screen
+import com.shapeup.ui.utils.helpers.Navigator
 
 @Preview
 @Composable
 fun WelcomeScreenPreview() {
     ShapeUpTheme {
         WelcomeScreen(
-            navigateToSignIn = {},
-            navigateToSignUp = {}
+            navigator = Navigator()
         )
     }
 }
 
 @Composable
 fun WelcomeScreen(
-    navigateToSignIn: () -> Unit,
-    navigateToSignUp: () -> Unit
+    navigator: Navigator
 ) {
+    BackHandler {
+        navigator.navigateBack()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
             .padding(24.dp),
         verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -57,21 +64,21 @@ fun WelcomeScreen(
         Text(
             color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.displaySmall,
-            text = "ShapeUp"
+            text = stringResource(R.string.app_name)
         )
 
         Image(
-            painter = painterResource(id = R.drawable.img_girl_welcome),
-            contentDescription = "Girl"
+            painter = painterResource(id = Image.GirlWelcome.value),
+            contentDescription = stringResource(R.string.img_girl_welcome)
         )
 
         Column {
             Button(
-                onClick = navigateToSignIn,
+                onClick = { navigator.navigate(Screen.SignIn) },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Sign in",
+                    text = stringResource(R.string.txt_sign_in),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
                         .padding(vertical = 12.dp)
@@ -81,12 +88,12 @@ fun WelcomeScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             OutlinedButton(
-                onClick = navigateToSignUp,
+                onClick = { navigator.navigate(Screen.SignUp) },
                 modifier = Modifier.fillMaxWidth(),
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
             ) {
                 Text(
-                    text = "Sign up",
+                    text = stringResource(R.string.txt_sign_up),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
                         .padding(vertical = 12.dp)
@@ -104,6 +111,7 @@ fun BottomSheet() {
     val scaffoldState = rememberBottomSheetScaffoldState()
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
+        sheetContainerColor = MaterialTheme.colorScheme.primaryContainer,
         sheetPeekHeight = BottomSheetDefaults.SheetPeekHeight,
         sheetContent = {
             Column(
@@ -113,34 +121,34 @@ fun BottomSheet() {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceAround
             ) {
-                Text(text = "About")
+                Text(text = stringResource(R.string.txt_welcome_drawer_title))
 
                 Image(
-                    painter = painterResource(id = R.drawable.img_big_foot),
-                    contentDescription = "Big_foot"
+                    painter = painterResource(id = Image.GirlMeditating.value),
+                    contentDescription = stringResource(R.string.img_girl_meditating)
                 )
                 Spacer(Modifier.height(72.dp))
 
                 RowIcon(
-                    text = "Share your progress",
-                    icon = R.drawable.icon_groups,
-                    contentDescription = "Icon groups"
+                    text = stringResource(R.string.txt_welcome_drawer_topic_1),
+                    icon = Icon.Groups,
+                    contentDescription = stringResource(R.string.icon_groups)
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 RowIcon(
-                    text = "A gamified social network",
-                    icon = R.drawable.icon_sports_joystick,
-                    contentDescription = "Icon joystick"
+                    text = stringResource(R.string.txt_welcome_drawer_topic_2),
+                    icon = Icon.SportsJoystick,
+                    contentDescription = stringResource(R.string.icon_joystick)
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 RowIcon(
-                    text = "Plan your trainings",
-                    icon = R.drawable.icon_fitness_center,
-                    contentDescription = "Icon fitness center"
+                    text = stringResource(R.string.txt_welcome_drawer_topic_3),
+                    icon = Icon.FitnessCenter,
+                    contentDescription = stringResource(R.string.icon_fitness_center)
                 )
             }
         }
@@ -148,10 +156,10 @@ fun BottomSheet() {
 }
 
 @Composable
-fun RowIcon(text: String, icon: Int, contentDescription: String) {
+fun RowIcon(text: String, icon: Icon, contentDescription: String? = "") {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Image(
-            painterResource(id = icon),
+            painterResource(id = icon.value),
             contentDescription = contentDescription
         )
         Spacer(modifier = Modifier.width(8.dp))

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- IMAGES -->
+    <string name="img_girl_meditating">Mulher meditando</string>
+    <string name="img_girl_welcome">Mulher se exercitando</string>
+
+    <!-- ICONS -->
+    <string name="icon_arrow_back">Seta de retorno</string>
+    <string name="icon_calendar">Calendário</string>
+    <string name="icon_close">Fechar</string>
+    <string name="icon_eye_closed">Escondido</string>
+    <string name="icon_eye_open">Visível</string>
+    <string name="icon_fitness_center">Fitness</string>
+    <string name="icon_groups">Grupos</string>
+    <string name="icon_joystick">Controle de vídeo game</string>
+    <string name="icon_phone">Telefone</string>
+
+    <!-- COMPONENTS -->
+    <string name="txt_form_field_password_icon">Senha</string>
+
+    <!-- PAGES -->
+    <!-- WELCOME -->
+    <string name="txt_sign_in">Entrar</string>
+    <string name="txt_sign_up">Criar conta</string>
+    <string name="txt_welcome_drawer_title">Vantagens</string>
+    <string name="txt_welcome_drawer_topic_1">Compartilhe seu progresso</string>
+    <string name="txt_welcome_drawer_topic_2">Uma rede social gamificada</string>
+    <string name="txt_welcome_drawer_topic_3">Planeje seus treinos</string>
+    <!-- SIGN IN -->
+    <string name="txt_sign_in_screen_sign_in">Entrar</string>
+    <string name="txt_sign_in_screen_sign_up">Criar conta</string>
+    <string name="txt_sign_in_screen_password_input_label">Senha</string>
+    <string name="txt_sign_in_screen_email_input_label">E-mail</string>
+    <string name="txt_sign_in_screen_title">Welcome Back</string>
+    <string name="txt_sign_in_screen_forgot_password">Esqueceu a senha?</string>
+    <!-- FORGOT PASSWORD -->
+    <string name="txt_forgot_password_screen_title">Esqueceu a Senha?</string>
+    <string name="txt_forgot_password_screen_email_input_label">E-mail</string>
+    <string name="txt_forgot_password_screen_info">nós vamos te enviar um código em seu endereço de e-mail</string>
+    <string name="txt_forgot_password_screen_send">Enviar</string>
+    <!-- SIGN IN VERIFICATION CODE -->
+    <string name="txt_sign_in_verification_code_screen_title">Código de Verificação</string>
+    <string name="txt_sign_in_verification_code_screen_input_label">Código de verificação</string>
+    <string name="txt_sign_in_verification_code_screen_resend_code">Reenviar código</string>
+    <string name="txt_sign_in_verification_code_screen_verify">Verificar</string>
+    <!-- CHANGE PASSWORD -->
+    <string name="txt_change_password_screen_title">Mudar Senha</string>
+    <string name="txt_change_password_screen_new_password_label">Nova senha</string>
+    <string name="txt_change_password_screen_password_confirmation_label">Confirme sua senha</string>
+    <string name="txt_change_password_screen_finish">Mudar senha</string>
+    <!-- SIGN UP -->
+    <string name="txt_sign_up_screen_continue_button">Continar</string>
+    <string name="txt_sign_up_screen_finish_button">Criar conta</string>
+    <string name="txt_sign_up_screen_progress_bar">Barra de progreso</string>
+    <string name="txt_sign_up_screen_first_name_label">Nome</string>
+    <string name="txt_sign_up_screen_last_name_label">Sobrenome</string>
+    <string name="txt_sign_up_screen_birthday_label">Data de nascimento</string>
+    <string name="txt_sign_up_screen_email_label">E-mail</string>
+    <string name="txt_sign_up_screen_verification_code_label">Código de verificação</string>
+    <string name="txt_sign_up_screen_send_code_warning">"nós vamos te enviar um código em seu endereço de e-mail "</string>
+    <string name="txt_sign_up_screen_phone_number_label">Número de telefone</string>
+    <string name="txt_sign_up_screen_username_label">Nome de usuário</string>
+    <string name="txt_sign_up_screen_password_label">Senha</string>
+    <string name="txt_sign_up_screen_password_confirmation_label">Confirme sua senha</string>
+    <!-- TERMS -->
+    <string name="terms_title">Termos e Condições</string>
+    <string name="terms_body">" 1. Uso da Plataforma\nVocê é responsável pelo uso adequado da nossa plataforma e deve cumprir todas as leis e regulamentos aplicáveis. Ao usar nossos serviços, você concorda em não:\n\na) Publicar conteúdo ilegal, difamatório, ofensivo, obsceno, ameaçador ou abusivo;\nb) Envolva-se em atividades fraudulentas, como phishing ou fraude de identidade;\nc) Cometa atos que possam prejudicar a plataforma ou outros usuários, como o uso de malware ou spam;\nd) Violar os direitos de propriedade intelectual de terceiros;\ne) Acessar ou tentar acessar a plataforma por meio de qualquer meio que não seja as interfaces fornecidas pela nossa rede social.\n\n 2. Conta de Usuário\nVocê deve ter uma conta para usar nossos serviços. Ao criar uma conta, você concorda em fornecer informações precisas e atualizadas e mantê-las atualizadas. Você também concorda em proteger sua conta e manter sua senha segura. Não permitiremos o compartilhamento de contas ou o uso de contas por outras pessoas.\n\n 3. Propriedade de Conteúdo\nVocê mantém a propriedade do conteúdo que você posta em nossa plataforma, mas concede à nossa rede social uma licença global, irrevogável e não exclusiva para usar, reproduzir, modificar, publicar e distribuir o conteúdo em nossa plataforma.\n\n 4. Modificações nos Termos de Uso\nPodemos modificar estes termos de uso a qualquer momento, e você será notificado de quaisquer alterações significativas. Se você continuar a usar nossos serviços após a modificação dos termos de uso, será considerado como sua aceitação dos novos termos.\n\n 5. Encerramento de Conta\nPodemos encerrar sua conta a qualquer momento, por qualquer motivo, sem aviso prévio. Você pode encerrar sua conta a qualquer momento seguindo as instruções em nossa plataforma.\n\n 6. Limitação de Responsabilidade\nNão somos responsáveis por danos diretos ou indiretos decorrentes do uso de nossa plataforma, incluindo danos decorrentes de erros, omissões ou interrupções nos serviços.\n\n 7. Lei Aplicável e Jurisdição\nEstes termos de uso são regidos pelas leis do país onde nossa rede social está sediada, e quaisquer disputas serão resolvidas exclusivamente pelos tribunais desse país. Ao usar nossos serviços, você concorda em cumprir estes termos de uso. Se você tiver alguma dúvida sobre estes termos, entre em contato conosco.\n\n 8. Privacidade\nColetamos e usamos informações de acordo com nossa política de privacidade."</string>
+    <!-- PRIVACY -->
+    <string name="privacy_title">Privacidade</string>
+    <string name="privacy_body">" 1. Coleta de Informações\nPodemos coletar as seguintes informações pessoais quando você utiliza nossos serviços:\na) Informações de contato, como nome completo, endereço de e-mail e número de telefone;\nb) Informações de perfil, como foto de perfil, data de nascimento, gênero, localização e outras informações de perfil que você escolher compartilhar;\nc) Informações sobre sua atividade em nossa rede social, incluindo suas postagens, comentários e interações com outros usuários;\nd) Informações sobre o dispositivo que você utiliza para acessar nossos serviços, como modelo do dispositivo, sistema operacional e endereço IP.\n\n 2. Uso das Informações\nUtilizamos suas informações pessoais para fornecer e melhorar nossos serviços, incluindo:\na) Personalizar sua experiência em nossa plataforma;\nb) Fornecer serviços de suporte ao cliente;\nc) Enviar comunicações relevantes, como atualizações de serviço e promoções;\nd) Realizar análises de dados para melhorar nossos serviços e compreender as necessidades de nossos usuários.\n\n 3. Divulgação de Informações\nNão compartilhamos suas informações pessoais com terceiros, exceto nas seguintes circunstâncias:\na) Quando somos obrigados por lei a divulgar suas informações;\nb) Quando acreditamos que a divulgação é necessária para proteger nossos direitos legais ou os de terceiros;\nc) Quando fornecemos informações a prestadores de serviços que nos auxiliam na entrega de nossos serviços.\n\n 5. Proteção de Informações\nTomamos medidas para proteger suas informações pessoais contra perda, uso indevido, acesso não autorizado, divulgação ou alteração.\n\n 6. Política de Cookies\nUtilizamos cookies para aprimorar sua experiência em nossa plataforma. Os cookies nos permitem lembrar de suas preferências e personalizar sua experiência. Você pode desativar os cookies em seu navegador, mas isso pode afetar sua experiência em nossa plataforma.\n\n 7. Direitos de Privacidade\nVocê tem o direito de acessar, corrigir e excluir suas informações pessoais, e reservamos o direito de excluir qualquer tipo de conteúdo se violar os termos.\n\n 8. Alterações na Política de Privacidade\nPodemos modificar esta Política de Privacidade a qualquer momento, e você será notificado de quaisquer alterações significativas. Se você continuar a utilizar nossos serviços após a modificação desta Política de Privacidade, será considerado como sua aceitação das novas disposições.\n\nContate-nos se necessário: shapeupcontact1@gmail.com"</string>
+</resources>
