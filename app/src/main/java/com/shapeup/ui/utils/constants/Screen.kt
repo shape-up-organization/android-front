@@ -1,11 +1,12 @@
 package com.shapeup.ui.utils.constants
 
 enum class Screen(val value: String) {
-    Splash("splash-screen"),
-    Welcome("welcome-screen"),
-    SignIn("sign-in-screen"),
-    SignUp("sign-up-screen"),
+    ChangePassword("change-password-screen"),
+    Feed("feed-screen"),
     ForgotPassword("forgot-password-screen"),
+    SignIn("sign-in-screen"),
     SignInVerificationCode("sign-in-verification-code-screen"),
-    ChangePassword("change-password-screen")
+    SignUp("sign-up-screen"),
+    Splash("splash-screen"),
+    Welcome("welcome-screen")
 }
