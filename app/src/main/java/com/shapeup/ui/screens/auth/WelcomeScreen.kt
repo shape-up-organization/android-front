@@ -159,7 +159,7 @@ fun BottomSheet() {
 fun RowIcon(text: String, icon: Icon, contentDescription: String? = "") {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Image(
-            painterResource(id = icon.value),
+            painterResource(icon.value),
             contentDescription = contentDescription
         )
         Spacer(modifier = Modifier.width(8.dp))

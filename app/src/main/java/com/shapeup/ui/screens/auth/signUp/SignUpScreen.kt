@@ -132,7 +132,7 @@ fun SignUpScreen(
                         }
                     ),
                     painter = painterResource(
-                        id = when (activeStep.value) {
+                        when (activeStep.value) {
                             1 -> Icon.Close.value
                             else -> Icon.ArrowBack.value
                         }

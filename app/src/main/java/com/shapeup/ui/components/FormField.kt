@@ -94,7 +94,7 @@ fun FormField(
             when {
                 trailingIcon != null -> {
                     Icon(
-                        painter = painterResource(id = trailingIcon.value),
+                        painter = painterResource(trailingIcon.value),
                         contentDescription = trailingIconDescription
                     )
                 }
@@ -102,7 +102,7 @@ fun FormField(
                 isDateType -> {
                     Icon(
                         contentDescription = stringResource(R.string.icon_calendar),
-                        painter = painterResource(id = Icon.Calendar.value)
+                        painter = painterResource(Icon.Calendar.value)
                     )
                 }
 
@@ -127,7 +127,7 @@ fun FormField(
                     }) {
                         Icon(
                             contentDescription = contentDescription,
-                            painter = painterResource(id = icon.value)
+                            painter = painterResource(icon.value)
                         )
                     }
                 }
@@ -135,7 +135,7 @@ fun FormField(
                 isPhoneType -> {
                     Icon(
                         contentDescription = stringResource(R.string.icon_phone),
-                        painter = painterResource(id = Icon.Phone.value)
+                        painter = painterResource(Icon.Phone.value)
                     )
                 }
             }
