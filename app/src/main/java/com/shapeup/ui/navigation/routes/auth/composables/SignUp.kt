@@ -41,6 +41,7 @@ fun NavGraphBuilder.screenSignUp(navController: NavHostController) {
         }
     ) {
         val viewModel = it.viewModel<SignUpViewModel>(navController)
+        viewModel.navigator = navController.navigator
 
         SignUpScreen(
             activeStep = viewModel.activeStep,

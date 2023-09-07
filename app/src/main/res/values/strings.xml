@@ -6,6 +6,7 @@
     <string name="img_girl_welcome">Girl exercising</string>
 
     <!-- ICONS -->
+    <string name="icon_add">Add</string>
     <string name="icon_arrow_back">Return arrow</string>
     <string name="icon_calendar">Calendar</string>
     <string name="icon_close">Close</string>
@@ -13,8 +14,10 @@
     <string name="icon_eye_open">Visible</string>
     <string name="icon_fitness_center">Fitness</string>
     <string name="icon_groups">Groups</string>
+    <string name="icon_home">Home</string>
     <string name="icon_joystick">Joystick</string>
     <string name="icon_phone">Phone</string>
+    <string name="icon_rank">Rank</string>
 
     <!-- COMPONENTS -->
     <string name="txt_form_field_password_icon">"Password "</string>

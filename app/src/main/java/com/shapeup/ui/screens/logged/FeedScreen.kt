@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.shapeup.ui.components.EPageButtons
+import com.shapeup.ui.components.Navbar
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.helpers.Navigator
@@ -35,13 +37,14 @@ fun FeedPreview() {
 fun FeedScreen(navigator: Navigator) {
     Column(
         modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.colorScheme.primaryContainer)
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(0.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
         ) {
             IconButton(
                 onClick = { /*TODO*/ }
@@ -78,19 +81,9 @@ fun FeedScreen(navigator: Navigator) {
             }
         }
 
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            IconButton(
-                onClick = { /*TODO*/ }
-            ) {
-                Icon(
-//                    contentDescription = stringResource(R.string.icon_arrow_back),
-                    contentDescription = "Icon",
-                    painter = painterResource(Icon.Groups.value),
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
-        }
+        Navbar(
+            activePage = EPageButtons.HOME,
+            navigator = navigator
+        )
     }
 }
