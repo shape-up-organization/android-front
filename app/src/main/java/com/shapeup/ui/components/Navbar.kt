@@ -86,7 +86,10 @@ fun PageButton(
                 .height(64.dp)
                 .width(64.dp)
 
-        else -> Modifier
+        else ->
+            Modifier
+                .height(32.dp)
+                .width(32.dp)
     }
 
     val iconModifier = when (isBigger) {
@@ -97,8 +100,8 @@ fun PageButton(
 
         else ->
             Modifier
-                .height(32.dp)
-                .width(32.dp)
+                .height(24.dp)
+                .width(24.dp)
     }
 
     IconButton(
@@ -159,6 +162,5 @@ enum class EPageButtons(
                 else -> MaterialTheme.colorScheme.onBackground
             }
         }
-
     }
 }

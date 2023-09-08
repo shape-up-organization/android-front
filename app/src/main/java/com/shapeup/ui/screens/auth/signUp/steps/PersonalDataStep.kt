@@ -1,6 +1,7 @@
 package com.shapeup.ui.screens.auth.signUp.steps
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
@@ -21,13 +22,15 @@ import com.shapeup.ui.theme.ShapeUpTheme
 @Composable
 fun PersonalDataStepPreview() {
     ShapeUpTheme {
-        PersonalDataStep(
-            data = PersonalDataStepFormData(
-                birthday = mutableStateOf(""),
-                firstName = mutableStateOf(""),
-                lastName = mutableStateOf("")
+        Column {
+            PersonalDataStep(
+                data = PersonalDataStepFormData(
+                    birthday = mutableStateOf(""),
+                    firstName = mutableStateOf(""),
+                    lastName = mutableStateOf("")
+                )
             )
-        )
+        }
     }
 }
 

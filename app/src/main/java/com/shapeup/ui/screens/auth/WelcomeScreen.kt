@@ -139,7 +139,7 @@ fun BottomSheet() {
 
                 RowIcon(
                     text = stringResource(R.string.txt_welcome_drawer_topic_2),
-                    icon = Icon.SportsJoystick,
+                    icon = Icon.Joystick,
                     contentDescription = stringResource(R.string.icon_joystick)
                 )
 
