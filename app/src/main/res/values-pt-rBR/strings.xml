@@ -6,6 +6,7 @@
 
     <!-- ICONS -->
     <string name="icon_arrow_back">Seta de retorno</string>
+    <string name="icon_arrow_forward">Seta de avançar</string>
     <string name="icon_calendar">Calendário</string>
     <string name="icon_close">Fechar</string>
     <string name="icon_eye_closed">Escondido</string>
@@ -68,4 +69,10 @@
     <!-- PRIVACY -->
     <string name="privacy_title">Privacidade</string>
     <string name="privacy_body">" 1. Coleta de Informações\nPodemos coletar as seguintes informações pessoais quando você utiliza nossos serviços:\na) Informações de contato, como nome completo, endereço de e-mail e número de telefone;\nb) Informações de perfil, como foto de perfil, data de nascimento, gênero, localização e outras informações de perfil que você escolher compartilhar;\nc) Informações sobre sua atividade em nossa rede social, incluindo suas postagens, comentários e interações com outros usuários;\nd) Informações sobre o dispositivo que você utiliza para acessar nossos serviços, como modelo do dispositivo, sistema operacional e endereço IP.\n\n 2. Uso das Informações\nUtilizamos suas informações pessoais para fornecer e melhorar nossos serviços, incluindo:\na) Personalizar sua experiência em nossa plataforma;\nb) Fornecer serviços de suporte ao cliente;\nc) Enviar comunicações relevantes, como atualizações de serviço e promoções;\nd) Realizar análises de dados para melhorar nossos serviços e compreender as necessidades de nossos usuários.\n\n 3. Divulgação de Informações\nNão compartilhamos suas informações pessoais com terceiros, exceto nas seguintes circunstâncias:\na) Quando somos obrigados por lei a divulgar suas informações;\nb) Quando acreditamos que a divulgação é necessária para proteger nossos direitos legais ou os de terceiros;\nc) Quando fornecemos informações a prestadores de serviços que nos auxiliam na entrega de nossos serviços.\n\n 5. Proteção de Informações\nTomamos medidas para proteger suas informações pessoais contra perda, uso indevido, acesso não autorizado, divulgação ou alteração.\n\n 6. Política de Cookies\nUtilizamos cookies para aprimorar sua experiência em nossa plataforma. Os cookies nos permitem lembrar de suas preferências e personalizar sua experiência. Você pode desativar os cookies em seu navegador, mas isso pode afetar sua experiência em nossa plataforma.\n\n 7. Direitos de Privacidade\nVocê tem o direito de acessar, corrigir e excluir suas informações pessoais, e reservamos o direito de excluir qualquer tipo de conteúdo se violar os termos.\n\n 8. Alterações na Política de Privacidade\nPodemos modificar esta Política de Privacidade a qualquer momento, e você será notificado de quaisquer alterações significativas. Se você continuar a utilizar nossos serviços após a modificação desta Política de Privacidade, será considerado como sua aceitação das novas disposições.\n\nContate-nos se necessário: shapeupcontact1@gmail.com"</string>
+    <!-- Notifications -->
+    <string name="notification_header_title">Notificações</string>
+    <string name="txt_notification_head_title_to_friendship_request">Pedidos de amizade</string>
+    <string name="txt_notification_subtitle_to_friendship_request">Aceite ou ignore as solicitações</string>
+    <string name="txt_notification_liked_your_picture" >Gostou da sua foto</string>
+    <string name="txt_notification_commented_your_post" >Comentou no seu post</string>
 </resources>
