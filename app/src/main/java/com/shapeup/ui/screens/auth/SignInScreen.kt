@@ -76,10 +76,12 @@ fun SignInScreen(
             .padding(24.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Header {
-            handlers.clearFormData()
-            navigator.navigateBack()
-        }
+        Header(
+            navigateTo = {
+                handlers.clearFormData()
+                navigator.navigateBack()
+            }
+        )
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

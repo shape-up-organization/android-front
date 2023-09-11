@@ -57,7 +57,9 @@ fun ChangePasswordScreen(
             .padding(24.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Header { navigator.navigateClean(Screen.ForgotPassword) }
+        Header(navigateTo = {
+            navigator.navigateClean(Screen.ForgotPassword)
+        })
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

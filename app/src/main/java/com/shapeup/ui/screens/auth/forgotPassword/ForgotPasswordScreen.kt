@@ -55,7 +55,7 @@ fun ForgotPasswordScreen(
             .padding(24.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Header { navigator.navigateBack() }
+        Header(navigateTo = { navigator.navigateBack() })
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
