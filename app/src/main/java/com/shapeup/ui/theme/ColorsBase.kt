@@ -1,5 +1,6 @@
 package com.shapeup.ui.theme
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
@@ -18,12 +19,18 @@ val BackgroundSecondaryDark = Color(0xFF181818)
 val Pink = Color(0xFFE96BE4)
 val BlackText = Color(0xFF2B2B2B)
 val WhiteText = Color(0xFFFFFFFF)
+val RedError = Color(0xFFED145B)
 
 val GradientLight = Brush.verticalGradient(
     listOf(
         GreenLight50,
         BackgroundWhite
     )
+)
+val GradientBrush = Brush.linearGradient(
+    colors = listOf(RedError, GreenLight),
+    start = Offset(0f, 0f),
+    end = Offset(200f, 0f)
 )
 
 val GradientDark = Brush.verticalGradient(

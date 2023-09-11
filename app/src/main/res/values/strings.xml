@@ -24,6 +24,9 @@
     <string name="icon_phone">Phone</string>
     <string name="icon_rank">Rank</string>
     <string name="icon_search">Search</string>
+    <string name="icon_arrow_forward">Forward arrow</string>
+    <string name="icon_accept">Accept</string>
+    <string name="icon_decline">Decline</string>
 
     <!-- COMPONENTS -->
     <string name="txt_form_field_password_icon">"Password "</string>
@@ -78,4 +81,10 @@
     <!-- PRIVACY -->
     <string name="privacy_title">Privacy</string>
     <string name="privacy_body" tools:ignore="Typos">" 1. Information Collection\nWe may collect the following personal information when you use our services: a) Contact information, such as full name, email address, and phone number; b) Profile information, such as profile picture, date of birth, gender, location, and other profile information you choose to share; c) Information about your activity on our social network, including your posts, comments, and interactions with other users; d) Information about the device you use to access our services, such as device model, operating system, and IP address.\n\n 2. Use of Information\nWe use your personal information to provide and improve our services, including: a) Personalizing your experience on our platform; b) Providing customer support services; c) Sending relevant communications, such as service updates and promotions; d) Conducting data analysis to improve our services and understand the needs of our users.\n\n 3. Information Disclosure\nWe do not share your personal information with third parties, except in the following circumstances:\n\na) When we are required by law to disclose your information; b) When we believe that disclosure is necessary to protect our legal rights or those of third parties; c) When we provide information to service providers that assist us in delivering our services.\n\n 5. Information Protection\nWe take measures to protect your personal information against loss, misuse, unauthorized access, disclosure, or alteration.\n\n 6. Cookie Policy\nWe use cookies to enhance your experience on our platform. Cookies allow us to remember your preferences and personalize your experience. You can disable cookies in your browser, but this may affect your experience on our platform.\n\n 7. Privacy Rights\nYou have the right to access, correct, and delete your personal information, and we reserve the right to delete any type of content if it violates any terms.\n\n 8. Changes to Privacy Policy\nWe may modify this Privacy Policy at any time, and you will be notified of any significant changes. If you continue to use our services after the modification of this Privacy Policy, it will be considered as your acceptance of the new provisions.\n\nContact us if needed: shapeupcontact1@gmail.com"</string>
+    <!-- Notifications -->
+    <string name="notification_header_title">Notifications</string>
+    <string name="txt_notification_head_title_to_friendship_request">Friendship requests</string>
+    <string name="txt_notification_subtitle_to_friendship_request">Accept or ignore requests</string>
+    <string name="txt_notification_liked_your_picture" >Liked your picture</string>
+    <string name="txt_notification_commented_your_post" >Commented on your post</string>
 </resources>

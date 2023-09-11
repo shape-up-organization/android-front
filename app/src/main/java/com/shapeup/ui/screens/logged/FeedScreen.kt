@@ -255,7 +255,7 @@ fun FeedScreen(navigator: Navigator) {
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.bodySmall,
                         text = "Lorem Ipsum is simply dummy text of the printing and typesetting " +
-                                "industry. Lorem Ipsum has been the industry Lorem"
+                            "industry. Lorem Ipsum has been the industry Lorem"
                     )
                 }
 

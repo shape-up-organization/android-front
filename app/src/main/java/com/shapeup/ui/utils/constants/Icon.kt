@@ -75,5 +75,17 @@ enum class Icon(@DrawableRes val value: Int, val description: Int) {
     Search(
         description = R.string.icon_search,
         value = R.drawable.icon_search
+    ),
+    ArrowForward(
+        description = R.string.icon_arrow_forward,
+        value = R.drawable.icon_arrow_forward
+    ),
+    Accept(
+        description = R.string.icon_accept,
+        value = R.drawable.icon_accept
+    ),
+    Decline(
+        description = R.string.icon_decline,
+        value = R.drawable.icon_decline
     )
 }
