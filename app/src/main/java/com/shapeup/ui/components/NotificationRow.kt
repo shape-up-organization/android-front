@@ -20,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.shapeup.R
+import com.shapeup.ui.theme.GradientBrush
 import com.shapeup.ui.utils.helpers.TextHelper
 
 @Composable
@@ -27,12 +28,6 @@ fun NotificationRow(
     userFullName: String,
     action: Int
 ) {
-    val gradientBrush = Brush.linearGradient(
-        colors = listOf(Color(0xFFED145B), Color(0xFF23C7A8)),
-        start = Offset(0f, 0f),
-        end = Offset(200f, 0f)
-    )
-
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier.height(88.dp)
@@ -44,7 +39,7 @@ fun NotificationRow(
             modifier = Modifier
                 .size(45.dp)
                 .background(
-                    brush = gradientBrush,
+                    brush = GradientBrush,
                     shape = RoundedCornerShape(100.dp)
                 )
                 .padding(1.6.dp)
