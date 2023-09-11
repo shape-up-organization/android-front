@@ -12,5 +12,8 @@ enum class Icon(@DrawableRes val value: Int) {
     FitnessCenter(value = R.drawable.icon_fitness_center),
     Groups(value = R.drawable.icon_groups),
     Phone(value = R.drawable.icon_phone),
-    SportsJoystick(value = R.drawable.icon_sports_joystick)
+    SportsJoystick(value = R.drawable.icon_sports_joystick),
+    ArrowForward(value = R.drawable.icon_arrow_forward),
+    Accept(value = R.drawable.icon_accept),
+    Decline(value = R.drawable.icon_decline)
 }
