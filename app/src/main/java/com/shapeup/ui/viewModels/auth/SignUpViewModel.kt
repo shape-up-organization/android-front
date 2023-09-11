@@ -4,9 +4,13 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.DateHelper
+import com.shapeup.ui.utils.helpers.Navigator
 
 class SignUpViewModel : ViewModel() {
+    var navigator: Navigator? = null
+
     val activeStep = mutableIntStateOf(1)
     val birthday = mutableStateOf("")
     val email = mutableStateOf("")
@@ -41,6 +45,7 @@ class SignUpViewModel : ViewModel() {
                 birthday.value != "" -> dateHelper.fromFormFieldDateStringToServiceDate(
                     birthday.value
                 )
+
                 else -> ""
             }
             }"
@@ -53,6 +58,8 @@ class SignUpViewModel : ViewModel() {
         println("phone: ${phone.value}")
         println("username: ${username.value}")
         println("verificationCode: ${verificationCode.value}")
+
+        this.navigator?.navigate?.invoke(Screen.Feed)
     }
 
     private fun verifyCode() {}

@@ -31,7 +31,7 @@ fun Header(
         IconButton(onClick = navigateTo) {
             Icon(
                 contentDescription = stringResource(R.string.icon_arrow_back),
-                painter = painterResource(id = Icon.ArrowBack.value),
+                painter = painterResource(Icon.ArrowBack.value),
                 tint = MaterialTheme.colorScheme.onBackground
             )
         }

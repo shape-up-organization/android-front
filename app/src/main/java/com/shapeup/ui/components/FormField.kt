@@ -40,19 +40,20 @@ fun FormField(
     ),
     keyboardOptions: KeyboardOptions? = null,
     label: String,
+    leadingIcon: Icon? = null,
     maxLines: Int = 1,
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
     onValueChange: (String) -> Unit = {},
     readOnly: Boolean = false,
-    supportingText: String = "",
+    supportingText: String? = null,
     trailingIcon: Icon? = null,
-    trailingIconDescription: String = "",
     type: FormFieldType = FormFieldType.DEFAULT,
     value: String = ""
 ) {
     val isDateType = type == FormFieldType.DATE
     val isPasswordType = type == FormFieldType.PASSWORD
     val isPhoneType = type == FormFieldType.PHONE
+    val isSearchType = type == FormFieldType.SEARCH
 
     OutlinedTextField(
         colors = OutlinedTextFieldDefaults.colors(
@@ -77,32 +78,58 @@ fun FormField(
                 keyboardType = KeyboardType.Phone
             )
 
+            isSearchType -> KeyboardOptions(
+                imeAction = ImeAction.Search,
+                keyboardType = KeyboardType.Text
+            )
+
             else -> KeyboardOptions(
                 imeAction = ImeAction.Next,
                 keyboardType = KeyboardType.Text
             )
         },
         label = { Text(label) },
+        leadingIcon = when {
+            leadingIcon != null -> {
+                {
+                    Icon(
+                        contentDescription = stringResource(leadingIcon.description),
+                        painter = painterResource(leadingIcon.value)
+                    )
+                }
+            }
+
+            isSearchType -> {
+                {
+                    Icon(
+                        contentDescription = stringResource(Icon.Search.description),
+                        painter = painterResource(Icon.Search.value)
+                    )
+                }
+            }
+
+            else -> null
+        },
         modifier = Modifier
             .fillMaxWidth()
             .then(modifier),
         onValueChange = onValueChange,
         readOnly = readOnly,
         shape = RoundedCornerShape(16.dp),
-        supportingText = { Text(supportingText) },
+        supportingText = supportingText?.let { { Text(it) } },
         trailingIcon = {
             when {
                 trailingIcon != null -> {
                     Icon(
-                        painter = painterResource(id = trailingIcon.value),
-                        contentDescription = trailingIconDescription
+                        contentDescription = stringResource(trailingIcon.description),
+                        painter = painterResource(trailingIcon.value)
                     )
                 }
 
                 isDateType -> {
                     Icon(
-                        contentDescription = stringResource(R.string.icon_calendar),
-                        painter = painterResource(id = Icon.Calendar.value)
+                        contentDescription = stringResource(Icon.Calendar.description),
+                        painter = painterResource(Icon.Calendar.value)
                     )
                 }
 
@@ -116,8 +143,11 @@ fun FormField(
                         append(R.string.txt_form_field_password_icon)
                         append(
                             when {
-                                (isPasswordHidden.value) -> stringResource(R.string.icon_eye_closed)
-                                else -> stringResource(R.string.icon_eye_open)
+                                (isPasswordHidden.value) -> stringResource(
+                                    Icon.EyeClosed.description
+                                )
+
+                                else -> stringResource(Icon.EyeOpen.description)
                             }
                         )
                     }
@@ -127,15 +157,15 @@ fun FormField(
                     }) {
                         Icon(
                             contentDescription = contentDescription,
-                            painter = painterResource(id = icon.value)
+                            painter = painterResource(icon.value)
                         )
                     }
                 }
 
                 isPhoneType -> {
                     Icon(
-                        contentDescription = stringResource(R.string.icon_phone),
-                        painter = painterResource(id = Icon.Phone.value)
+                        contentDescription = stringResource(Icon.Phone.description),
+                        painter = painterResource(Icon.Phone.value)
                     )
                 }
             }
@@ -160,5 +190,6 @@ enum class FormFieldType {
     DATE,
     DEFAULT,
     PASSWORD,
-    PHONE
+    PHONE,
+    SEARCH
 }
