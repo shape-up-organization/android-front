@@ -7,6 +7,8 @@ val GreenLight = Color(0xFF23C7A8)
 val GreenLight50 = Color(0x5023C7A8)
 val BackgroundWhite = Color(0xFFFAFAFA)
 val BackgroundSecondaryWhite = Color(0xFFF1F1F1)
+val GreyLight = Color(0xFF939393)
+val GreyLight30 = Color(0x30939393)
 
 val GreenDark = Color(0xFF23C7A8)
 val GreenDark50 = Color(0xFF10463C)

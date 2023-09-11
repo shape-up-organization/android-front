@@ -5,16 +5,13 @@ import androidx.compose.animation.core.tween
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.shapeup.ui.screens.auth.signUp.SignUpScreen
+import com.shapeup.ui.screens.logged.FeedScreen
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.navigator
-import com.shapeup.ui.utils.helpers.viewModel
-import com.shapeup.ui.viewModels.auth.SignUpFormData
-import com.shapeup.ui.viewModels.auth.SignUpViewModel
 
-fun NavGraphBuilder.screenSignUp(navController: NavHostController) {
+fun NavGraphBuilder.screenFeed(navController: NavHostController) {
     composable(
-        route = Screen.SignUp.value,
+        route = Screen.Feed.value,
         enterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Left,
@@ -29,7 +26,7 @@ fun NavGraphBuilder.screenSignUp(navController: NavHostController) {
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                towards = AnimatedContentTransitionScope.SlideDirection.Left,
                 animationSpec = tween(300)
             )
         },
@@ -40,23 +37,7 @@ fun NavGraphBuilder.screenSignUp(navController: NavHostController) {
             )
         }
     ) {
-        val viewModel = it.viewModel<SignUpViewModel>(navController)
-        viewModel.navigator = navController.navigator
-
-        SignUpScreen(
-            activeStep = viewModel.activeStep,
-            data = SignUpFormData(
-                birthday = viewModel.birthday,
-                email = viewModel.email,
-                firstName = viewModel.firstName,
-                lastName = viewModel.lastName,
-                password = viewModel.password,
-                passwordConfirmation = viewModel.passwordConfirmation,
-                phone = viewModel.phone,
-                username = viewModel.username,
-                verificationCode = viewModel.verificationCode
-            ),
-            handlers = viewModel.handlers,
+        FeedScreen(
             navigator = navController.navigator
         )
     }

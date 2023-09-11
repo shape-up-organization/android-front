@@ -3,14 +3,77 @@ package com.shapeup.ui.utils.constants
 import androidx.annotation.DrawableRes
 import com.shapeup.R
 
-enum class Icon(@DrawableRes val value: Int) {
-    ArrowBack(value = R.drawable.icon_arrow_back),
-    Calendar(value = R.drawable.icon_calendar),
-    Close(value = R.drawable.icon_close),
-    EyeClosed(value = R.drawable.icon_eye_closed),
-    EyeOpen(value = R.drawable.icon_eye_open),
-    FitnessCenter(value = R.drawable.icon_fitness_center),
-    Groups(value = R.drawable.icon_groups),
-    Phone(value = R.drawable.icon_phone),
-    SportsJoystick(value = R.drawable.icon_sports_joystick)
+enum class Icon(@DrawableRes val value: Int, val description: Int) {
+    Add(
+        description = R.string.icon_add,
+        value = R.drawable.icon_add
+    ),
+    ArrowBack(
+        description = R.string.icon_arrow_back,
+        value = R.drawable.icon_arrow_back
+    ),
+    Calendar(
+        description = R.string.icon_calendar,
+        value = R.drawable.icon_calendar
+    ),
+    Chats(
+        description = R.string.icon_chats,
+        value = R.drawable.icon_chats
+    ),
+    Close(
+        description = R.string.icon_close,
+        value = R.drawable.icon_close
+    ),
+    EyeClosed(
+        description = R.string.icon_eye_closed,
+        value = R.drawable.icon_eye_closed
+    ),
+    EyeOpen(
+        description = R.string.icon_eye_open,
+        value = R.drawable.icon_eye_open
+    ),
+    FitnessCenter(
+        description = R.string.icon_fitness_center,
+        value = R.drawable.icon_fitness_center
+    ),
+    Groups(
+        description = R.string.icon_groups,
+        value = R.drawable.icon_groups
+    ),
+    HeartFilled(
+        description = R.string.icon_heart_filled,
+        value = R.drawable.icon_heart_filled
+    ),
+    HeartOutlined(
+        description = R.string.icon_heart_outlined,
+        value = R.drawable.icon_heart_outlined
+    ),
+    Home(
+        description = R.string.icon_home,
+        value = R.drawable.icon_home
+    ),
+    Joystick(
+        description = R.string.icon_joystick,
+        value = R.drawable.icon_joystick
+    ),
+    More(
+        description = R.string.icon_more,
+        value = R.drawable.icon_more
+    ),
+    Notifications(
+        description = R.string.icon_notifications,
+        value = R.drawable.icon_notifications
+    ),
+    Phone(
+        description = R.string.icon_phone,
+        value = R.drawable.icon_phone
+    ),
+    Rank(
+        description = R.string.icon_rank,
+        value = R.drawable.icon_rank
+    ),
+    Search(
+        description = R.string.icon_search,
+        value = R.drawable.icon_search
+    )
 }

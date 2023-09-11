@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.shapeup.ui.navigation.routes.auth.routeAuth
+import com.shapeup.ui.navigation.routes.auth.routeLogged
 import com.shapeup.ui.screens.SplashScreen
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.navigator
@@ -35,6 +36,8 @@ fun Navigation(navController: NavHostController) {
             SplashScreen(navController.navigator)
         }
 
-        routeAuth(navController = navController)
+        routeAuth(navController)
+
+        routeLogged(navController)
     }
 }
