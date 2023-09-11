@@ -1,5 +1,6 @@
 package com.shapeup.ui.screens.logged
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.shapeup.MainActivity
 import com.shapeup.ui.components.Carousel
 import com.shapeup.ui.components.EPageButtons
 import com.shapeup.ui.components.FormField
@@ -38,6 +40,7 @@ import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
+import kotlin.system.exitProcess
 
 @Preview
 @Composable
@@ -60,6 +63,11 @@ fun FeedScreen(navigator: Navigator) {
         "Georgia John",
         "Mikael Sam"
     )
+
+    BackHandler {
+        MainActivity().finish()
+        exitProcess(0)
+    }
 
     Column(
         modifier = Modifier
@@ -84,7 +92,7 @@ fun FeedScreen(navigator: Navigator) {
                 modifier = Modifier
                     .height(32.dp)
                     .width(32.dp),
-                onClick = { navigator.navigate(Screen.Feed) }
+                onClick = { navigator.navigate(Screen.Notification) }
             ) {
                 Icon(
                     contentDescription = stringResource(Icon.Notifications.description),

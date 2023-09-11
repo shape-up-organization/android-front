@@ -4,6 +4,10 @@ import androidx.annotation.DrawableRes
 import com.shapeup.R
 
 enum class Icon(@DrawableRes val value: Int, val description: Int) {
+    Accept(
+        description = R.string.icon_accept,
+        value = R.drawable.icon_accept
+    ),
     Add(
         description = R.string.icon_add,
         value = R.drawable.icon_add
@@ -11,6 +15,10 @@ enum class Icon(@DrawableRes val value: Int, val description: Int) {
     ArrowBack(
         description = R.string.icon_arrow_back,
         value = R.drawable.icon_arrow_back
+    ),
+    ArrowForward(
+        description = R.string.icon_arrow_forward,
+        value = R.drawable.icon_arrow_forward
     ),
     Calendar(
         description = R.string.icon_calendar,
@@ -27,6 +35,10 @@ enum class Icon(@DrawableRes val value: Int, val description: Int) {
     EyeClosed(
         description = R.string.icon_eye_closed,
         value = R.drawable.icon_eye_closed
+    ),
+    Decline(
+        description = R.string.icon_decline,
+        value = R.drawable.icon_decline
     ),
     EyeOpen(
         description = R.string.icon_eye_open,
@@ -75,17 +87,5 @@ enum class Icon(@DrawableRes val value: Int, val description: Int) {
     Search(
         description = R.string.icon_search,
         value = R.drawable.icon_search
-    ),
-    ArrowForward(
-        description = R.string.icon_arrow_forward,
-        value = R.drawable.icon_arrow_forward
-    ),
-    Accept(
-        description = R.string.icon_accept,
-        value = R.drawable.icon_accept
-    ),
-    Decline(
-        description = R.string.icon_decline,
-        value = R.drawable.icon_decline
     )
 }

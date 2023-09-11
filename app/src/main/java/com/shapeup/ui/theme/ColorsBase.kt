@@ -27,15 +27,16 @@ val GradientLight = Brush.verticalGradient(
         BackgroundWhite
     )
 )
-val GradientBrush = Brush.linearGradient(
-    colors = listOf(RedError, GreenLight),
-    start = Offset(0f, 0f),
-    end = Offset(200f, 0f)
-)
 
 val GradientDark = Brush.verticalGradient(
     listOf(
         GreenDark50,
         BackgroundDark
     )
+)
+
+val GradientBrush = Brush.linearGradient(
+    colors = listOf(RedError, GreenLight),
+    start = Offset(0f, 0f),
+    end = Offset(200f, 0f)
 )

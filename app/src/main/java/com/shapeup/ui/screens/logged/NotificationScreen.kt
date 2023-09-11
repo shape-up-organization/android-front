@@ -1,4 +1,4 @@
-package com.shapeup.ui.screens
+package com.shapeup.ui.screens.logged
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -15,9 +15,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -109,12 +106,6 @@ fun NotificationScreen(
             modifier = Modifier
                 .padding(top = 32.dp)
         ) {
-            val gradientBrush = Brush.linearGradient(
-                colors = listOf(Color(0xFFED145B), Color(0xFF23C7A8)),
-                start = Offset(0f, 0f),
-                end = Offset(200f, 0f)
-            )
-
             repeat(30) {
                 NotificationRow(
                     "Mayna Rose",
