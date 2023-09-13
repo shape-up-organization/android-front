@@ -2,6 +2,8 @@ package com.shapeup.ui.theme
 
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 
 val LightSchema = lightColorScheme(
     primary = GreenLight,
@@ -24,3 +26,14 @@ val DarkSchema = darkColorScheme(
     background = BackgroundDark,
     onBackground = WhiteText
 )
+
+enum class LevelGradient(val value: Brush) {
+    LEVEL_1(
+        value = Brush.verticalGradient(
+            listOf(
+                Color(0xFF23C7A8),
+                Color(0xFFE96BE4)
+            )
+        )
+    )
+}

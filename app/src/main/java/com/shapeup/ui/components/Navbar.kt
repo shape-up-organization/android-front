@@ -1,6 +1,8 @@
 package com.shapeup.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,17 +10,25 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.shapeup.R
+import com.shapeup.ui.theme.LevelGradient
 import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
@@ -32,7 +42,7 @@ fun Navbar(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.background)
+            .background(color = MaterialTheme.colorScheme.primaryContainer)
             .fillMaxWidth()
             .padding(
                 horizontal = 24.dp,
@@ -64,11 +74,27 @@ fun Navbar(
             pageButton = EPageButtons.TRAININGS
         )
 
-        PageButton(
-            activePage = activePage,
-            navigator = navigator,
-            pageButton = EPageButtons.PROFILE
-        )
+        IconButton(
+            modifier = Modifier
+                .height(32.dp)
+                .width(32.dp),
+            onClick = { navigator.navigate(Screen.Profile) }
+        ) {
+            Image(
+                contentDescription = stringResource(R.string.user_profile_pic),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .border(
+                        brush = LevelGradient.LEVEL_1.value,
+                        shape = CircleShape,
+                        width = 2.dp
+                    )
+                    .clip(CircleShape)
+                    .height(24.dp)
+                    .width(24.dp),
+                painter = rememberAsyncImagePainter("https://picsum.photos/id/64/4326/2884")
+            )
+        }
     }
 }
 
@@ -95,6 +121,13 @@ fun PageButton(
     val iconModifier = when (isBigger) {
         true ->
             Modifier
+                .graphicsLayer(alpha = 0.99f)
+                .drawWithCache {
+                    onDrawWithContent {
+                        drawContent()
+                        drawRect(LevelGradient.LEVEL_1.value, blendMode = BlendMode.SrcAtop)
+                    }
+                }
                 .height(64.dp)
                 .width(64.dp)
 
@@ -136,9 +169,9 @@ enum class EPageButtons(
         screen = Screen.Feed
     ),
     PROFILE(
-        description = R.string.icon_groups,
+        description = R.string.user_profile_pic,
         icon = Icon.Groups,
-        screen = Screen.Feed
+        screen = Screen.Profile
     ),
     RANK(
         description = R.string.icon_rank,
