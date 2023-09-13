@@ -80,6 +80,10 @@ enum class Icon(@DrawableRes val value: Int, val description: Int) {
         description = R.string.icon_phone,
         value = R.drawable.icon_phone
     ),
+    Plus(
+        description = R.string.icon_plus,
+        value = R.drawable.icon_plus
+    ),
     Rank(
         description = R.string.icon_rank,
         value = R.drawable.icon_rank
