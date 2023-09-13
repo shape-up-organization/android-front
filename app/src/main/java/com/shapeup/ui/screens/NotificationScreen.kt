@@ -15,9 +15,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,6 +25,7 @@ import com.shapeup.ui.components.NotificationRow
 import com.shapeup.ui.components.TextListComponent
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon
+import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
 import com.shapeup.ui.utils.helpers.TextHelper
 
@@ -95,7 +93,7 @@ fun NotificationScreen(
 
                 TextListComponent(texts = textsToFriendshipRequests)
 
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = { navigator.navigate(Screen.FriendshipRequests) }) {
                     Icon(
                         contentDescription = stringResource(R.string.icon_arrow_forward),
                         painter = painterResource(id = Icon.ArrowForward.value),
@@ -109,12 +107,6 @@ fun NotificationScreen(
             modifier = Modifier
                 .padding(top = 32.dp)
         ) {
-            val gradientBrush = Brush.linearGradient(
-                colors = listOf(Color(0xFFED145B), Color(0xFF23C7A8)),
-                start = Offset(0f, 0f),
-                end = Offset(200f, 0f)
-            )
-
             repeat(30) {
                 NotificationRow(
                     "Mayna Rose",

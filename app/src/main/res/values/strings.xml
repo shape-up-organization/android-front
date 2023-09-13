@@ -87,4 +87,6 @@
     <string name="txt_notification_subtitle_to_friendship_request">Accept or ignore requests</string>
     <string name="txt_notification_liked_your_picture" >Liked your picture</string>
     <string name="txt_notification_commented_your_post" >Commented on your post</string>
+    <string name="requests_header_title">Requests</string>
+    <string name="sent_you_friendship_request">Sent you a friend request</string>
 </resources>
