@@ -11,6 +11,5 @@ enum class Screen(val value: String) {
     SignUp("sign-up-screen"),
     Splash("splash-screen"),
     Welcome("welcome-screen"),
-    FriendshipRequests("friendship-requests-screen"),
-    Notification("notification-screen")
+    FriendshipRequests("friendship-requests-screen")
 }
