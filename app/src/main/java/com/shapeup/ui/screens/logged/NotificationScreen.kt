@@ -1,4 +1,4 @@
-package com.shapeup.ui.screens
+package com.shapeup.ui.screens.logged
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background

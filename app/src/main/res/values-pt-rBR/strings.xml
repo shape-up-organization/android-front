@@ -5,11 +5,14 @@
     <string name="img_girl_welcome">Mulher se exercitando</string>
 
     <!-- ICONS -->
+    <string name="icon_accept">Aceitar</string>
     <string name="icon_add">Adicionar</string>
     <string name="icon_arrow_back">Seta de retorno</string>
+    <string name="icon_arrow_forward">Seta de avançar</string>
     <string name="icon_calendar">Calendário</string>
     <string name="icon_chats">Conversas</string>
     <string name="icon_close">Fechar</string>
+    <string name="icon_decline">Recusar</string>
     <string name="icon_eye_closed">Escondido</string>
     <string name="icon_eye_open">Visível</string>
     <string name="icon_fitness_center">Fitness</string>
@@ -21,14 +24,13 @@
     <string name="icon_more">Mais</string>
     <string name="icon_notifications">Notificações</string>
     <string name="icon_phone">Telefone</string>
+    <string name="icon_plus">Adicionar</string>
     <string name="icon_rank">Classificação</string>
     <string name="icon_search">Pesquisar</string>
-    <string name="icon_arrow_forward">Seta de avançar</string>
-    <string name="icon_accept">Aceitar</string>
-    <string name="icon_decline">Recusar</string>
 
     <!-- COMPONENTS -->
     <string name="txt_form_field_password_icon">Senha</string>
+    <string name="user_profile_pic">Foto de perfil do usuário</string>
 
     <!-- PAGES -->
     <!-- WELCOME -->
