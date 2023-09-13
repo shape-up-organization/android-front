@@ -55,9 +55,9 @@ fun FeedPreview() {
 @Composable
 fun FeedScreen(navigator: Navigator) {
     val focusManager = LocalFocusManager.current
-    val data = listOf(
-        "https://placehold.co/600x400.jpg",
-        "https://placehold.co/1200x1400.jpg"
+    val carouselData = listOf(
+        "https://picsum.photos/id/42/3456/2304",
+        "https://picsum.photos/id/59/2464/1632"
     )
     val posts = listOf(
         "Georgia John",
@@ -195,7 +195,7 @@ fun FeedScreen(navigator: Navigator) {
                         }
                     }
 
-                    Carousel(data = data)
+                    Carousel(data = carouselData)
 
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,

@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.navigation
 import com.shapeup.ui.navigation.routes.logged.composables.screenFeed
 import com.shapeup.ui.navigation.routes.logged.composables.screenNotification
+import com.shapeup.ui.navigation.routes.logged.composables.screenProfile
 import com.shapeup.ui.utils.constants.Route
 import com.shapeup.ui.utils.constants.Screen
 
@@ -16,5 +17,7 @@ fun NavGraphBuilder.routeLogged(navController: NavHostController) {
         screenFeed(navController)
 
         screenNotification(navController)
+
+        screenProfile(navController)
     }
 }
