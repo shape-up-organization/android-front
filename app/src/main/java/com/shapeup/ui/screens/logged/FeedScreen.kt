@@ -1,7 +1,11 @@
 package com.shapeup.ui.screens.logged
 
+import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AssistChip
@@ -22,15 +27,23 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.shapeup.MainActivity
+import com.shapeup.R
+import com.shapeup.service.friends.getAllFriendshipMock
+import com.shapeup.service.posts.getPostsMock
+import com.shapeup.service.users.getUserDataMock
 import com.shapeup.ui.components.Carousel
 import com.shapeup.ui.components.EPageButtons
 import com.shapeup.ui.components.FormField
@@ -40,29 +53,39 @@ import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
+import com.shapeup.ui.utils.helpers.XPUtils
+import com.shapeup.ui.viewModels.logged.EUserRelation
+import com.shapeup.ui.viewModels.logged.JourneyData
+import com.shapeup.ui.viewModels.logged.JourneyHandlers
 import kotlin.system.exitProcess
 
+@SuppressLint("UnrememberedMutableState")
 @Preview
 @Composable
 fun FeedPreview() {
     ShapeUpTheme {
         FeedScreen(
+            data = JourneyData(
+                friends = mutableStateOf(emptyList()),
+                selectedUser = mutableStateOf(null),
+                userData = mutableStateOf(getUserDataMock)
+            ),
+            handlers = JourneyHandlers(
+                getUserRelation = { EUserRelation.USER },
+                logOut = {}
+            ),
             navigator = Navigator()
         )
     }
 }
 
 @Composable
-fun FeedScreen(navigator: Navigator) {
+fun FeedScreen(
+    data: JourneyData,
+    handlers: JourneyHandlers,
+    navigator: Navigator
+) {
     val focusManager = LocalFocusManager.current
-    val carouselData = listOf(
-        "https://picsum.photos/id/42/3456/2304",
-        "https://picsum.photos/id/59/2464/1632"
-    )
-    val posts = listOf(
-        "Georgia John",
-        "Mikael Sam"
-    )
 
     BackHandler {
         MainActivity().finish()
@@ -71,7 +94,7 @@ fun FeedScreen(navigator: Navigator) {
 
     Column(
         modifier = Modifier
-            .background(MaterialTheme.colorScheme.primaryContainer)
+            .background(MaterialTheme.colorScheme.background)
             .fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -108,7 +131,7 @@ fun FeedScreen(navigator: Navigator) {
 
             FormField(
                 focusManager = focusManager,
-                label = "Search",
+                label = stringResource(R.string.txt_feed_search_input),
                 type = FormFieldType.SEARCH,
                 modifier = Modifier.weight(1f)
             )
@@ -137,7 +160,11 @@ fun FeedScreen(navigator: Navigator) {
                 .verticalScroll(rememberScrollState())
                 .weight(1f)
         ) {
-            posts.map {
+            getPostsMock.map {
+                val user = getAllFriendshipMock.find { user ->
+                    user.username == it.username
+                } ?: data.userData.value
+
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -153,15 +180,27 @@ fun FeedScreen(navigator: Navigator) {
                             modifier = Modifier
                                 .height(40.dp)
                                 .width(40.dp),
-                            onClick = { /*TODO*/ }
+                            onClick = {
+                                if (handlers.getUserRelation(user.username) != EUserRelation.USER) {
+                                    data.selectedUser.value = user
+                                }
+                                navigator.navigateClean(Screen.Profile)
+                            }
                         ) {
-                            Icon(
-                                contentDescription = stringResource(Icon.Groups.description),
+                            Image(
+                                contentDescription = stringResource(R.string.user_profile_pic),
+                                contentScale = ContentScale.Crop,
                                 modifier = Modifier
+                                    .clip(CircleShape)
+                                    .border(
+                                        brush = XPUtils.getBorder(user.xp),
+                                        shape = CircleShape,
+                                        width = 2.dp
+                                    )
+                                    .background(brush = XPUtils.getBorder(user.xp))
                                     .height(32.dp)
                                     .width(32.dp),
-                                painter = painterResource(Icon.Groups.value),
-                                tint = MaterialTheme.colorScheme.onBackground
+                                painter = rememberAsyncImagePainter(user.profilePicture)
                             )
                         }
 
@@ -170,10 +209,15 @@ fun FeedScreen(navigator: Navigator) {
                         Text(
                             color = MaterialTheme.colorScheme.onBackground,
                             maxLines = 1,
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier
+                                .clickable {
+                                    data.selectedUser.value = user
+                                    navigator.navigate(Screen.Profile)
+                                }
+                                .weight(1f),
                             overflow = TextOverflow.Ellipsis,
                             style = MaterialTheme.typography.bodySmall,
-                            text = it
+                            text = "${user.firstName} ${user.lastName}"
                         )
 
                         Spacer(modifier = Modifier.width(8.dp))
@@ -195,7 +239,22 @@ fun FeedScreen(navigator: Navigator) {
                         }
                     }
 
-                    Carousel(data = carouselData)
+                    Carousel(data = it.photoUrls)
+
+                    if (it.photoUrls.isEmpty()) {
+                        it.description?.let {
+                            Text(
+                                color = MaterialTheme.colorScheme.onBackground,
+                                maxLines = 8,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 24.dp),
+                                overflow = TextOverflow.Ellipsis,
+                                style = MaterialTheme.typography.bodySmall,
+                                text = it
+                            )
+                        }
+                    }
 
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -214,12 +273,22 @@ fun FeedScreen(navigator: Navigator) {
                             onClick = { /*TODO*/ }
                         ) {
                             Icon(
-                                contentDescription = stringResource(Icon.HeartFilled.description),
+                                contentDescription = stringResource(
+                                    when (it.liked) {
+                                        true -> Icon.HeartFilled.description
+                                        else -> Icon.HeartOutlined.description
+                                    }
+                                ),
                                 modifier = Modifier
                                     .height(24.dp)
                                     .width(24.dp),
-                                painter = painterResource(Icon.HeartFilled.value),
-                                tint = MaterialTheme.colorScheme.onBackground
+                                painter = painterResource(
+                                    when (it.liked) {
+                                        true -> Icon.HeartFilled.value
+                                        else -> Icon.HeartOutlined.value
+                                    }
+                                ),
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         }
 
@@ -229,7 +298,7 @@ fun FeedScreen(navigator: Navigator) {
                             modifier = Modifier.weight(1f),
                             overflow = TextOverflow.Ellipsis,
                             style = MaterialTheme.typography.labelMedium,
-                            text = "25 likes"
+                            text = "${it.countLike} ${stringResource(R.string.txt_feed_likes)}"
                         )
 
                         Spacer(modifier = Modifier.width(8.dp))
@@ -245,7 +314,8 @@ fun FeedScreen(navigator: Navigator) {
                             label = {
                                 Text(
                                     style = MaterialTheme.typography.labelMedium,
-                                    text = "129 comments"
+                                    text = "${it.countComments} " +
+                                            stringResource(R.string.txt_feed_comments)
                                 )
                             },
                             modifier = Modifier.padding(0.dp),
@@ -254,35 +324,50 @@ fun FeedScreen(navigator: Navigator) {
                         )
                     }
 
-                    Text(
-                        color = MaterialTheme.colorScheme.onBackground,
-                        maxLines = 2,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp),
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.bodySmall,
-                        text = "Lorem Ipsum is simply dummy text of the printing and typesetting " +
-                            "industry. Lorem Ipsum has been the industry Lorem"
-                    )
+                    if (it.photoUrls.isNotEmpty()) {
+                        it.description?.let {
+                            Text(
+                                color = MaterialTheme.colorScheme.onBackground,
+                                maxLines = 2,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 24.dp),
+                                overflow = TextOverflow.Ellipsis,
+                                style = MaterialTheme.typography.bodySmall,
+                                text = it
+                            )
+                        }
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(
+                    modifier = with(Modifier) {
+                        height(
+                            when {
+                                it.description.isNullOrBlank() ||
+                                        it.photoUrls.isNullOrEmpty() -> 4.dp
+
+                                else -> 32.dp
+                            }
+                        )
+                    }
+                )
 
                 Divider(
                     color = MaterialTheme.colorScheme.tertiaryContainer,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 80.dp),
+                        .padding(horizontal = 48.dp),
                     thickness = 1.dp
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
 
         Navbar(
             activePage = EPageButtons.HOME,
+            data = data,
             navigator = navigator
         )
     }
