@@ -6,8 +6,8 @@ import androidx.compose.ui.graphics.Color
 
 val GreenLight = Color(0xFF23C7A8)
 val GreenLight50 = Color(0x5023C7A8)
-val BackgroundWhite = Color(0xFFFAFAFA)
-val BackgroundSecondaryWhite = Color(0xFFF1F1F1)
+val BackgroundWhite = Color(0xFFF1F1F1)
+val BackgroundSecondaryWhite = Color(0xFFFAFAFA)
 val GreyLight = Color(0xFF939393)
 val GreyLight30 = Color(0x30939393)
 

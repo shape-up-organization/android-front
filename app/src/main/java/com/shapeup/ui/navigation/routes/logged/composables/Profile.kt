@@ -1,43 +1,43 @@
 package com.shapeup.ui.navigation.routes.logged.composables
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.shapeup.ui.screens.logged.ProfileScreen
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.navigator
+import com.shapeup.ui.utils.helpers.viewModel
+import com.shapeup.ui.viewModels.logged.JourneyData
+import com.shapeup.ui.viewModels.logged.JourneyViewModel
 
 fun NavGraphBuilder.screenProfile(navController: NavHostController) {
     composable(
         route = Screen.Profile.value,
         enterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                animationSpec = tween(300)
-            )
+            EnterTransition.None
         },
         popEnterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                animationSpec = tween(300)
-            )
+            EnterTransition.None
         },
         exitTransition = {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                animationSpec = tween(300)
-            )
+            ExitTransition.None
         },
         popExitTransition = {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                animationSpec = tween(300)
-            )
+            ExitTransition.None
         }
     ) {
+        val viewModel = it.viewModel<JourneyViewModel>(navController)
+        viewModel.navigator = navController.navigator
+
         ProfileScreen(
+            data = JourneyData(
+                friends = viewModel.friends,
+                selectedUser = viewModel.selectedUser,
+                userData = viewModel.userData
+            ),
+            handlers = viewModel.handlers,
             navigator = navController.navigator
         )
     }

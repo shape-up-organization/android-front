@@ -1,10 +1,11 @@
-package com.shapeup.ui.screens
+package com.shapeup.ui.screens.logged
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -45,11 +46,12 @@ fun FriendshipRequestsScreen(
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
+            .fillMaxSize()
             .padding(24.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Header(
-            navigateTo = { navigator.navigateBack },
+            navigateTo = { navigator.navigateBack() },
             text = stringResource(id = R.string.requests_header_title)
         )
 

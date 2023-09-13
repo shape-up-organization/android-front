@@ -96,7 +96,7 @@ fun NotificationScreen(
                 IconButton(onClick = { navigator.navigate(Screen.FriendshipRequests) }) {
                     Icon(
                         contentDescription = stringResource(R.string.icon_arrow_forward),
-                        painter = painterResource(id = Icon.ArrowForward.value),
+                        painter = painterResource(Icon.ArrowForward.value),
                         tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
