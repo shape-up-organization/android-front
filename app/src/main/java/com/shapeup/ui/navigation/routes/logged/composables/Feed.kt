@@ -1,4 +1,4 @@
-package com.shapeup.ui.navigation.routes.auth.composables
+package com.shapeup.ui.navigation.routes.logged.composables
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween

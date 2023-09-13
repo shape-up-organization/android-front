@@ -2,8 +2,9 @@ package com.shapeup.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -36,11 +37,12 @@ fun Header(
             )
         }
 
+        Spacer(modifier = Modifier.width(8.dp))
+
         Text(
-            text = text ?: "",
-            style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.height(42.dp)
+            style = MaterialTheme.typography.titleLarge,
+            text = text ?: ""
         )
     }
 }

@@ -1,6 +1,7 @@
 package com.shapeup.ui.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -27,13 +28,13 @@ fun Carousel(data: List<String>) {
         HorizontalPager(
             key = { data[it] },
             pageContent = { index ->
-                AsyncImage(
+                Image(
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(maxHeight),
-                    model = data[index]
+                    painter = rememberAsyncImagePainter(model = data[index])
                 )
             },
             state = pagerState
