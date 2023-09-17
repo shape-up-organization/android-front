@@ -99,10 +99,7 @@ fun Navbar(
             modifier = Modifier
                 .height(32.dp)
                 .width(32.dp),
-            onClick = {
-                data.selectedUser.value = null
-                navigator.navigateClean(Screen.Profile)
-            }
+            onClick = { navigator.navigate(Screen.Profile) }
         ) {
             Image(
                 contentDescription = stringResource(R.string.user_profile_pic),

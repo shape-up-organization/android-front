@@ -5,6 +5,7 @@ import com.shapeup.ui.utils.constants.Screen
 
 class Navigator(private val navController: NavController? = null) {
     val navigate: (Screen) -> Unit = { screen -> navController?.navigate(screen.value) }
+    val navigateArgs: (String) -> Unit = { screen -> navController?.navigate(screen) }
     val navigateClean: (Screen) -> Unit = { screen ->
         navController?.navigate(screen.value) {
             popUpTo(screen.value) {

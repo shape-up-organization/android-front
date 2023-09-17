@@ -76,6 +76,10 @@ enum class Icon(@DrawableRes val value: Int, val description: Int) {
         description = R.string.icon_notifications,
         value = R.drawable.icon_notifications
     ),
+    Pencil(
+        description = R.string.icon_pencil,
+        value = R.drawable.icon_pencil
+    ),
     Phone(
         description = R.string.icon_phone,
         value = R.drawable.icon_phone
@@ -91,5 +95,9 @@ enum class Icon(@DrawableRes val value: Int, val description: Int) {
     Search(
         description = R.string.icon_search,
         value = R.drawable.icon_search
+    ),
+    Settings(
+        description = R.string.icon_settings,
+        value = R.drawable.icon_settings
     )
 }

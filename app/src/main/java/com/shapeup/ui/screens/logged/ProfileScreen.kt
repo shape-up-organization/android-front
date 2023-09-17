@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -45,16 +47,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.shapeup.R
+import com.shapeup.service.friends.getAllFriendshipMock
+import com.shapeup.service.posts.getPostsMock
 import com.shapeup.service.users.getUserDataMock
+import com.shapeup.ui.components.CardPost
 import com.shapeup.ui.components.EPageButtons
 import com.shapeup.ui.components.Navbar
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon
+import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
 import com.shapeup.ui.utils.helpers.XPUtils
 import com.shapeup.ui.viewModels.logged.EUserRelation
 import com.shapeup.ui.viewModels.logged.JourneyData
 import com.shapeup.ui.viewModels.logged.JourneyHandlers
+import com.shapeup.ui.viewModels.logged.PostsData
+import com.shapeup.ui.viewModels.logged.User
 
 @SuppressLint("UnrememberedMutableState")
 @Preview
@@ -62,37 +70,35 @@ import com.shapeup.ui.viewModels.logged.JourneyHandlers
 fun ProfilePreview() {
     ShapeUpTheme {
         ProfileScreen(
-            data = JourneyData(
+            journeyData = JourneyData(
                 friends = mutableStateOf(emptyList()),
-                selectedUser = mutableStateOf(null),
                 userData = mutableStateOf(getUserDataMock)
             ),
-            handlers = JourneyHandlers(
+            journeyHandlers = JourneyHandlers(
+                getFriends = { getAllFriendshipMock },
+                getUser = { getUserDataMock },
                 getUserRelation = { EUserRelation.USER },
                 logOut = {}
             ),
-            navigator = Navigator()
+            navigator = Navigator(),
+            postsData = PostsData(
+                posts = mutableStateOf(emptyList()),
+                specificPosts = mutableStateOf(getPostsMock.filter { it.username == "g_johnston" })
+            ),
+            user = getUserDataMock
         )
     }
 }
 
 @Composable
 fun ProfileScreen(
-    data: JourneyData,
-    handlers: JourneyHandlers,
-    navigator: Navigator
+    journeyData: JourneyData,
+    journeyHandlers: JourneyHandlers,
+    navigator: Navigator,
+    postsData: PostsData,
+    user: User
 ) {
-    val userRelation = handlers.getUserRelation(
-        when {
-            data.selectedUser.value?.username != null -> data.selectedUser.value!!.username
-
-            else -> data.userData.value.username
-        }
-    )
-    val user = when (data.selectedUser.value != null) {
-        true -> data.selectedUser.value!!
-        else -> data.userData.value
-    }
+    val userRelation = journeyHandlers.getUserRelation(user.username)
 
     var tabSelected by remember { mutableIntStateOf(0) }
 
@@ -100,24 +106,6 @@ fun ProfileScreen(
     val titles = listOf(
         stringResource(R.string.txt_profile_tab_photos),
         stringResource(R.string.txt_profile_tab_posts)
-    )
-
-    val posts = listOf(
-        "https://picsum.photos/id/42/3456/2304",
-        "https://picsum.photos/id/59/2464/1632",
-        "https://picsum.photos/id/56/2880/1920",
-        "https://picsum.photos/id/57/2448/3264",
-        "https://picsum.photos/id/49/1280/792",
-        "https://picsum.photos/id/54/3264/2176",
-        "https://picsum.photos/id/57/2448/3264",
-        "https://picsum.photos/id/64/4326/2884",
-        "https://picsum.photos/id/73/5000/3333",
-        "https://picsum.photos/id/76/4912/3264",
-        "https://picsum.photos/id/75/1999/2998",
-        "https://picsum.photos/id/42/3456/2304",
-        "https://picsum.photos/id/59/2464/1632",
-        "https://picsum.photos/id/56/2880/1920",
-        "https://picsum.photos/id/57/2448/3264"
     )
 
     BackHandler {
@@ -143,7 +131,7 @@ fun ProfileScreen(
             ) {
                 IconButton(onClick = { navigator.navigateBack() }) {
                     Icon(
-                        contentDescription = stringResource(R.string.icon_arrow_back),
+                        contentDescription = stringResource(Icon.ArrowBack.description),
                         painter = painterResource(Icon.ArrowBack.value),
                         tint = MaterialTheme.colorScheme.onBackground
                     )
@@ -164,19 +152,23 @@ fun ProfileScreen(
         ) {
             Column {
                 when (userRelation) {
-                    EUserRelation.USER -> Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
+                    EUserRelation.USER -> Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(
                                 bottom = 0.dp,
                                 end = 24.dp,
                                 start = 24.dp,
-                                top = 16.dp
-                            ),
-                        verticalAlignment = Alignment.CenterVertically
+                                top = 24.dp
+                            )
                     ) {
                         Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    bottom = 16.dp
+                                ),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Image(
@@ -196,24 +188,80 @@ fun ProfileScreen(
                                 )
                             )
 
-                            Spacer(modifier = Modifier.width(16.dp))
-
-                            Column {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
                                 Text(
                                     color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    text = "${user.firstName} ${user.lastName}"
+                                    style = MaterialTheme.typography.labelLarge,
+                                    text = "${journeyData.friends.value.size}"
                                 )
                                 Text(
                                     color = MaterialTheme.colorScheme.onBackground,
                                     style = MaterialTheme.typography.labelSmall,
-                                    text = "${stringResource(R.string.txt_profile_level)} ${
-                                    XPUtils.getLevel(
-                                        user.xp
-                                    )
-                                    }"
+                                    text = stringResource(R.string.txt_profile_level)
                                 )
                             }
+
+                            Divider(
+                                color = MaterialTheme.colorScheme.tertiaryContainer,
+                                modifier = Modifier
+                                    .height(32.dp)
+                                    .width(1.dp)
+                            )
+
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    text = "${journeyData.friends.value.size}"
+                                )
+                                Text(
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    text = stringResource(R.string.txt_profile_friends)
+                                )
+                            }
+
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                IconButton(onClick = { navigator.navigate(Screen.Profile) }) {
+                                    Icon(
+                                        contentDescription =
+                                        stringResource(Icon.Pencil.description),
+                                        painter = painterResource(Icon.Pencil.value),
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+
+                                IconButton(onClick = { navigator.navigate(Screen.Profile) }) {
+                                    Icon(
+                                        contentDescription = stringResource(
+                                            Icon.Settings.description
+                                        ),
+                                        painter = painterResource(Icon.Settings.value),
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            }
+                        }
+
+                        Row {
+                            Text(
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.labelLarge,
+                                text = "${user.firstName} ${user.lastName} "
+                            )
+                            Text(
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.bodySmall,
+                                text = "- ${user.username}"
+                            )
                         }
                     }
 
@@ -283,6 +331,7 @@ fun ProfileScreen(
                                             EUserRelation.FRIEND -> stringResource(
                                                 R.string.txt_profile_remove_friend
                                             )
+
                                             else -> stringResource(R.string.txt_profile_add_friend)
                                         }
                                     }
@@ -348,24 +397,74 @@ fun ProfileScreen(
                 }
             }
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3)
-            ) {
-                items(posts) {
-                    Image(
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .height(imageSize),
-                        painter = rememberAsyncImagePainter(model = it)
-                    )
+            when (tabSelected) {
+                0 -> LazyVerticalGrid(
+                    columns = GridCells.Fixed(3)
+                ) {
+                    items(
+                        postsData.specificPosts.value.filter {
+                            it.photoUrls.isNotEmpty()
+                        }
+                    ) {
+                        Image(
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .clickable {
+                                    navigator.navigateArgs(
+                                        "${Screen.Post.value}/${user.username}/${it.id}"
+                                    )
+                                }
+                                .height(imageSize),
+                            painter = rememberAsyncImagePainter(model = it.photoUrls[0])
+                        )
+                    }
+                }
+
+                1 -> LazyVerticalGrid(
+                    columns = GridCells.Fixed(1)
+                ) {
+                    items(
+                        postsData.specificPosts.value.filter {
+                            it.photoUrls.isEmpty()
+                        }
+                    ) {
+                        CardPost(
+                            postData = it,
+                            navigator = navigator,
+                            user = user
+                        )
+
+                        Spacer(
+                            modifier = with(Modifier) {
+                                height(
+                                    when {
+                                        it.description.isNullOrBlank() ||
+                                            it.photoUrls.isEmpty() -> 4.dp
+
+                                        else -> 32.dp
+                                    }
+                                )
+                            }
+                        )
+
+                        Divider(
+                            color = MaterialTheme.colorScheme.tertiaryContainer,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 48.dp),
+                            thickness = 1.dp
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
                 }
             }
         }
 
         Navbar(
             activePage = EPageButtons.PROFILE,
-            data = data,
+            data = journeyData,
             navigator = navigator
         )
     }

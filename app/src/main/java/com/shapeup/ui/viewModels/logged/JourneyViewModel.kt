@@ -8,12 +8,29 @@ import com.shapeup.service.users.getUserDataMock
 import com.shapeup.ui.utils.helpers.Navigator
 
 class JourneyViewModel : ViewModel() {
-    var navigator: Navigator? = null
+    lateinit var navigator: Navigator
 
-//    val friends = mutableStateOf<List<User>>(emptyList())
-    val friends = mutableStateOf<List<User>>(getAllFriendshipMock)
-    val selectedUser = mutableStateOf<User?>(null)
+    val friends = mutableStateOf<List<User>>(emptyList())
     val userData = mutableStateOf(getUserDataMock)
+
+    private fun getFriends(): List<User>? {
+        // TODO: implement getFriends from service
+        friends.value = getAllFriendshipMock
+        return friends.value
+    }
+
+    private fun getUser(username: String): User? {
+        if (userData.value.username == username) return userData.value
+
+        friends.value.forEach {
+            if (it.username == username) {
+                return it
+            }
+        }
+
+        // TODO: implement userGet from service before returning null
+        return null
+    }
 
     private fun getUserRelation(username: String): EUserRelation {
         if (userData.value.username == username) return EUserRelation.USER
@@ -30,27 +47,24 @@ class JourneyViewModel : ViewModel() {
     private fun logOut() {}
 
     val handlers = JourneyHandlers(
+        getFriends = ::getFriends,
+        getUser = ::getUser,
         getUserRelation = ::getUserRelation,
         logOut = ::logOut
     )
 }
 
-class JourneyData(
+data class JourneyData(
     val friends: MutableState<List<User>>,
-    val selectedUser: MutableState<User?>,
     val userData: MutableState<User>
 )
 
-class JourneyHandlers(
+data class JourneyHandlers(
+    val getFriends: () -> List<User>?,
+    val getUser: (String) -> User?,
     val getUserRelation: (String) -> EUserRelation,
     val logOut: () -> Unit
 )
-
-enum class EUserRelation {
-    USER,
-    FRIEND,
-    NON_FRIEND
-}
 
 data class User(
     val firstName: String,
@@ -60,3 +74,9 @@ data class User(
     val username: String,
     val xp: Int
 )
+
+enum class EUserRelation {
+    USER,
+    FRIEND,
+    NON_FRIEND
+}

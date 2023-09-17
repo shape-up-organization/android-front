@@ -1,15 +1,6 @@
 package com.shapeup.service.posts
 
-data class Post(
-    val countComments: Int,
-    val countLike: Int,
-    val createdAt: String,
-    val description: String? = null,
-    val id: String,
-    val liked: Boolean? = false,
-    val photoUrls: List<String>,
-    val username: String
-)
+import com.shapeup.ui.viewModels.logged.Post
 
 val getPostsMock = listOf(
     Post(
@@ -63,5 +54,31 @@ val getPostsMock = listOf(
             "https://picsum.photos/id/57/2448/3264"
         ),
         username = "will_sigma"
+    ),
+    Post(
+        countComments = 39,
+        countLike = 110,
+        createdAt = "13/04/2023",
+        description = "Lorem ipsum dolor sit amet lorem ipsum dolor." +
+            "\n\nLorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum " +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "dolor sit amet lorem ipsum dolor. Lorem ipsum dolor sit amet lorem ipsum dolor.",
+        id = "5",
+        liked = false,
+        photoUrls = listOf(
+            "https://picsum.photos/id/103/2592/1936"
+        ),
+        username = "g_johnston"
     )
 )

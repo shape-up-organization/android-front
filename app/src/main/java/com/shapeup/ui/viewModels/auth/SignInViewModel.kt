@@ -7,7 +7,7 @@ import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
 
 class SignInViewModel : ViewModel() {
-    var navigator: Navigator? = null
+    lateinit var navigator: Navigator
 
     val email = mutableStateOf("")
     val password = mutableStateOf("")
@@ -21,7 +21,7 @@ class SignInViewModel : ViewModel() {
         println("email: ${email.value}")
         println("password: ${password.value}")
 
-        this.navigator?.navigate?.invoke(Screen.Feed)
+        navigator.navigate(Screen.Feed)
     }
 
     val handlers = SignInFormHandlers(
