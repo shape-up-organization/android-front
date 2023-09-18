@@ -430,8 +430,10 @@ fun ProfileScreen(
                         }
                     ) {
                         CardPost(
-                            postData = it,
                             navigator = navigator,
+                            postData = it,
+                            showDeleteButton = userRelation == EUserRelation.USER,
+                            showProfile = false,
                             user = user
                         )
 

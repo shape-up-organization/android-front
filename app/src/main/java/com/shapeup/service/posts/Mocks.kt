@@ -80,5 +80,53 @@ val getPostsMock = listOf(
             "https://picsum.photos/id/103/2592/1936"
         ),
         username = "g_johnston"
+    ),
+    Post(
+        countComments = 22,
+        countLike = 15,
+        createdAt = "16/05/2023",
+        description = "Lorem ipsum dolor sit amet lorem ipsum dolor." +
+            "\n\nLorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum " +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "dolor sit amet lorem ipsum dolor. Lorem ipsum dolor sit amet lorem ipsum dolor.",
+        id = "6",
+        liked = true,
+        photoUrls = emptyList(),
+        username = "g_johnston"
+    ),
+    Post(
+        countComments = 40,
+        countLike = 2,
+        createdAt = "17/05/2023",
+        description = "Lorem ipsum dolor sit amet lorem ipsum dolor." +
+            "\n\nLorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum " +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "Lorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum\n" +
+            "dolor sit amet lorem ipsum dolor. Lorem ipsum dolor sit amet lorem ipsum dolor.",
+        id = "7",
+        liked = true,
+        photoUrls = emptyList(),
+        username = "g_johnston"
     )
 )

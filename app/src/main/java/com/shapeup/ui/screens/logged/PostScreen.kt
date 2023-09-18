@@ -32,8 +32,8 @@ fun PostScreen(
 ) {
     CardPost(
         fullScreen = true,
-        postData = postData,
         navigator = navigator,
+        postData = postData,
         user = user
     )
 }

@@ -44,8 +44,10 @@ import com.shapeup.ui.viewModels.logged.User
 @Composable
 fun CardPost(
     fullScreen: Boolean = false,
-    postData: Post,
     navigator: Navigator,
+    postData: Post,
+    showDeleteButton: Boolean = false,
+    showProfile: Boolean = true,
     user: User
 ) {
     Column(
@@ -55,89 +57,111 @@ fun CardPost(
                 when (fullScreen) {
                     true ->
                         Modifier
+                            .background(color = MaterialTheme.colorScheme.background)
                             .fillMaxHeight()
                             .verticalScroll(rememberScrollState())
 
                     else -> Modifier
                 }
             )
+            .then(
+                when (showProfile) {
+                    true -> Modifier
+
+                    else ->
+                        Modifier
+                            .padding(all = 16.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.primaryContainer,
+                                shape = RoundedCornerShape(16.dp)
+                            )
+                            .padding(
+                                bottom = 10.dp,
+                                end = 16.dp,
+                                start = 16.dp,
+                                top = 24.dp
+                            )
+                }
+            )
     ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = 24.dp,
-                    vertical = 8.dp
-                ),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            if (fullScreen) {
-                IconButton(onClick = { navigator.navigateBack() }) {
-                    Icon(
-                        contentDescription = stringResource(Icon.ArrowBack.description),
-                        painter = painterResource(Icon.ArrowBack.value),
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-            }
-
-            IconButton(
+        if (showProfile) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
-                    .height(40.dp)
-                    .width(40.dp),
-                onClick = {
-                    navigator.navigateArgs("${Screen.Profile.value}/${user.username}")
-                }
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = 24.dp,
+                        vertical = 8.dp
+                    ),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    contentDescription = stringResource(R.string.user_profile_pic),
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .border(
-                            brush = XPUtils.getBorder(user.xp),
-                            shape = CircleShape,
-                            width = 2.dp
+                if (fullScreen) {
+                    IconButton(onClick = { navigator.navigateBack() }) {
+                        Icon(
+                            contentDescription = stringResource(Icon.ArrowBack.description),
+                            painter = painterResource(Icon.ArrowBack.value),
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
-                        .background(brush = XPUtils.getBorder(user.xp))
-                        .height(32.dp)
-                        .width(32.dp),
-                    painter = rememberAsyncImagePainter(user.profilePicture)
-                )
-            }
+                    }
+                }
 
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Text(
-                color = MaterialTheme.colorScheme.onBackground,
-                maxLines = 1,
-                modifier = Modifier
-                    .clickable {
+                IconButton(
+                    modifier = Modifier
+                        .height(40.dp)
+                        .width(40.dp),
+                    onClick = {
                         navigator.navigateArgs("${Screen.Profile.value}/${user.username}")
                     }
-                    .weight(1f),
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.bodySmall,
-                text = "${user.firstName} ${user.lastName}"
-            )
+                ) {
+                    Image(
+                        contentDescription = stringResource(R.string.user_profile_pic),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .border(
+                                brush = XPUtils.getBorder(user.xp),
+                                shape = CircleShape,
+                                width = 2.dp
+                            )
+                            .background(brush = XPUtils.getBorder(user.xp))
+                            .height(32.dp)
+                            .width(32.dp),
+                        painter = rememberAsyncImagePainter(user.profilePicture)
+                    )
+                }
 
-            Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(8.dp))
 
-            IconButton(
-                modifier = Modifier
-                    .height(24.dp)
-                    .width(24.dp),
-                onClick = { /*TODO*/ }
-            ) {
-                Icon(
-                    contentDescription = stringResource(Icon.More.description),
+                Text(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    maxLines = 1,
                     modifier = Modifier
-                        .height(4.dp)
-                        .width(16.dp),
-                    painter = painterResource(Icon.More.value),
-                    tint = MaterialTheme.colorScheme.tertiary
+                        .clickable {
+                            navigator.navigateArgs("${Screen.Profile.value}/${user.username}")
+                        }
+                        .weight(1f),
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodySmall,
+                    text = "${user.firstName} ${user.lastName}"
                 )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                IconButton(
+                    modifier = Modifier
+                        .height(24.dp)
+                        .width(24.dp),
+                    onClick = { /*TODO*/ }
+                ) {
+                    Icon(
+                        contentDescription = stringResource(Icon.More.description),
+                        modifier = Modifier
+                            .height(4.dp)
+                            .width(16.dp),
+                        painter = painterResource(Icon.More.value),
+                        tint = MaterialTheme.colorScheme.tertiary
+                    )
+                }
             }
         }
 
@@ -230,6 +254,30 @@ fun CardPost(
                 onClick = { /*TODO*/ },
                 shape = RoundedCornerShape(24.dp)
             )
+
+            if (showDeleteButton) {
+                Spacer(modifier = Modifier.width(8.dp))
+
+                AssistChip(
+                    border = AssistChipDefaults.assistChipBorder(
+                        borderWidth = 0.dp
+                    ),
+                    colors = AssistChipDefaults.assistChipColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        labelColor = MaterialTheme.colorScheme.onError
+                    ),
+                    label = {
+                        Text(
+                            style = MaterialTheme.typography.labelMedium,
+//                            text = stringResource(R.string.txt_feed_comments)
+                            text = "Delete"
+                        )
+                    },
+                    modifier = Modifier.padding(0.dp),
+                    onClick = { /*TODO*/ },
+                    shape = RoundedCornerShape(24.dp)
+                )
+            }
         }
 
         if (postData.photoUrls.isNotEmpty()) {
@@ -243,12 +291,14 @@ fun CardPost(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp)
-                        .then(when (fullScreen) {
-                            true ->
-                                Modifier.padding(bottom = 24.dp)
+                        .then(
+                            when (fullScreen) {
+                                true ->
+                                    Modifier.padding(bottom = 24.dp)
 
-                            else -> Modifier
-                        }),
+                                else -> Modifier
+                            }
+                        ),
                     overflow = when (fullScreen) {
                         true -> TextOverflow.Visible
                         else -> TextOverflow.Ellipsis
