@@ -317,8 +317,8 @@ fun ProfileScreen(
                             ),
                             colors = AssistChipDefaults.assistChipColors(
                                 containerColor = when (userRelation) {
-                                    EUserRelation.FRIEND -> MaterialTheme.colorScheme.error
-                                    else -> MaterialTheme.colorScheme.primary
+                                    EUserRelation.NON_FRIEND -> MaterialTheme.colorScheme.primary
+                                    else -> MaterialTheme.colorScheme.error
                                 },
                                 labelColor = MaterialTheme.colorScheme.onPrimary
                             ),
@@ -332,7 +332,21 @@ fun ProfileScreen(
                                                 R.string.txt_profile_remove_friend
                                             )
 
-                                            else -> stringResource(R.string.txt_profile_add_friend)
+                                            EUserRelation.NON_FRIEND -> stringResource(
+                                                R.string.txt_profile_add_friend
+                                            )
+
+                                            EUserRelation.NON_FRIEND_RECEIVED -> stringResource(
+                                                R.string.txt_profile_refuse_friend
+                                            )
+
+                                            EUserRelation.NON_FRIEND_REQUESTED -> stringResource(
+                                                R.string.txt_profile_cancel_friend
+                                            )
+
+                                            else -> stringResource(
+                                                R.string.txt_profile_add_friend
+                                            )
                                         }
                                     }
                                 )
@@ -342,8 +356,8 @@ fun ProfileScreen(
                                 Icon(
                                     contentDescription = stringResource(
                                         when (userRelation) {
-                                            EUserRelation.FRIEND -> Icon.Decline.description
-                                            else -> Icon.Add.description
+                                            EUserRelation.NON_FRIEND -> Icon.Add.description
+                                            else -> Icon.Decline.description
                                         }
                                     ),
                                     modifier = Modifier
@@ -351,8 +365,8 @@ fun ProfileScreen(
                                         .width(16.dp),
                                     painter = painterResource(
                                         when (userRelation) {
-                                            EUserRelation.FRIEND -> Icon.Decline.value
-                                            else -> Icon.Add.value
+                                            EUserRelation.NON_FRIEND -> Icon.Add.value
+                                            else -> Icon.Decline.value
                                         }
                                     ),
                                     tint = MaterialTheme.colorScheme.onPrimary
@@ -430,11 +444,11 @@ fun ProfileScreen(
                         }
                     ) {
                         CardPost(
+                            compactPost = true,
                             navigator = navigator,
                             postData = it,
-                            showDeleteButton = userRelation == EUserRelation.USER,
-                            showProfile = false,
-                            user = user
+                            user = user,
+                            userRelation = userRelation
                         )
 
                         Spacer(

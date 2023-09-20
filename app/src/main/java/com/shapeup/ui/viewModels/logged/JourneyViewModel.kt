@@ -78,5 +78,7 @@ data class User(
 enum class EUserRelation {
     USER,
     FRIEND,
-    NON_FRIEND
+    NON_FRIEND,
+    NON_FRIEND_RECEIVED,
+    NON_FRIEND_REQUESTED
 }

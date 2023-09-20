@@ -156,11 +156,13 @@ fun FeedScreen(
         ) {
             postsData.posts.value.map {
                 val user = journeyHandlers.getUser(it.username) ?: return
+                val userRelation = journeyHandlers.getUserRelation(it.username)
 
                 CardPost(
                     postData = it,
                     navigator = navigator,
-                    user = user
+                    user = user,
+                    userRelation = userRelation
                 )
 
                 Spacer(

@@ -121,7 +121,11 @@ fun BottomSheet() {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceAround
             ) {
-                Text(text = stringResource(R.string.txt_welcome_drawer_title))
+                Text(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.bodyLarge,
+                    text = stringResource(R.string.txt_welcome_drawer_title)
+                )
 
                 Image(
                     painter = painterResource(id = Image.GirlMeditating.value),
@@ -163,6 +167,10 @@ fun RowIcon(text: String, icon: Icon, contentDescription: String? = "") {
             contentDescription = contentDescription
         )
         Spacer(modifier = Modifier.width(8.dp))
-        Text(text = text, style = MaterialTheme.typography.bodyLarge)
+        Text(
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.bodyLarge,
+            text = text
+        )
     }
 }

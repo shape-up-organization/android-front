@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,17 +14,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,18 +50,22 @@ import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
 import com.shapeup.ui.utils.helpers.XPUtils
+import com.shapeup.ui.viewModels.logged.EUserRelation
 import com.shapeup.ui.viewModels.logged.Post
 import com.shapeup.ui.viewModels.logged.User
 
 @Composable
 fun CardPost(
+    compactPost: Boolean = false,
     fullScreen: Boolean = false,
     navigator: Navigator,
     postData: Post,
-    showDeleteButton: Boolean = false,
-    showProfile: Boolean = true,
-    user: User
+    user: User,
+    userRelation: EUserRelation
 ) {
+    val expandCommentsBottomSheet = remember { mutableStateOf(false) }
+    var expandOptionsMenu by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -65,10 +81,8 @@ fun CardPost(
                 }
             )
             .then(
-                when (showProfile) {
-                    true -> Modifier
-
-                    else ->
+                when (compactPost) {
+                    true ->
                         Modifier
                             .padding(all = 16.dp)
                             .background(
@@ -81,10 +95,12 @@ fun CardPost(
                                 start = 16.dp,
                                 top = 24.dp
                             )
+
+                    else -> Modifier
                 }
             )
     ) {
-        if (showProfile) {
+        if (!compactPost) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
@@ -147,20 +163,101 @@ fun CardPost(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                IconButton(
-                    modifier = Modifier
-                        .height(24.dp)
-                        .width(24.dp),
-                    onClick = { /*TODO*/ }
-                ) {
-                    Icon(
-                        contentDescription = stringResource(Icon.More.description),
+                Box(modifier = Modifier.wrapContentSize(Alignment.TopStart)) {
+                    IconButton(
                         modifier = Modifier
-                            .height(4.dp)
-                            .width(16.dp),
-                        painter = painterResource(Icon.More.value),
-                        tint = MaterialTheme.colorScheme.tertiary
-                    )
+                            .height(24.dp)
+                            .width(24.dp),
+                        onClick = { expandOptionsMenu = true }
+                    ) {
+                        Icon(
+                            contentDescription = stringResource(Icon.More.description),
+                            modifier = Modifier
+                                .height(4.dp)
+                                .width(16.dp),
+                            painter = painterResource(Icon.More.value),
+                            tint = MaterialTheme.colorScheme.tertiary
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = expandOptionsMenu,
+                        onDismissRequest = { expandOptionsMenu = false }
+                    ) {
+                        if (userRelation == EUserRelation.USER) {
+                            DropdownMenuItem(
+                                modifier = Modifier.background(MaterialTheme.colorScheme.error),
+                                onClick = { /*TODO: */ },
+                                text = {
+                                    Text(
+                                        color = MaterialTheme.colorScheme.onError,
+                                        text = stringResource(
+                                            R.string.txt_feed_delete
+                                        )
+                                    )
+                                }
+                            )
+                        }
+
+                        if (userRelation == EUserRelation.FRIEND) {
+                            DropdownMenuItem(
+                                modifier = Modifier.background(MaterialTheme.colorScheme.error),
+                                onClick = { /*TODO: */ },
+                                text = {
+                                    Text(
+                                        color = MaterialTheme.colorScheme.onError,
+                                        text = stringResource(
+                                            R.string.txt_profile_remove_friend
+                                        )
+                                    )
+                                }
+                            )
+                        }
+
+                        if (userRelation == EUserRelation.NON_FRIEND) {
+                            DropdownMenuItem(
+                                modifier = Modifier.background(MaterialTheme.colorScheme.error),
+                                onClick = { /*TODO: */ },
+                                text = {
+                                    Text(
+                                        color = MaterialTheme.colorScheme.onError,
+                                        text = stringResource(
+                                            R.string.txt_profile_add_friend
+                                        )
+                                    )
+                                }
+                            )
+                        }
+
+                        if (userRelation == EUserRelation.NON_FRIEND_RECEIVED) {
+                            DropdownMenuItem(
+                                modifier = Modifier.background(MaterialTheme.colorScheme.error),
+                                onClick = { /*TODO: */ },
+                                text = {
+                                    Text(
+                                        color = MaterialTheme.colorScheme.onError,
+                                        text = stringResource(
+                                            R.string.txt_profile_refuse_friend
+                                        )
+                                    )
+                                }
+                            )
+                        }
+
+                        if (userRelation == EUserRelation.NON_FRIEND_REQUESTED) {
+                            DropdownMenuItem(
+                                modifier = Modifier.background(MaterialTheme.colorScheme.error),
+                                onClick = { /*TODO: */ },
+                                text = {
+                                    Text(
+                                        color = MaterialTheme.colorScheme.onError,
+                                        text = stringResource(
+                                            R.string.txt_profile_cancel_friend
+                                        )
+                                    )
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -224,6 +321,8 @@ fun CardPost(
                 )
             }
 
+            Spacer(modifier = Modifier.width(8.dp))
+
             Text(
                 color = MaterialTheme.colorScheme.onBackground,
                 maxLines = 1,
@@ -251,11 +350,11 @@ fun CardPost(
                     )
                 },
                 modifier = Modifier.padding(0.dp),
-                onClick = { /*TODO*/ },
+                onClick = { expandCommentsBottomSheet.value = true },
                 shape = RoundedCornerShape(24.dp)
             )
 
-            if (showDeleteButton) {
+            if (compactPost && userRelation == EUserRelation.USER) {
                 Spacer(modifier = Modifier.width(8.dp))
 
                 AssistChip(
@@ -269,8 +368,7 @@ fun CardPost(
                     label = {
                         Text(
                             style = MaterialTheme.typography.labelMedium,
-//                            text = stringResource(R.string.txt_feed_comments)
-                            text = "Delete"
+                            text = stringResource(R.string.txt_feed_delete)
                         )
                     },
                     modifier = Modifier.padding(0.dp),
@@ -289,6 +387,11 @@ fun CardPost(
                         else -> 2
                     },
                     modifier = Modifier
+                        .clickable {
+                            navigator.navigateArgs(
+                                "${Screen.Post.value}/${user.username}/${postData.id}"
+                            )
+                        }
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp)
                         .then(
@@ -306,6 +409,39 @@ fun CardPost(
                     style = MaterialTheme.typography.bodySmall,
                     text = it
                 )
+            }
+        }
+    }
+
+    CommentsBottomSheet(open = expandCommentsBottomSheet)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CommentsBottomSheet(open: MutableState<Boolean>) {
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    if (open.value) {
+        ModalBottomSheet(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            onDismissRequest = { open.value = false },
+            sheetState = bottomSheetState
+        ) {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(64.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceAround
+            ) {
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
             }
         }
     }

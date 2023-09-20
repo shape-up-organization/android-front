@@ -96,6 +96,7 @@
     <string name="txt_feed_search_input">Search</string>
     <string name="txt_feed_likes">likes</string>
     <string name="txt_feed_comments">comments</string>
+    <string name="txt_feed_delete">Delete</string>
     <!-- PROFILE -->
     <string name="txt_profile_likes">likes</string>
     <string name="txt_profile_comments">comments</string>
@@ -103,6 +104,8 @@
     <string name="txt_profile_friends">friends</string>
     <string name="txt_profile_add_friend">Request</string>
     <string name="txt_profile_remove_friend">Remove</string>
+    <string name="txt_profile_refuse_friend">Refuse request</string>
+    <string name="txt_profile_cancel_friend">Cancel request</string>
     <string name="txt_profile_tab_photos">Photos</string>
     <string name="txt_profile_tab_posts">Posts</string>
     <string name="requests_header_title">Requests</string>

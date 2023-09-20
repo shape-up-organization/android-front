@@ -8,6 +8,7 @@ import com.shapeup.service.users.getUserDataMock
 import com.shapeup.ui.components.CardPost
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.helpers.Navigator
+import com.shapeup.ui.viewModels.logged.EUserRelation
 import com.shapeup.ui.viewModels.logged.Post
 import com.shapeup.ui.viewModels.logged.User
 
@@ -19,7 +20,8 @@ fun PostPreview() {
         PostScreen(
             navigator = Navigator(),
             postData = getPostsMock[0],
-            user = getUserDataMock
+            user = getUserDataMock,
+            userRelation = EUserRelation.USER
         )
     }
 }
@@ -28,12 +30,14 @@ fun PostPreview() {
 fun PostScreen(
     navigator: Navigator,
     postData: Post,
-    user: User
+    user: User,
+    userRelation: EUserRelation
 ) {
     CardPost(
         fullScreen = true,
         navigator = navigator,
         postData = postData,
-        user = user
+        user = user,
+        userRelation = userRelation
     )
 }
