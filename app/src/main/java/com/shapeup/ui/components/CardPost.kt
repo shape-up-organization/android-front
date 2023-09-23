@@ -23,13 +23,10 @@ import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -40,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -350,7 +348,9 @@ fun CardPost(
                     )
                 },
                 modifier = Modifier.padding(0.dp),
-                onClick = { expandCommentsBottomSheet.value = true },
+                onClick = {
+                    expandCommentsBottomSheet.value = !expandCommentsBottomSheet.value
+                },
                 shape = RoundedCornerShape(24.dp)
             )
 
@@ -416,22 +416,22 @@ fun CardPost(
     CommentsBottomSheet(open = expandCommentsBottomSheet)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentsBottomSheet(open: MutableState<Boolean>) {
-    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val bottomSheetHeight = LocalConfiguration.current.screenHeightDp * 0.7
 
-    if (open.value) {
-        ModalBottomSheet(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            onDismissRequest = { open.value = false },
-            sheetState = bottomSheetState
-        ) {
+    BottomSheet(
+        mode = BottomSheetModes.MODAL,
+        open = open,
+        title = "Comments",
+        content = {
             Column(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(64.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(bottomSheetHeight.dp)
+                    .padding(64.dp)
+                    .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.SpaceAround
             ) {
                 Text(text = "COMMENTS")
@@ -442,7 +442,35 @@ fun CommentsBottomSheet(open: MutableState<Boolean>) {
                 Text(text = "COMMENTS")
                 Text(text = "COMMENTS")
                 Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
+                Text(text = "COMMENTS")
             }
         }
-    }
+    )
 }

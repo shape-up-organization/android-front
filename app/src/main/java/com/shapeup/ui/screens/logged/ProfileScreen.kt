@@ -315,7 +315,7 @@ fun ProfileScreen(
                                     color = MaterialTheme.colorScheme.onBackground,
                                     style = MaterialTheme.typography.labelSmall,
                                     text = "${stringResource(R.string.txt_profile_level)} " +
-                                            "${user.xp}"
+                                        "${user.xp}"
                                 )
                             }
                         }
@@ -397,8 +397,8 @@ fun ProfileScreen(
                         ),
                     style = MaterialTheme.typography.bodySmall,
                     text = "Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. " +
-                            "Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. " +
-                            "Lorem ipsum dolor sit amet. "
+                        "Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. " +
+                        "Lorem ipsum dolor sit amet. "
                 )
 
                 TabRow(
@@ -465,7 +465,7 @@ fun ProfileScreen(
                                 height(
                                     when {
                                         it.description.isNullOrBlank() ||
-                                                it.photoUrls.isEmpty() -> 4.dp
+                                            it.photoUrls.isEmpty() -> 4.dp
 
                                         else -> 32.dp
                                     }
