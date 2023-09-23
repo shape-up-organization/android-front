@@ -315,7 +315,7 @@ fun FeedScreen(
                                 Text(
                                     style = MaterialTheme.typography.labelMedium,
                                     text = "${it.countComments} " +
-                                            stringResource(R.string.txt_feed_comments)
+                                        stringResource(R.string.txt_feed_comments)
                                 )
                             },
                             modifier = Modifier.padding(0.dp),
@@ -345,7 +345,7 @@ fun FeedScreen(
                         height(
                             when {
                                 it.description.isNullOrBlank() ||
-                                        it.photoUrls.isNullOrEmpty() -> 4.dp
+                                    it.photoUrls.isNullOrEmpty() -> 4.dp
 
                                 else -> 32.dp
                             }
