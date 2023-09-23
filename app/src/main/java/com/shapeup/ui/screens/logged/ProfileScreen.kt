@@ -45,6 +45,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import coil.compose.rememberAsyncImagePainter
 import com.shapeup.R
 import com.shapeup.service.friends.getAllFriendshipMock
@@ -101,8 +102,10 @@ fun ProfileScreen(
     val userRelation = journeyHandlers.getUserRelation(user.username)
 
     var tabSelected by remember { mutableIntStateOf(0) }
+    var openProfileImageDialog by remember { mutableStateOf(false) }
 
     val imageSize = LocalConfiguration.current.screenWidthDp.dp / 3
+    val expandedProfilePictureSize = LocalConfiguration.current.screenWidthDp * 0.8
     val titles = listOf(
         stringResource(R.string.txt_profile_tab_photos),
         stringResource(R.string.txt_profile_tab_posts)
@@ -181,6 +184,9 @@ fun ProfileScreen(
                                         width = 2.dp
                                     )
                                     .clip(CircleShape)
+                                    .clickable {
+                                        openProfileImageDialog = true
+                                    }
                                     .height(64.dp)
                                     .width(64.dp),
                                 painter = rememberAsyncImagePainter(
@@ -287,6 +293,9 @@ fun ProfileScreen(
                                         width = 2.dp
                                     )
                                     .clip(CircleShape)
+                                    .clickable {
+                                        openProfileImageDialog = true
+                                    }
                                     .height(64.dp)
                                     .width(64.dp),
                                 painter = rememberAsyncImagePainter(
@@ -306,7 +315,7 @@ fun ProfileScreen(
                                     color = MaterialTheme.colorScheme.onBackground,
                                     style = MaterialTheme.typography.labelSmall,
                                     text = "${stringResource(R.string.txt_profile_level)} " +
-                                        "${user.xp}"
+                                            "${user.xp}"
                                 )
                             }
                         }
@@ -388,8 +397,8 @@ fun ProfileScreen(
                         ),
                     style = MaterialTheme.typography.bodySmall,
                     text = "Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. " +
-                        "Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. " +
-                        "Lorem ipsum dolor sit amet. "
+                            "Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. " +
+                            "Lorem ipsum dolor sit amet. "
                 )
 
                 TabRow(
@@ -456,7 +465,7 @@ fun ProfileScreen(
                                 height(
                                     when {
                                         it.description.isNullOrBlank() ||
-                                            it.photoUrls.isEmpty() -> 4.dp
+                                                it.photoUrls.isEmpty() -> 4.dp
 
                                         else -> 32.dp
                                     }
@@ -483,5 +492,26 @@ fun ProfileScreen(
             data = journeyData,
             navigator = navigator
         )
+    }
+
+    if (openProfileImageDialog) {
+        Dialog(onDismissRequest = { openProfileImageDialog = false }) {
+            Image(
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .border(
+                        brush = XPUtils.getBorder(user.xp),
+                        shape = CircleShape,
+                        width = 2.dp
+                    )
+                    .clip(CircleShape)
+                    .height(expandedProfilePictureSize.dp)
+                    .width(expandedProfilePictureSize.dp),
+                painter = rememberAsyncImagePainter(
+                    model = user.profilePicture
+                )
+            )
+        }
     }
 }
