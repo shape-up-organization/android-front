@@ -28,14 +28,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.shapeup.R
-import com.shapeup.ui.theme.LevelGradient
 import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
+import com.shapeup.ui.utils.helpers.XPUtils
+import com.shapeup.ui.viewModels.logged.JourneyData
 
 @Composable
 fun Navbar(
     activePage: EPageButtons,
+    data: JourneyData,
     navigator: Navigator
 ) {
     Row(
@@ -61,12 +63,31 @@ fun Navbar(
             pageButton = EPageButtons.RANK
         )
 
-        PageButton(
-            activePage = activePage,
-            isBigger = true,
-            navigator = navigator,
-            pageButton = EPageButtons.ADD
-        )
+        IconButton(
+            modifier = Modifier
+                .offset(x = 0.dp, y = (-12).dp)
+                .height(64.dp)
+                .width(64.dp),
+            onClick = { navigator.navigate(EPageButtons.ADD.screen) }
+        ) {
+            Icon(
+                contentDescription = stringResource(EPageButtons.ADD.description),
+                modifier = Modifier
+                    .graphicsLayer(alpha = 0.99f)
+                    .drawWithCache {
+                        onDrawWithContent {
+                            drawContent()
+                            drawRect(
+                                XPUtils.getBorder(data.userData.value.xp),
+                                blendMode = BlendMode.SrcAtop
+                            )
+                        }
+                    }
+                    .height(64.dp)
+                    .width(64.dp),
+                painter = painterResource(EPageButtons.ADD.icon.value)
+            )
+        }
 
         PageButton(
             activePage = activePage,
@@ -78,14 +99,17 @@ fun Navbar(
             modifier = Modifier
                 .height(32.dp)
                 .width(32.dp),
-            onClick = { navigator.navigate(Screen.Profile) }
+            onClick = {
+                data.selectedUser.value = null
+                navigator.navigateClean(Screen.Profile)
+            }
         ) {
             Image(
                 contentDescription = stringResource(R.string.user_profile_pic),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .border(
-                        brush = LevelGradient.LEVEL_1.value,
+                        brush = XPUtils.getBorder(data.userData.value.xp),
                         shape = CircleShape,
                         width = 2.dp
                     )
@@ -101,49 +125,20 @@ fun Navbar(
 @Composable
 fun PageButton(
     activePage: EPageButtons,
-    isBigger: Boolean? = false,
     navigator: Navigator,
     pageButton: EPageButtons
 ) {
-    val iconButtonModifier = when (isBigger) {
-        true ->
-            Modifier
-                .offset(x = 0.dp, y = (-12).dp)
-                .height(64.dp)
-                .width(64.dp)
-
-        else ->
-            Modifier
-                .height(32.dp)
-                .width(32.dp)
-    }
-
-    val iconModifier = when (isBigger) {
-        true ->
-            Modifier
-                .graphicsLayer(alpha = 0.99f)
-                .drawWithCache {
-                    onDrawWithContent {
-                        drawContent()
-                        drawRect(LevelGradient.LEVEL_1.value, blendMode = BlendMode.SrcAtop)
-                    }
-                }
-                .height(64.dp)
-                .width(64.dp)
-
-        else ->
-            Modifier
-                .height(24.dp)
-                .width(24.dp)
-    }
-
     IconButton(
-        modifier = iconButtonModifier,
+        modifier = Modifier
+            .height(32.dp)
+            .width(32.dp),
         onClick = { navigator.navigate(pageButton.screen) }
     ) {
         Icon(
             contentDescription = stringResource(pageButton.description),
-            modifier = iconModifier,
+            modifier = Modifier
+                .height(24.dp)
+                .width(24.dp),
             painter = painterResource(pageButton.icon.value),
             tint = EPageButtons.getColor(
                 activePage = activePage,

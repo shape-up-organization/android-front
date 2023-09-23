@@ -86,6 +86,20 @@
     <string name="notification_header_title">Notificações</string>
     <string name="txt_notification_head_title_to_friendship_request">Pedidos de amizade</string>
     <string name="txt_notification_subtitle_to_friendship_request">Aceite ou ignore as solicitações</string>
-    <string name="txt_notification_liked_your_picture" >Gostou da sua foto</string>
-    <string name="txt_notification_commented_your_post" >Comentou no seu post</string>
+    <string name="txt_notification_liked_your_picture">Gostou da sua foto</string>
+    <string name="txt_notification_commented_your_post">Comentou no seu post</string>
+    <!-- FEED -->
+    <string name="txt_feed_search_input">Procurar</string>
+    <string name="txt_feed_likes">curtidas</string>
+    <string name="txt_feed_comments">comentários</string>
+    <!-- PROFILE -->
+    <string name="txt_profile_likes">curtidas</string>
+    <string name="txt_profile_comments">comentários</string>
+    <string name="txt_profile_level">nível</string>
+    <string name="txt_profile_add_friend">Adicionar</string>
+    <string name="txt_profile_remove_friend">Remover</string>
+    <string name="txt_profile_tab_photos">Fotos</string>
+    <string name="txt_profile_tab_posts">Postagens</string>
+    <string name="requests_header_title">Solicitações</string>
+    <string name="sent_you_friendship_request">Te enviou uma solicitação de amizade</string>
 </resources>

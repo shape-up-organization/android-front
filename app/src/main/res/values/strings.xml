@@ -87,6 +87,20 @@
     <string name="notification_header_title">Notifications</string>
     <string name="txt_notification_head_title_to_friendship_request">Friendship requests</string>
     <string name="txt_notification_subtitle_to_friendship_request">Accept or ignore requests</string>
-    <string name="txt_notification_liked_your_picture" >Liked your picture</string>
-    <string name="txt_notification_commented_your_post" >Commented on your post</string>
+    <string name="txt_notification_liked_your_picture">Liked your picture</string>
+    <string name="txt_notification_commented_your_post">Commented on your post</string>
+    <!-- FEED -->
+    <string name="txt_feed_search_input">Search</string>
+    <string name="txt_feed_likes">likes</string>
+    <string name="txt_feed_comments">comments</string>
+    <!-- PROFILE -->
+    <string name="txt_profile_likes">likes</string>
+    <string name="txt_profile_comments">comments</string>
+    <string name="txt_profile_level">level</string>
+    <string name="txt_profile_add_friend">Request</string>
+    <string name="txt_profile_remove_friend">Remove</string>
+    <string name="txt_profile_tab_photos">Photos</string>
+    <string name="txt_profile_tab_posts">Posts</string>
+    <string name="requests_header_title">Requests</string>
+    <string name="sent_you_friendship_request">Sent you a friend request</string>
 </resources>

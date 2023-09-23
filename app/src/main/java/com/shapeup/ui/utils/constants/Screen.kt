@@ -4,6 +4,7 @@ enum class Screen(val value: String) {
     ChangePassword("change-password-screen"),
     Feed("feed-screen"),
     ForgotPassword("forgot-password-screen"),
+    FriendshipRequests("friendship-requests-screen"),
     Notification("notification-screen"),
     Profile("profile-screen"),
     SignIn("sign-in-screen"),

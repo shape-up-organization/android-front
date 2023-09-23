@@ -25,6 +25,7 @@ import com.shapeup.ui.components.NotificationRow
 import com.shapeup.ui.components.TextListComponent
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon
+import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
 import com.shapeup.ui.utils.helpers.TextHelper
 
@@ -92,10 +93,10 @@ fun NotificationScreen(
 
                 TextListComponent(texts = textsToFriendshipRequests)
 
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = { navigator.navigate(Screen.FriendshipRequests) }) {
                     Icon(
                         contentDescription = stringResource(R.string.icon_arrow_forward),
-                        painter = painterResource(id = Icon.ArrowForward.value),
+                        painter = painterResource(Icon.ArrowForward.value),
                         tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
