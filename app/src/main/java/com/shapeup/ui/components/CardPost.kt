@@ -443,6 +443,7 @@ fun CardPost(
 
     CommentsBottomSheet(
         comments = comments,
+        navigator = navigator,
         open = expandCommentsBottomSheet,
         sendComment = { commentMessage ->
             sendComment(
@@ -456,6 +457,7 @@ fun CardPost(
 @Composable
 fun CommentsBottomSheet(
     comments: List<Comment>,
+    navigator: Navigator,
     open: MutableState<Boolean>,
     sendComment: (commentMessage: String) -> Unit
 ) {
@@ -515,7 +517,12 @@ fun CommentsBottomSheet(
                             Spacer(modifier = Modifier.width(16.dp))
 
                             Column {
-                                Row {
+                                Row(
+                                    modifier = Modifier.clickable {
+                                        navigator
+                                            .navigateArgs("${Screen.Profile.value}/${it.username}")
+                                    }
+                                ) {
                                     Text(
                                         color = MaterialTheme.colorScheme.primary,
                                         style = MaterialTheme.typography.bodySmall,

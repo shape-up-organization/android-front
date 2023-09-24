@@ -10,6 +10,7 @@ import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.navigator
 import com.shapeup.ui.utils.helpers.viewModel
 import com.shapeup.ui.viewModels.logged.JourneyData
+import com.shapeup.ui.viewModels.logged.JourneyMappers
 import com.shapeup.ui.viewModels.logged.JourneyViewModel
 import com.shapeup.ui.viewModels.logged.PostsData
 import com.shapeup.ui.viewModels.logged.PostsViewModel
@@ -23,7 +24,6 @@ fun NavGraphBuilder.screenProfile(navController: NavHostController) {
         popExitTransition = { ExitTransition.None }
     ) {
         val journeyViewModel = it.viewModel<JourneyViewModel>(navController)
-        journeyViewModel.navigator = navController.navigator
 
         val userName = it.arguments?.getString("userName")
         val user = userName?.let { itUserName -> journeyViewModel.handlers.getUser(itUserName) }
@@ -58,7 +58,6 @@ fun NavGraphBuilder.screenProfile(navController: NavHostController) {
         popExitTransition = { ExitTransition.None }
     ) {
         val journeyViewModel = it.viewModel<JourneyViewModel>(navController)
-        journeyViewModel.navigator = navController.navigator
 
         val postsViewModel = it.viewModel<PostsViewModel>(navController)
         postsViewModel.navigator = navController.navigator
@@ -76,7 +75,7 @@ fun NavGraphBuilder.screenProfile(navController: NavHostController) {
             ),
             postsHandlers = postsViewModel.handlers,
             navigator = navController.navigator,
-            user = journeyViewModel.userData.value
+            user = JourneyMappers.userDataToUser(journeyViewModel.userData.value)
         )
     }
 }

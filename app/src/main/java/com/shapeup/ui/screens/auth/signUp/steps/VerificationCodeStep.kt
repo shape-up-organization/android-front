@@ -105,7 +105,7 @@ fun VerificationCodeStep(data: VerificationCodeStepFormData) {
         TextButton(onClick = { /*TODO*/ }) {
             Text(
                 style = MaterialTheme.typography.bodyMedium,
-                text = "Resend code"
+                text = stringResource(R.string.txt_sign_in_verification_code_screen_resend_code)
             )
         }
     }

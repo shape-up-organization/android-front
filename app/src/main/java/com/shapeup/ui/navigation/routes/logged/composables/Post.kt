@@ -21,7 +21,6 @@ fun NavGraphBuilder.screenPost(navController: NavHostController) {
         popExitTransition = { ExitTransition.None }
     ) {
         val journeyViewModel = it.viewModel<JourneyViewModel>(navController)
-        journeyViewModel.navigator = navController.navigator
 
         val userName = it.arguments?.getString("userName")
         val user = userName?.let { itUserName -> journeyViewModel.handlers.getUser(itUserName) }
