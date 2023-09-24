@@ -12,7 +12,8 @@ val LightSchema = lightColorScheme(
     tertiaryContainer = GreyLight30,
     background = BackgroundWhite,
     onBackground = BlackText,
-    error = RedError
+    error = RedError,
+    onError = WhiteText
 )
 
 val DarkSchema = darkColorScheme(
@@ -24,5 +25,6 @@ val DarkSchema = darkColorScheme(
     tertiaryContainer = GreyLight30,
     background = BackgroundDark,
     onBackground = WhiteText,
-    error = RedError
+    error = RedError,
+    onError = WhiteText
 )

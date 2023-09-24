@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -43,18 +45,28 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import coil.compose.rememberAsyncImagePainter
 import com.shapeup.R
 import com.shapeup.service.users.getUserDataMock
+import com.shapeup.ui.components.CardPost
 import com.shapeup.ui.components.EPageButtons
 import com.shapeup.ui.components.Navbar
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon
+import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
 import com.shapeup.ui.utils.helpers.XPUtils
 import com.shapeup.ui.viewModels.logged.EUserRelation
 import com.shapeup.ui.viewModels.logged.JourneyData
 import com.shapeup.ui.viewModels.logged.JourneyHandlers
+import com.shapeup.ui.viewModels.logged.PostsData
+import com.shapeup.ui.viewModels.logged.PostsHandlers
+import com.shapeup.ui.viewModels.logged.User
+import com.shapeup.ui.viewModels.logged.journeyDataMock
+import com.shapeup.ui.viewModels.logged.journeyHandlersMock
+import com.shapeup.ui.viewModels.logged.postsDataMock
+import com.shapeup.ui.viewModels.logged.postsHandlersMock
 
 @SuppressLint("UnrememberedMutableState")
 @Preview
@@ -62,62 +74,35 @@ import com.shapeup.ui.viewModels.logged.JourneyHandlers
 fun ProfilePreview() {
     ShapeUpTheme {
         ProfileScreen(
-            data = JourneyData(
-                friends = mutableStateOf(emptyList()),
-                selectedUser = mutableStateOf(null),
-                userData = mutableStateOf(getUserDataMock)
-            ),
-            handlers = JourneyHandlers(
-                getUserRelation = { EUserRelation.USER },
-                logOut = {}
-            ),
-            navigator = Navigator()
+            journeyData = journeyDataMock,
+            journeyHandlers = journeyHandlersMock,
+            navigator = Navigator(),
+            postsData = postsDataMock,
+            postsHandlers = postsHandlersMock,
+            user = getUserDataMock
         )
     }
 }
 
 @Composable
 fun ProfileScreen(
-    data: JourneyData,
-    handlers: JourneyHandlers,
-    navigator: Navigator
+    journeyData: JourneyData,
+    journeyHandlers: JourneyHandlers,
+    navigator: Navigator,
+    postsData: PostsData,
+    postsHandlers: PostsHandlers,
+    user: User
 ) {
-    val userRelation = handlers.getUserRelation(
-        when {
-            data.selectedUser.value?.username != null -> data.selectedUser.value!!.username
-
-            else -> data.userData.value.username
-        }
-    )
-    val user = when (data.selectedUser.value != null) {
-        true -> data.selectedUser.value!!
-        else -> data.userData.value
-    }
+    val userRelation = journeyHandlers.getUserRelation(user.username)
 
     var tabSelected by remember { mutableIntStateOf(0) }
+    var openProfileImageDialog by remember { mutableStateOf(false) }
 
     val imageSize = LocalConfiguration.current.screenWidthDp.dp / 3
+    val expandedProfilePictureSize = LocalConfiguration.current.screenWidthDp * 0.8
     val titles = listOf(
         stringResource(R.string.txt_profile_tab_photos),
         stringResource(R.string.txt_profile_tab_posts)
-    )
-
-    val posts = listOf(
-        "https://picsum.photos/id/42/3456/2304",
-        "https://picsum.photos/id/59/2464/1632",
-        "https://picsum.photos/id/56/2880/1920",
-        "https://picsum.photos/id/57/2448/3264",
-        "https://picsum.photos/id/49/1280/792",
-        "https://picsum.photos/id/54/3264/2176",
-        "https://picsum.photos/id/57/2448/3264",
-        "https://picsum.photos/id/64/4326/2884",
-        "https://picsum.photos/id/73/5000/3333",
-        "https://picsum.photos/id/76/4912/3264",
-        "https://picsum.photos/id/75/1999/2998",
-        "https://picsum.photos/id/42/3456/2304",
-        "https://picsum.photos/id/59/2464/1632",
-        "https://picsum.photos/id/56/2880/1920",
-        "https://picsum.photos/id/57/2448/3264"
     )
 
     BackHandler {
@@ -143,7 +128,7 @@ fun ProfileScreen(
             ) {
                 IconButton(onClick = { navigator.navigateBack() }) {
                     Icon(
-                        contentDescription = stringResource(R.string.icon_arrow_back),
+                        contentDescription = stringResource(Icon.ArrowBack.description),
                         painter = painterResource(Icon.ArrowBack.value),
                         tint = MaterialTheme.colorScheme.onBackground
                     )
@@ -164,19 +149,23 @@ fun ProfileScreen(
         ) {
             Column {
                 when (userRelation) {
-                    EUserRelation.USER -> Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
+                    EUserRelation.USER -> Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(
                                 bottom = 0.dp,
                                 end = 24.dp,
                                 start = 24.dp,
-                                top = 16.dp
-                            ),
-                        verticalAlignment = Alignment.CenterVertically
+                                top = 24.dp
+                            )
                     ) {
                         Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    bottom = 16.dp
+                                ),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Image(
@@ -189,6 +178,9 @@ fun ProfileScreen(
                                         width = 2.dp
                                     )
                                     .clip(CircleShape)
+                                    .clickable {
+                                        openProfileImageDialog = true
+                                    }
                                     .height(64.dp)
                                     .width(64.dp),
                                 painter = rememberAsyncImagePainter(
@@ -196,24 +188,80 @@ fun ProfileScreen(
                                 )
                             )
 
-                            Spacer(modifier = Modifier.width(16.dp))
-
-                            Column {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
                                 Text(
                                     color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    text = "${user.firstName} ${user.lastName}"
+                                    style = MaterialTheme.typography.labelLarge,
+                                    text = "${journeyData.friends.value.size}"
                                 )
                                 Text(
                                     color = MaterialTheme.colorScheme.onBackground,
                                     style = MaterialTheme.typography.labelSmall,
-                                    text = "${stringResource(R.string.txt_profile_level)} ${
-                                    XPUtils.getLevel(
-                                        user.xp
-                                    )
-                                    }"
+                                    text = stringResource(R.string.txt_profile_level)
                                 )
                             }
+
+                            Divider(
+                                color = MaterialTheme.colorScheme.tertiaryContainer,
+                                modifier = Modifier
+                                    .height(32.dp)
+                                    .width(1.dp)
+                            )
+
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    text = "${journeyData.friends.value.size}"
+                                )
+                                Text(
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    text = stringResource(R.string.txt_profile_friends)
+                                )
+                            }
+
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                IconButton(onClick = { navigator.navigate(Screen.Profile) }) {
+                                    Icon(
+                                        contentDescription =
+                                        stringResource(Icon.Pencil.description),
+                                        painter = painterResource(Icon.Pencil.value),
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+
+                                IconButton(onClick = { navigator.navigate(Screen.Profile) }) {
+                                    Icon(
+                                        contentDescription = stringResource(
+                                            Icon.Settings.description
+                                        ),
+                                        painter = painterResource(Icon.Settings.value),
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            }
+                        }
+
+                        Row {
+                            Text(
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.labelLarge,
+                                text = "${user.firstName} ${user.lastName} "
+                            )
+                            Text(
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.bodySmall,
+                                text = "- ${user.username}"
+                            )
                         }
                     }
 
@@ -239,6 +287,9 @@ fun ProfileScreen(
                                         width = 2.dp
                                     )
                                     .clip(CircleShape)
+                                    .clickable {
+                                        openProfileImageDialog = true
+                                    }
                                     .height(64.dp)
                                     .width(64.dp),
                                 painter = rememberAsyncImagePainter(
@@ -269,8 +320,8 @@ fun ProfileScreen(
                             ),
                             colors = AssistChipDefaults.assistChipColors(
                                 containerColor = when (userRelation) {
-                                    EUserRelation.FRIEND -> MaterialTheme.colorScheme.error
-                                    else -> MaterialTheme.colorScheme.primary
+                                    EUserRelation.NON_FRIEND -> MaterialTheme.colorScheme.primary
+                                    else -> MaterialTheme.colorScheme.error
                                 },
                                 labelColor = MaterialTheme.colorScheme.onPrimary
                             ),
@@ -283,7 +334,22 @@ fun ProfileScreen(
                                             EUserRelation.FRIEND -> stringResource(
                                                 R.string.txt_profile_remove_friend
                                             )
-                                            else -> stringResource(R.string.txt_profile_add_friend)
+
+                                            EUserRelation.NON_FRIEND -> stringResource(
+                                                R.string.txt_profile_add_friend
+                                            )
+
+                                            EUserRelation.NON_FRIEND_RECEIVED -> stringResource(
+                                                R.string.txt_profile_refuse_friend
+                                            )
+
+                                            EUserRelation.NON_FRIEND_REQUESTED -> stringResource(
+                                                R.string.txt_profile_cancel_friend
+                                            )
+
+                                            else -> stringResource(
+                                                R.string.txt_profile_add_friend
+                                            )
                                         }
                                     }
                                 )
@@ -293,8 +359,8 @@ fun ProfileScreen(
                                 Icon(
                                     contentDescription = stringResource(
                                         when (userRelation) {
-                                            EUserRelation.FRIEND -> Icon.Decline.description
-                                            else -> Icon.Add.description
+                                            EUserRelation.NON_FRIEND -> Icon.Add.description
+                                            else -> Icon.Decline.description
                                         }
                                     ),
                                     modifier = Modifier
@@ -302,8 +368,8 @@ fun ProfileScreen(
                                         .width(16.dp),
                                     painter = painterResource(
                                         when (userRelation) {
-                                            EUserRelation.FRIEND -> Icon.Decline.value
-                                            else -> Icon.Add.value
+                                            EUserRelation.NON_FRIEND -> Icon.Add.value
+                                            else -> Icon.Decline.value
                                         }
                                     ),
                                     tint = MaterialTheme.colorScheme.onPrimary
@@ -348,25 +414,100 @@ fun ProfileScreen(
                 }
             }
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3)
-            ) {
-                items(posts) {
-                    Image(
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .height(imageSize),
-                        painter = rememberAsyncImagePainter(model = it)
-                    )
+            when (tabSelected) {
+                0 -> LazyVerticalGrid(
+                    columns = GridCells.Fixed(3)
+                ) {
+                    items(
+                        postsData.specificPosts.value.filter {
+                            it.photoUrls.isNotEmpty()
+                        }
+                    ) {
+                        Image(
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .clickable {
+                                    navigator.navigateArgs(
+                                        "${Screen.Post.value}/${user.username}/${it.id}"
+                                    )
+                                }
+                                .height(imageSize),
+                            painter = rememberAsyncImagePainter(model = it.photoUrls[0])
+                        )
+                    }
+                }
+
+                1 -> LazyVerticalGrid(
+                    columns = GridCells.Fixed(1)
+                ) {
+                    items(
+                        postsData.specificPosts.value.filter {
+                            it.photoUrls.isEmpty()
+                        }
+                    ) {
+                        CardPost(
+                            compactPost = true,
+                            getComments = postsHandlers.getCommentsByPostId,
+                            navigator = navigator,
+                            postData = it,
+                            sendComment = postsHandlers.sendComment,
+                            user = user,
+                            userRelation = userRelation
+                        )
+
+                        Spacer(
+                            modifier = with(Modifier) {
+                                height(
+                                    when {
+                                        it.description.isNullOrBlank() ||
+                                            it.photoUrls.isEmpty() -> 4.dp
+
+                                        else -> 32.dp
+                                    }
+                                )
+                            }
+                        )
+
+                        Divider(
+                            color = MaterialTheme.colorScheme.tertiaryContainer,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 48.dp),
+                            thickness = 1.dp
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
                 }
             }
         }
 
         Navbar(
             activePage = EPageButtons.PROFILE,
-            data = data,
+            data = journeyData,
             navigator = navigator
         )
+    }
+
+    if (openProfileImageDialog) {
+        Dialog(onDismissRequest = { openProfileImageDialog = false }) {
+            Image(
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .border(
+                        brush = XPUtils.getBorder(user.xp),
+                        shape = CircleShape,
+                        width = 2.dp
+                    )
+                    .clip(CircleShape)
+                    .height(expandedProfilePictureSize.dp)
+                    .width(expandedProfilePictureSize.dp),
+                painter = rememberAsyncImagePainter(
+                    model = user.profilePicture
+                )
+            )
+        }
     }
 }

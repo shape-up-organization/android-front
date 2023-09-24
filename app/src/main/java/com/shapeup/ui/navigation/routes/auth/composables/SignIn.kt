@@ -40,15 +40,15 @@ fun NavGraphBuilder.screenSignIn(navController: NavHostController) {
             )
         }
     ) {
-        val viewModel = it.viewModel<SignInViewModel>(navController)
-        viewModel.navigator = navController.navigator
+        val signInViewModel = it.viewModel<SignInViewModel>(navController)
+        signInViewModel.navigator = navController.navigator
 
         SignInScreen(
             data = SignInFormData(
-                email = viewModel.email,
-                password = viewModel.password
+                email = signInViewModel.email,
+                password = signInViewModel.password
             ),
-            handlers = viewModel.handlers,
+            handlers = signInViewModel.handlers,
             navigator = navController.navigator
         )
     }

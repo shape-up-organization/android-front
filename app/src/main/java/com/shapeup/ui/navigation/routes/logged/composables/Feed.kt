@@ -11,33 +11,39 @@ import com.shapeup.ui.utils.helpers.navigator
 import com.shapeup.ui.utils.helpers.viewModel
 import com.shapeup.ui.viewModels.logged.JourneyData
 import com.shapeup.ui.viewModels.logged.JourneyViewModel
+import com.shapeup.ui.viewModels.logged.PostsData
+import com.shapeup.ui.viewModels.logged.PostsViewModel
 
 fun NavGraphBuilder.screenFeed(navController: NavHostController) {
     composable(
         route = Screen.Feed.value,
-        enterTransition = {
-            EnterTransition.None
-        },
-        popEnterTransition = {
-            EnterTransition.None
-        },
-        exitTransition = {
-            ExitTransition.None
-        },
-        popExitTransition = {
-            ExitTransition.None
-        }
+        enterTransition = { EnterTransition.None },
+        popEnterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None },
+        popExitTransition = { ExitTransition.None }
     ) {
-        val viewModel = it.viewModel<JourneyViewModel>(navController)
-        viewModel.navigator = navController.navigator
+        val journeyViewModel = it.viewModel<JourneyViewModel>(navController)
+        journeyViewModel.navigator = navController.navigator
+
+        val postsViewModel = it.viewModel<PostsViewModel>(navController)
+        postsViewModel.navigator = navController.navigator
+
+        if (journeyViewModel.friends.value.isEmpty()) {
+            journeyViewModel.handlers.getFriends()
+        }
+        postsViewModel.handlers.getPosts()
 
         FeedScreen(
-            data = JourneyData(
-                friends = viewModel.friends,
-                selectedUser = viewModel.selectedUser,
-                userData = viewModel.userData
+            journeyData = JourneyData(
+                friends = journeyViewModel.friends,
+                userData = journeyViewModel.userData
             ),
-            handlers = viewModel.handlers,
+            journeyHandlers = journeyViewModel.handlers,
+            postsData = PostsData(
+                posts = postsViewModel.posts,
+                specificPosts = postsViewModel.specificPosts
+            ),
+            postsHandlers = postsViewModel.handlers,
             navigator = navController.navigator
         )
     }

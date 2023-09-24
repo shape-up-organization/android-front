@@ -13,14 +13,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.shapeup.R
+import com.shapeup.ui.components.BottomSheet
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.constants.Image
@@ -102,18 +99,14 @@ fun WelcomeScreen(
         }
     }
 
-    BottomSheet()
+    AboutBottomSheet()
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheet() {
-    val scaffoldState = rememberBottomSheetScaffoldState()
-    BottomSheetScaffold(
-        scaffoldState = scaffoldState,
-        sheetContainerColor = MaterialTheme.colorScheme.primaryContainer,
-        sheetPeekHeight = BottomSheetDefaults.SheetPeekHeight,
-        sheetContent = {
+fun AboutBottomSheet() {
+    BottomSheet(
+        title = stringResource(R.string.txt_welcome_drawer_title),
+        content = {
             Column(
                 Modifier
                     .fillMaxWidth()
@@ -121,8 +114,6 @@ fun BottomSheet() {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceAround
             ) {
-                Text(text = stringResource(R.string.txt_welcome_drawer_title))
-
                 Image(
                     painter = painterResource(id = Image.GirlMeditating.value),
                     contentDescription = stringResource(R.string.img_girl_meditating)
@@ -152,7 +143,7 @@ fun BottomSheet() {
                 )
             }
         }
-    ) {}
+    )
 }
 
 @Composable
@@ -163,6 +154,10 @@ fun RowIcon(text: String, icon: Icon, contentDescription: String? = "") {
             contentDescription = contentDescription
         )
         Spacer(modifier = Modifier.width(8.dp))
-        Text(text = text, style = MaterialTheme.typography.bodyLarge)
+        Text(
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.bodyLarge,
+            text = text
+        )
     }
 }

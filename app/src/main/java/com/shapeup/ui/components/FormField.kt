@@ -35,6 +35,7 @@ fun FormField(
     isPasswordHidden: MutableState<Boolean> = remember { mutableStateOf(true) },
     keyboardActions: KeyboardActions = KeyboardActions(
         onDone = { focusManager?.clearFocus() },
+        onGo = { focusManager?.clearFocus() },
         onSearch = { focusManager?.clearFocus() },
         onSend = { focusManager?.clearFocus() }
     ),

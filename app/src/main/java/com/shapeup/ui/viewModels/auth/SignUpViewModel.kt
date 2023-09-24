@@ -9,7 +9,9 @@ import com.shapeup.ui.utils.helpers.DateHelper
 import com.shapeup.ui.utils.helpers.Navigator
 
 class SignUpViewModel : ViewModel() {
-    var navigator: Navigator? = null
+    lateinit var navigator: Navigator
+
+    private val dateHelper = DateHelper()
 
     val activeStep = mutableIntStateOf(1)
     val birthday = mutableStateOf("")
@@ -21,8 +23,6 @@ class SignUpViewModel : ViewModel() {
     val phone = mutableStateOf("")
     val username = mutableStateOf("")
     val verificationCode = mutableStateOf("")
-
-    val dateHelper = DateHelper()
 
     private fun clearFormData() {
         activeStep.intValue = 1
@@ -59,7 +59,7 @@ class SignUpViewModel : ViewModel() {
         println("username: ${username.value}")
         println("verificationCode: ${verificationCode.value}")
 
-        this.navigator?.navigate?.invoke(Screen.Feed)
+        navigator.navigate(Screen.Feed)
     }
 
     private fun verifyCode() {}
