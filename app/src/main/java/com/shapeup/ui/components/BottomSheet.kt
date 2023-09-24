@@ -79,7 +79,7 @@ fun BottomSheet(
                                             defaultState.bottomSheetState.targetValue ==
                                                 SheetValue.Expanded
                                         }
-                                    }.value -> 0.6f
+                                    }.value -> 0.3f
 
                                     else -> 0f
                                 }

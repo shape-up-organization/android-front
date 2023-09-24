@@ -60,6 +60,7 @@ import com.shapeup.ui.utils.helpers.XPUtils
 import com.shapeup.ui.viewModels.logged.EUserRelation
 import com.shapeup.ui.viewModels.logged.JourneyData
 import com.shapeup.ui.viewModels.logged.JourneyHandlers
+import com.shapeup.ui.viewModels.logged.JourneyMappers
 import com.shapeup.ui.viewModels.logged.PostsData
 import com.shapeup.ui.viewModels.logged.PostsHandlers
 import com.shapeup.ui.viewModels.logged.User
@@ -79,7 +80,7 @@ fun ProfilePreview() {
             navigator = Navigator(),
             postsData = postsDataMock,
             postsHandlers = postsHandlersMock,
-            user = getUserDataMock
+            user = JourneyMappers.userDataToUser(getUserDataMock)
         )
     }
 }
@@ -230,7 +231,7 @@ fun ProfileScreen(
                             Row(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                IconButton(onClick = { navigator.navigate(Screen.Profile) }) {
+                                IconButton(onClick = { navigator.navigate(Screen.EditProfile) }) {
                                     Icon(
                                         contentDescription =
                                         stringResource(Icon.Pencil.description),

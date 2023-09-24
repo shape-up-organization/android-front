@@ -9,6 +9,7 @@ import com.shapeup.ui.components.CardPost
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.helpers.Navigator
 import com.shapeup.ui.viewModels.logged.EUserRelation
+import com.shapeup.ui.viewModels.logged.JourneyMappers
 import com.shapeup.ui.viewModels.logged.Post
 import com.shapeup.ui.viewModels.logged.PostsHandlers
 import com.shapeup.ui.viewModels.logged.User
@@ -23,7 +24,7 @@ fun PostPreview() {
             navigator = Navigator(),
             postData = getPostsMock[0],
             postsHandlers = postsHandlersMock,
-            user = getUserDataMock,
+            user = JourneyMappers.userDataToUser(getUserDataMock),
             userRelation = EUserRelation.USER
         )
     }

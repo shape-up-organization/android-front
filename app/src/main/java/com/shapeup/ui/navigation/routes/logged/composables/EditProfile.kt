@@ -5,18 +5,16 @@ import androidx.compose.animation.ExitTransition
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.shapeup.ui.screens.logged.FeedScreen
+import com.shapeup.ui.screens.logged.EditProfileScreen
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.navigator
 import com.shapeup.ui.utils.helpers.viewModel
 import com.shapeup.ui.viewModels.logged.JourneyData
 import com.shapeup.ui.viewModels.logged.JourneyViewModel
-import com.shapeup.ui.viewModels.logged.PostsData
-import com.shapeup.ui.viewModels.logged.PostsViewModel
 
-fun NavGraphBuilder.screenFeed(navController: NavHostController) {
+fun NavGraphBuilder.screenEditProfile(navController: NavHostController) {
     composable(
-        route = Screen.Feed.value,
+        route = Screen.EditProfile.value,
         enterTransition = { EnterTransition.None },
         popEnterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None },
@@ -24,25 +22,12 @@ fun NavGraphBuilder.screenFeed(navController: NavHostController) {
     ) {
         val journeyViewModel = it.viewModel<JourneyViewModel>(navController)
 
-        val postsViewModel = it.viewModel<PostsViewModel>(navController)
-        postsViewModel.navigator = navController.navigator
-
-        if (journeyViewModel.friends.value.isEmpty()) {
-            journeyViewModel.handlers.getFriends()
-        }
-        postsViewModel.handlers.getPosts()
-
-        FeedScreen(
+        EditProfileScreen(
             journeyData = JourneyData(
                 friends = journeyViewModel.friends,
                 userData = journeyViewModel.userData
             ),
             journeyHandlers = journeyViewModel.handlers,
-            postsData = PostsData(
-                posts = postsViewModel.posts,
-                specificPosts = postsViewModel.specificPosts
-            ),
-            postsHandlers = postsViewModel.handlers,
             navigator = navController.navigator
         )
     }

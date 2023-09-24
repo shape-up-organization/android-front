@@ -3,6 +3,7 @@ package com.shapeup.ui.navigation.routes.logged
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.navigation
+import com.shapeup.ui.navigation.routes.logged.composables.screenEditProfile
 import com.shapeup.ui.navigation.routes.logged.composables.screenFeed
 import com.shapeup.ui.navigation.routes.logged.composables.screenFriendshipRequest
 import com.shapeup.ui.navigation.routes.logged.composables.screenNotification
@@ -25,5 +26,7 @@ fun NavGraphBuilder.routeLogged(navController: NavHostController) {
         screenPost(navController)
 
         screenProfile(navController)
+
+        screenEditProfile(navController)
     }
 }
