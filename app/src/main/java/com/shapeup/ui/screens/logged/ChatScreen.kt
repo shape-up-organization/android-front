@@ -96,7 +96,7 @@ fun ChatScreen(
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(messages.size) {
-        messagesColumnState.animateScrollToItem(userData.messages.size - 1)
+        messagesColumnState.animateScrollToItem(messages.size - 1)
     }
 
     BackHandler {
