@@ -43,10 +43,11 @@ fun BottomSheet(
     content: @Composable (ColumnScope.() -> Unit),
     mode: BottomSheetModes = BottomSheetModes.DEFAULT,
     open: MutableState<Boolean> = mutableStateOf(false),
+    skipPartiallyExpanded: Boolean = false,
     title: String? = null,
     peekHeight: Dp = if (title.isNullOrBlank()) 32.dp else 72.dp
 ) {
-    val modalState = rememberModalBottomSheetState()
+    val modalState = rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
     val defaultState = rememberBottomSheetScaffoldState()
 
     if (mode == BottomSheetModes.MODAL && open.value) {

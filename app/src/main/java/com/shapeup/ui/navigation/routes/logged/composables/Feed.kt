@@ -43,6 +43,7 @@ fun NavGraphBuilder.screenFeed(navController: NavHostController) {
                 posts = postsViewModel.posts,
                 specificPosts = postsViewModel.specificPosts
             ),
+            postsHandlers = postsViewModel.handlers,
             navigator = navController.navigator
         )
     }

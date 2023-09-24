@@ -15,9 +15,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
@@ -30,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,16 +42,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import coil.compose.rememberAsyncImagePainter
 import com.shapeup.R
 import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
 import com.shapeup.ui.utils.helpers.XPUtils
+import com.shapeup.ui.viewModels.logged.Comment
 import com.shapeup.ui.viewModels.logged.EUserRelation
 import com.shapeup.ui.viewModels.logged.Post
 import com.shapeup.ui.viewModels.logged.User
@@ -56,11 +65,17 @@ import com.shapeup.ui.viewModels.logged.User
 fun CardPost(
     compactPost: Boolean = false,
     fullScreen: Boolean = false,
+    getComments: (String) -> List<Comment>?,
+    sendComment: (postId: String, commentMessage: String) -> Unit,
     navigator: Navigator,
     postData: Post,
     user: User,
     userRelation: EUserRelation
 ) {
+    var comments by remember {
+        mutableStateOf<List<Comment>>(emptyList())
+    }
+
     val expandCommentsBottomSheet = remember { mutableStateOf(false) }
     var expandOptionsMenu by remember { mutableStateOf(false) }
 
@@ -179,15 +194,29 @@ fun CardPost(
                     }
                     DropdownMenu(
                         expanded = expandOptionsMenu,
+                        modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer),
                         onDismissRequest = { expandOptionsMenu = false }
                     ) {
+                        DropdownMenuItem(
+                            onClick = {
+                                navigator.navigateArgs("${Screen.Profile.value}/${user.username}")
+                            },
+                            text = {
+                                Text(
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    text = stringResource(
+                                        R.string.txt_profile_see_profile
+                                    )
+                                )
+                            }
+                        )
+
                         if (userRelation == EUserRelation.USER) {
                             DropdownMenuItem(
-                                modifier = Modifier.background(MaterialTheme.colorScheme.error),
                                 onClick = { /*TODO: */ },
                                 text = {
                                     Text(
-                                        color = MaterialTheme.colorScheme.onError,
+                                        color = MaterialTheme.colorScheme.error,
                                         text = stringResource(
                                             R.string.txt_feed_delete
                                         )
@@ -198,11 +227,10 @@ fun CardPost(
 
                         if (userRelation == EUserRelation.FRIEND) {
                             DropdownMenuItem(
-                                modifier = Modifier.background(MaterialTheme.colorScheme.error),
                                 onClick = { /*TODO: */ },
                                 text = {
                                     Text(
-                                        color = MaterialTheme.colorScheme.onError,
+                                        color = MaterialTheme.colorScheme.error,
                                         text = stringResource(
                                             R.string.txt_profile_remove_friend
                                         )
@@ -213,11 +241,10 @@ fun CardPost(
 
                         if (userRelation == EUserRelation.NON_FRIEND) {
                             DropdownMenuItem(
-                                modifier = Modifier.background(MaterialTheme.colorScheme.error),
                                 onClick = { /*TODO: */ },
                                 text = {
                                     Text(
-                                        color = MaterialTheme.colorScheme.onError,
+                                        color = MaterialTheme.colorScheme.primary,
                                         text = stringResource(
                                             R.string.txt_profile_add_friend
                                         )
@@ -228,11 +255,10 @@ fun CardPost(
 
                         if (userRelation == EUserRelation.NON_FRIEND_RECEIVED) {
                             DropdownMenuItem(
-                                modifier = Modifier.background(MaterialTheme.colorScheme.error),
                                 onClick = { /*TODO: */ },
                                 text = {
                                     Text(
-                                        color = MaterialTheme.colorScheme.onError,
+                                        color = MaterialTheme.colorScheme.error,
                                         text = stringResource(
                                             R.string.txt_profile_refuse_friend
                                         )
@@ -243,11 +269,10 @@ fun CardPost(
 
                         if (userRelation == EUserRelation.NON_FRIEND_REQUESTED) {
                             DropdownMenuItem(
-                                modifier = Modifier.background(MaterialTheme.colorScheme.error),
                                 onClick = { /*TODO: */ },
                                 text = {
                                     Text(
-                                        color = MaterialTheme.colorScheme.onError,
+                                        color = MaterialTheme.colorScheme.error,
                                         text = stringResource(
                                             R.string.txt_profile_cancel_friend
                                         )
@@ -350,6 +375,9 @@ fun CardPost(
                 modifier = Modifier.padding(0.dp),
                 onClick = {
                     expandCommentsBottomSheet.value = !expandCommentsBottomSheet.value
+                    if (expandCommentsBottomSheet.value) {
+                        comments = getComments(postData.id) ?: emptyList()
+                    }
                 },
                 shape = RoundedCornerShape(24.dp)
             )
@@ -413,63 +441,169 @@ fun CardPost(
         }
     }
 
-    CommentsBottomSheet(open = expandCommentsBottomSheet)
+    CommentsBottomSheet(
+        comments = comments,
+        open = expandCommentsBottomSheet,
+        sendComment = { commentMessage ->
+            sendComment(
+                postData.id,
+                commentMessage
+            )
+        }
+    )
 }
 
 @Composable
-fun CommentsBottomSheet(open: MutableState<Boolean>) {
+fun CommentsBottomSheet(
+    comments: List<Comment>,
+    open: MutableState<Boolean>,
+    sendComment: (commentMessage: String) -> Unit
+) {
+    var openProfileImageDialog by remember { mutableStateOf(false) }
+    var userCommentProfilePicture by remember { mutableStateOf<String?>("") }
+    var userCommentXp by remember { mutableIntStateOf(0) }
+    var commentText by remember { mutableStateOf("") }
+
+    val focusManager = LocalFocusManager.current
     val bottomSheetHeight = LocalConfiguration.current.screenHeightDp * 0.7
+    val expandedProfilePictureSize = LocalConfiguration.current.screenWidthDp * 0.8
 
     BottomSheet(
         mode = BottomSheetModes.MODAL,
         open = open,
-        title = "Comments",
+        skipPartiallyExpanded = true,
+        title = stringResource(R.string.txt_profile_sheet_comments),
         content = {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(bottomSheetHeight.dp)
-                    .padding(64.dp)
-                    .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.SpaceAround
+                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .height(bottomSheetHeight.dp),
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
-                Text(text = "COMMENTS")
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp)
+                        .weight(1f)
+                ) {
+                    items(comments) {
+                        Row(
+                            modifier = Modifier.padding(vertical = 16.dp),
+                            verticalAlignment = Alignment.Top
+                        ) {
+                            Image(
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .border(
+                                        brush = XPUtils.getBorder(it.xp),
+                                        shape = CircleShape,
+                                        width = 2.dp
+                                    )
+                                    .clip(CircleShape)
+                                    .clickable {
+                                        userCommentProfilePicture = it.profilePicture
+                                        userCommentXp = it.xp
+                                        openProfileImageDialog = true
+                                    }
+                                    .height(48.dp)
+                                    .width(48.dp),
+                                painter = rememberAsyncImagePainter(
+                                    model = it.profilePicture
+                                )
+                            )
+
+                            Spacer(modifier = Modifier.width(16.dp))
+
+                            Column {
+                                Row {
+                                    Text(
+                                        color = MaterialTheme.colorScheme.primary,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        text = "${it.firstName} ${it.lastName}"
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        color = MaterialTheme.colorScheme.tertiary,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        text = "@${it.username}"
+                                    )
+                                }
+                                Text(
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    text = it.commentMessage
+                                )
+                            }
+                        }
+
+                        if (openProfileImageDialog) {
+                            Dialog(onDismissRequest = { openProfileImageDialog = false }) {
+                                Image(
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .border(
+                                            brush = XPUtils.getBorder(userCommentXp),
+                                            shape = CircleShape,
+                                            width = 2.dp
+                                        )
+                                        .clip(CircleShape)
+                                        .height(expandedProfilePictureSize.dp)
+                                        .width(expandedProfilePictureSize.dp),
+                                    painter = rememberAsyncImagePainter(
+                                        model = userCommentProfilePicture
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.background)
+                        .fillMaxWidth()
+                        .padding(
+                            bottom = 20.dp,
+                            end = 24.dp,
+                            start = 24.dp,
+                            top = 8.dp
+                        ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    FormField(
+                        focusManager = focusManager,
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Default,
+                            keyboardType = KeyboardType.Ascii
+                        ),
+                        label = stringResource(R.string.txt_profile_sheet_send_comment),
+                        maxLines = 3,
+                        modifier = Modifier.weight(1f),
+                        onValueChange = { commentText = it },
+                        value = commentText
+                    )
+                    IconButton(
+                        modifier = Modifier
+                            .height(40.dp)
+                            .width(40.dp),
+                        onClick = {
+                            focusManager.clearFocus()
+                            sendComment(commentText)
+                            commentText = ""
+                        }
+                    ) {
+                        Icon(
+                            contentDescription = stringResource(Icon.Send.description),
+                            modifier = Modifier
+                                .height(24.dp)
+                                .width(24.dp),
+                            painter = painterResource(Icon.Send.value),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
             }
         }
     )

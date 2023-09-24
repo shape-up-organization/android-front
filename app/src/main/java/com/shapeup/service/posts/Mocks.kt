@@ -1,5 +1,6 @@
 package com.shapeup.service.posts
 
+import com.shapeup.ui.viewModels.logged.Comment
 import com.shapeup.ui.viewModels.logged.Post
 
 val getPostsMock = listOf(
@@ -128,5 +129,68 @@ val getPostsMock = listOf(
         liked = true,
         photoUrls = emptyList(),
         username = "g_johnston"
+    )
+)
+
+val getCommentsByPostIdMock = listOf(
+    Comment(
+        commentId = "1",
+        commentMessage = "Lorem ipsum dolor sit amet lorem ipsum dolor." +
+            "\nLorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum ",
+        createdAt = "2023-09-08",
+        firstName = "Fred",
+        lastName = "August",
+        profilePicture = null,
+        username = "fffred",
+        xp = 450
+    ),
+    Comment(
+        commentId = "2",
+        commentMessage = "Lorem ipsum dolor sit amet lorem ipsum dolor.",
+        createdAt = "2023-09-08",
+        firstName = "Georgia",
+        lastName = "Johnston",
+        profilePicture = "https://picsum.photos/id/57/2448/3264",
+        username = "g_johnston",
+        xp = 700
+    ),
+    Comment(
+        commentId = "3",
+        commentMessage = "Lorem ipsum dolor sit amet lorem ipsum dolor." +
+            "\nLorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum " +
+            "\n\nLorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum",
+        createdAt = "2023-09-09",
+        firstName = "Bartolomeo",
+        lastName = "Kingston",
+        profilePicture = "https://picsum.photos/id/57/2448/3264",
+        username = "barto",
+        xp = 120
+    ),
+    Comment(
+        commentId = "4",
+        commentMessage = "Lorem ipsum dolor sit amet lorem ipsum dolor." +
+            "\nLorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum " +
+            "\nLorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum " +
+            "\nLorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum " +
+            "\nLorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum " +
+            "\n\nLorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum",
+        createdAt = "2023-09-12",
+        firstName = "Will",
+        lastName = "Sigma",
+        profilePicture = "https://picsum.photos/id/56/2880/1920",
+        username = "will_sigma",
+        xp = 890
+    ),
+    Comment(
+        commentId = "6",
+        commentMessage = "Lorem ipsum dolor sit amet lorem ipsum dolor." +
+            "\nLorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum " +
+            "\n\nLorem ipsum dolor sit amet lorem ipsum dolor, lorem ipsum",
+        createdAt = "2023-09-12",
+        firstName = "Bartolomeo",
+        lastName = "Kingston",
+        profilePicture = "https://picsum.photos/id/57/2448/3264",
+        username = "barto",
+        xp = 120
     )
 )

@@ -12,14 +12,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -29,9 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.shapeup.MainActivity
 import com.shapeup.R
-import com.shapeup.service.friends.getAllFriendshipMock
-import com.shapeup.service.posts.getPostsMock
-import com.shapeup.service.users.getUserDataMock
 import com.shapeup.ui.components.CardPost
 import com.shapeup.ui.components.EPageButtons
 import com.shapeup.ui.components.FormField
@@ -41,10 +37,14 @@ import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
-import com.shapeup.ui.viewModels.logged.EUserRelation
 import com.shapeup.ui.viewModels.logged.JourneyData
 import com.shapeup.ui.viewModels.logged.JourneyHandlers
 import com.shapeup.ui.viewModels.logged.PostsData
+import com.shapeup.ui.viewModels.logged.PostsHandlers
+import com.shapeup.ui.viewModels.logged.journeyDataMock
+import com.shapeup.ui.viewModels.logged.journeyHandlersMock
+import com.shapeup.ui.viewModels.logged.postsDataMock
+import com.shapeup.ui.viewModels.logged.postsHandlersMock
 import kotlin.system.exitProcess
 
 @SuppressLint("UnrememberedMutableState")
@@ -53,20 +53,10 @@ import kotlin.system.exitProcess
 fun FeedPreview() {
     ShapeUpTheme {
         FeedScreen(
-            journeyData = JourneyData(
-                friends = mutableStateOf(emptyList()),
-                userData = mutableStateOf(getUserDataMock)
-            ),
-            journeyHandlers = JourneyHandlers(
-                getFriends = { getAllFriendshipMock },
-                getUser = { getUserDataMock },
-                getUserRelation = { EUserRelation.USER },
-                logOut = {}
-            ),
-            postsData = PostsData(
-                posts = mutableStateOf(getPostsMock),
-                specificPosts = mutableStateOf(emptyList())
-            ),
+            journeyData = journeyDataMock,
+            journeyHandlers = journeyHandlersMock,
+            postsData = postsDataMock,
+            postsHandlers = postsHandlersMock,
             navigator = Navigator()
         )
     }
@@ -77,7 +67,8 @@ fun FeedScreen(
     journeyData: JourneyData,
     journeyHandlers: JourneyHandlers,
     navigator: Navigator,
-    postsData: PostsData
+    postsData: PostsData,
+    postsHandlers: PostsHandlers
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -149,44 +140,47 @@ fun FeedScreen(
             }
         }
 
-        Column(
+        LazyColumn(
             modifier = Modifier
-                .verticalScroll(rememberScrollState())
                 .weight(1f)
         ) {
-            postsData.posts.value.map {
-                val user = journeyHandlers.getUser(it.username) ?: return
-                val userRelation = journeyHandlers.getUserRelation(it.username)
+            items(postsData.posts.value) {
+                val user = journeyHandlers.getUser(it.username)
+                if (user != null) {
+                    val userRelation = journeyHandlers.getUserRelation(it.username)
 
-                CardPost(
-                    postData = it,
-                    navigator = navigator,
-                    user = user,
-                    userRelation = userRelation
-                )
+                    CardPost(
+                        getComments = postsHandlers.getCommentsByPostId,
+                        navigator = navigator,
+                        postData = it,
+                        sendComment = postsHandlers.sendComment,
+                        user = user,
+                        userRelation = userRelation
+                    )
 
-                Spacer(
-                    modifier = with(Modifier) {
-                        height(
-                            when {
-                                it.description.isNullOrBlank() ||
-                                    it.photoUrls.isEmpty() -> 4.dp
+                    Spacer(
+                        modifier = with(Modifier) {
+                            height(
+                                when {
+                                    it.description.isNullOrBlank() ||
+                                        it.photoUrls.isEmpty() -> 4.dp
 
-                                else -> 32.dp
-                            }
-                        )
-                    }
-                )
+                                    else -> 32.dp
+                                }
+                            )
+                        }
+                    )
 
-                Divider(
-                    color = MaterialTheme.colorScheme.tertiaryContainer,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 48.dp),
-                    thickness = 1.dp
-                )
+                    Divider(
+                        color = MaterialTheme.colorScheme.tertiaryContainer,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 48.dp),
+                        thickness = 1.dp
+                    )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
             }
         }
 

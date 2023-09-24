@@ -48,8 +48,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import coil.compose.rememberAsyncImagePainter
 import com.shapeup.R
-import com.shapeup.service.friends.getAllFriendshipMock
-import com.shapeup.service.posts.getPostsMock
 import com.shapeup.service.users.getUserDataMock
 import com.shapeup.ui.components.CardPost
 import com.shapeup.ui.components.EPageButtons
@@ -63,7 +61,12 @@ import com.shapeup.ui.viewModels.logged.EUserRelation
 import com.shapeup.ui.viewModels.logged.JourneyData
 import com.shapeup.ui.viewModels.logged.JourneyHandlers
 import com.shapeup.ui.viewModels.logged.PostsData
+import com.shapeup.ui.viewModels.logged.PostsHandlers
 import com.shapeup.ui.viewModels.logged.User
+import com.shapeup.ui.viewModels.logged.journeyDataMock
+import com.shapeup.ui.viewModels.logged.journeyHandlersMock
+import com.shapeup.ui.viewModels.logged.postsDataMock
+import com.shapeup.ui.viewModels.logged.postsHandlersMock
 
 @SuppressLint("UnrememberedMutableState")
 @Preview
@@ -71,21 +74,11 @@ import com.shapeup.ui.viewModels.logged.User
 fun ProfilePreview() {
     ShapeUpTheme {
         ProfileScreen(
-            journeyData = JourneyData(
-                friends = mutableStateOf(emptyList()),
-                userData = mutableStateOf(getUserDataMock)
-            ),
-            journeyHandlers = JourneyHandlers(
-                getFriends = { getAllFriendshipMock },
-                getUser = { getUserDataMock },
-                getUserRelation = { EUserRelation.USER },
-                logOut = {}
-            ),
+            journeyData = journeyDataMock,
+            journeyHandlers = journeyHandlersMock,
             navigator = Navigator(),
-            postsData = PostsData(
-                posts = mutableStateOf(emptyList()),
-                specificPosts = mutableStateOf(getPostsMock.filter { it.username == "g_johnston" })
-            ),
+            postsData = postsDataMock,
+            postsHandlers = postsHandlersMock,
             user = getUserDataMock
         )
     }
@@ -97,6 +90,7 @@ fun ProfileScreen(
     journeyHandlers: JourneyHandlers,
     navigator: Navigator,
     postsData: PostsData,
+    postsHandlers: PostsHandlers,
     user: User
 ) {
     val userRelation = journeyHandlers.getUserRelation(user.username)
@@ -454,8 +448,10 @@ fun ProfileScreen(
                     ) {
                         CardPost(
                             compactPost = true,
+                            getComments = postsHandlers.getCommentsByPostId,
                             navigator = navigator,
                             postData = it,
+                            sendComment = postsHandlers.sendComment,
                             user = user,
                             userRelation = userRelation
                         )

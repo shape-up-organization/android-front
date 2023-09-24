@@ -96,6 +96,10 @@ enum class Icon(@DrawableRes val value: Int, val description: Int) {
         description = R.string.icon_search,
         value = R.drawable.icon_search
     ),
+    Send(
+        description = R.string.icon_send,
+        value = R.drawable.icon_send
+    ),
     Settings(
         description = R.string.icon_settings,
         value = R.drawable.icon_settings

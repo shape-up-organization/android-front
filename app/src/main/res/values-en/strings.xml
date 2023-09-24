@@ -28,6 +28,7 @@
     <string name="icon_plus">Plus</string>
     <string name="icon_rank">Rank</string>
     <string name="icon_search">Search</string>
+    <string name="icon_send">Send</string>
     <string name="icon_settings">Settings</string>
 
     <!-- COMPONENTS -->
@@ -99,8 +100,11 @@
     <!-- PROFILE -->
     <string name="txt_profile_likes">likes</string>
     <string name="txt_profile_comments">comments</string>
+    <string name="txt_profile_sheet_comments">Comments</string>
+    <string name="txt_profile_sheet_send_comment">Write a comment</string>
     <string name="txt_profile_level">level</string>
     <string name="txt_profile_friends">friends</string>
+    <string name="txt_profile_see_profile">See profile</string>
     <string name="txt_profile_add_friend">Request</string>
     <string name="txt_profile_remove_friend">Remove</string>
     <string name="txt_profile_refuse_friend">Refuse request</string>

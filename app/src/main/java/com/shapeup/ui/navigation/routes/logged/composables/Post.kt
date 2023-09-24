@@ -37,6 +37,7 @@ fun NavGraphBuilder.screenPost(navController: NavHostController) {
                 PostScreen(
                     navigator = navController.navigator,
                     postData = postData,
+                    postsHandlers = postsViewModel.handlers,
                     user = user,
                     userRelation = journeyViewModel.handlers.getUserRelation(user.username)
                 )

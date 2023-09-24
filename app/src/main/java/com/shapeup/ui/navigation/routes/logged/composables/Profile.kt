@@ -43,6 +43,7 @@ fun NavGraphBuilder.screenProfile(navController: NavHostController) {
                     posts = postsViewModel.posts,
                     specificPosts = postsViewModel.specificPosts
                 ),
+                postsHandlers = postsViewModel.handlers,
                 navigator = navController.navigator,
                 user = user
             )
@@ -73,6 +74,7 @@ fun NavGraphBuilder.screenProfile(navController: NavHostController) {
                 posts = postsViewModel.posts,
                 specificPosts = postsViewModel.specificPosts
             ),
+            postsHandlers = postsViewModel.handlers,
             navigator = navController.navigator,
             user = journeyViewModel.userData.value
         )

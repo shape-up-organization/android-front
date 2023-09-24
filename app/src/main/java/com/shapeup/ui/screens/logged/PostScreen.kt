@@ -10,7 +10,9 @@ import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.helpers.Navigator
 import com.shapeup.ui.viewModels.logged.EUserRelation
 import com.shapeup.ui.viewModels.logged.Post
+import com.shapeup.ui.viewModels.logged.PostsHandlers
 import com.shapeup.ui.viewModels.logged.User
+import com.shapeup.ui.viewModels.logged.postsHandlersMock
 
 @SuppressLint("UnrememberedMutableState")
 @Preview
@@ -20,6 +22,7 @@ fun PostPreview() {
         PostScreen(
             navigator = Navigator(),
             postData = getPostsMock[0],
+            postsHandlers = postsHandlersMock,
             user = getUserDataMock,
             userRelation = EUserRelation.USER
         )
@@ -30,13 +33,16 @@ fun PostPreview() {
 fun PostScreen(
     navigator: Navigator,
     postData: Post,
+    postsHandlers: PostsHandlers,
     user: User,
     userRelation: EUserRelation
 ) {
     CardPost(
         fullScreen = true,
+        getComments = postsHandlers.getCommentsByPostId,
         navigator = navigator,
         postData = postData,
+        sendComment = postsHandlers.sendComment,
         user = user,
         userRelation = userRelation
     )

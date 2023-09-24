@@ -59,11 +59,23 @@ data class JourneyData(
     val userData: MutableState<User>
 )
 
+val journeyDataMock = JourneyData(
+    friends = mutableStateOf(emptyList()),
+    userData = mutableStateOf(getUserDataMock)
+)
+
 data class JourneyHandlers(
     val getFriends: () -> List<User>?,
-    val getUser: (String) -> User?,
-    val getUserRelation: (String) -> EUserRelation,
+    val getUser: (username: String) -> User?,
+    val getUserRelation: (username: String) -> EUserRelation,
     val logOut: () -> Unit
+)
+
+val journeyHandlersMock = JourneyHandlers(
+    getFriends = { getAllFriendshipMock },
+    getUser = { getUserDataMock },
+    getUserRelation = { EUserRelation.USER },
+    logOut = {}
 )
 
 data class User(
