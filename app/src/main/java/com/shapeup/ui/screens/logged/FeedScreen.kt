@@ -127,7 +127,7 @@ fun FeedScreen(
                 modifier = Modifier
                     .height(32.dp)
                     .width(32.dp),
-                onClick = { navigator.navigate(Screen.Feed) }
+                onClick = { navigator.navigate(Screen.ChatsList) }
             ) {
                 Icon(
                     contentDescription = stringResource(Icon.Chats.description),

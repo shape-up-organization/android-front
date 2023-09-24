@@ -116,4 +116,9 @@
     <string name="sent_you_friendship_request">Te enviou uma solicitação de amizade</string>
     <!-- PROFILE -->
     <string name="txt_edit_profile_update_profile_pic">Alterar foto de perfil</string>
+    <!-- CHAT -->
+    <string name="txt_chat_search_friends">Achar amigo</string>
+    <string name="txt_chat_user_last_sender">Você:</string>
+    <string name="txt_chat_online">online</string>
+    <string name="txt_chat_offline">offline</string>
 </resources>

@@ -89,13 +89,19 @@ fun FormField(
                 keyboardType = KeyboardType.Text
             )
         },
-        label = { Text(label) },
+        label = {
+            Text(
+                color = MaterialTheme.colorScheme.tertiary,
+                text = label
+            )
+        },
         leadingIcon = when {
             leadingIcon != null -> {
                 {
                     Icon(
                         contentDescription = stringResource(leadingIcon.description),
-                        painter = painterResource(leadingIcon.value)
+                        painter = painterResource(leadingIcon.value),
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -104,7 +110,8 @@ fun FormField(
                 {
                     Icon(
                         contentDescription = stringResource(Icon.Search.description),
-                        painter = painterResource(Icon.Search.value)
+                        painter = painterResource(Icon.Search.value),
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }

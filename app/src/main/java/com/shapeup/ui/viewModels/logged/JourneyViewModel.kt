@@ -5,16 +5,40 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.shapeup.service.friends.getAllFriendshipMock
+import com.shapeup.service.friends.getFriendsMessagesMock
 import com.shapeup.service.users.getUserDataMock
+import kotlin.random.Random
 
 class JourneyViewModel : ViewModel() {
-    val friends = mutableStateOf<List<User>>(emptyList())
+    val friends = mutableStateOf<List<Friend>>(emptyList())
     val userData = mutableStateOf(getUserDataMock)
 
-    private fun getFriends(): List<User>? {
+    private fun getFriends(): List<Friend> {
         // TODO: implement getFriends from service
-        friends.value = getAllFriendshipMock
+        val friendsList = getAllFriendshipMock
+
+        // TODO: implement getFriendsMessages from service
+        fun getFriendsMessages(username: String): List<Message> {
+            return getFriendsMessagesMock.filter {
+                it.receiverName == username || it.senderName == username
+            }
+        }
+
+        val friendsWithMessages = friendsList.map {
+            Friend(
+                messages = getFriendsMessages(it.username),
+                online = getFriendStatus(it.username),
+                user = it
+            )
+        }
+
+        friends.value = friendsWithMessages
         return friends.value
+    }
+
+    private fun getFriendStatus(username: String): Boolean {
+        // TODO: implement getFriendStatus from service
+        return Random.nextBoolean()
     }
 
     private fun getUser(username: String): User? {
@@ -22,8 +46,8 @@ class JourneyViewModel : ViewModel() {
             EUserRelation.USER -> JourneyMappers.userDataToUser(userData.value)
 
             EUserRelation.FRIEND -> friends.value.find {
-                it.username == username
-            }
+                it.user.username == username
+            }?.user
 
             // TODO: implement userGet from service before returning null
             else -> null
@@ -34,7 +58,7 @@ class JourneyViewModel : ViewModel() {
         if (userData.value.username == username) return EUserRelation.USER
 
         friends.value.forEach {
-            if (it.username == username) {
+            if (it.user.username == username) {
                 return EUserRelation.FRIEND
             }
         }
@@ -65,6 +89,7 @@ class JourneyViewModel : ViewModel() {
 
     val handlers = JourneyHandlers(
         getFriends = ::getFriends,
+        getFriendStatus = ::getFriendStatus,
         getUser = ::getUser,
         getUserRelation = ::getUserRelation,
         logOut = ::logOut,
@@ -74,7 +99,7 @@ class JourneyViewModel : ViewModel() {
 }
 
 data class JourneyData(
-    val friends: MutableState<List<User>>,
+    val friends: MutableState<List<Friend>>,
     val userData: MutableState<UserData>
 )
 
@@ -84,7 +109,8 @@ val journeyDataMock = JourneyData(
 )
 
 data class JourneyHandlers(
-    val getFriends: () -> List<User>?,
+    val getFriends: () -> List<Friend>?,
+    val getFriendStatus: (username: String) -> Boolean,
     val getUser: (username: String) -> User?,
     val getUserRelation: (username: String) -> EUserRelation,
     val logOut: () -> Unit,
@@ -93,7 +119,19 @@ data class JourneyHandlers(
 )
 
 val journeyHandlersMock = JourneyHandlers(
-    getFriends = { getAllFriendshipMock },
+    getFriends = {
+        val friendsList = getAllFriendshipMock
+
+        friendsList.map {
+            Friend(
+                user = it,
+                messages = getFriendsMessagesMock.filter { message ->
+                    message.receiverName == it.username || message.senderName == it.username
+                }
+            )
+        }
+    },
+    getFriendStatus = { Random.nextBoolean() },
     getUser = { JourneyMappers.userDataToUser(getUserDataMock) },
     getUserRelation = { EUserRelation.USER },
     logOut = {},
@@ -129,6 +167,19 @@ data class UserDataUpdate(
     val lastName: String,
     val profilePicture: Uri,
     val username: String
+)
+
+data class Message(
+    val date: String,
+    val message: String,
+    val receiverName: String,
+    val senderName: String
+)
+
+data class Friend(
+    val messages: List<Message>,
+    val online: Boolean = false,
+    val user: User
 )
 
 object JourneyMappers {

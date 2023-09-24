@@ -139,6 +139,8 @@ fun ProfileScreen(
 
                 Text(
                     color = MaterialTheme.colorScheme.onBackground,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.labelLarge,
                     text = "${user.firstName} ${user.lastName}"
                 )
@@ -255,13 +257,17 @@ fun ProfileScreen(
                         Row {
                             Text(
                                 color = MaterialTheme.colorScheme.onBackground,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
                                 style = MaterialTheme.typography.labelLarge,
-                                text = "${user.firstName} ${user.lastName} "
+                                text = "${user.firstName} ${user.lastName}"
                             )
                             Text(
                                 color = MaterialTheme.colorScheme.onBackground,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
                                 style = MaterialTheme.typography.bodySmall,
-                                text = "- ${user.username}"
+                                text = " - ${user.username}"
                             )
                         }
                     }
@@ -276,6 +282,7 @@ fun ProfileScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Row(
+                            modifier = Modifier.weight(1f),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Image(
@@ -300,9 +307,11 @@ fun ProfileScreen(
 
                             Spacer(modifier = Modifier.width(16.dp))
 
-                            Column {
+                            Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     color = MaterialTheme.colorScheme.onBackground,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
                                     style = MaterialTheme.typography.bodyMedium,
                                     text = "${user.firstName} ${user.lastName}"
                                 )
