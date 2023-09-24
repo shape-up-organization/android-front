@@ -140,10 +140,7 @@ fun FeedScreen(
             }
         }
 
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-        ) {
+        LazyColumn(modifier = Modifier.weight(1f)) {
             items(postsData.posts.value) {
                 val user = journeyHandlers.getUser(it.username)
                 if (user != null) {

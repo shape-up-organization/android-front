@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.shapeup.service.friends.getAllFriendshipMock
 import com.shapeup.service.friends.getFriendsMessagesMock
 import com.shapeup.service.users.getUserDataMock
+import java.time.LocalDateTime
 import kotlin.random.Random
 
 class JourneyViewModel : ViewModel() {
@@ -18,10 +19,10 @@ class JourneyViewModel : ViewModel() {
         val friendsList = getAllFriendshipMock
 
         // TODO: implement getFriendsMessages from service
-        fun getFriendsMessages(username: String): List<Message> {
+        fun getFriendsMessages(username: String): MutableList<Message> {
             return getFriendsMessagesMock.filter {
                 it.receiverName == username || it.senderName == username
-            }
+            }.toMutableList()
         }
 
         val friendsWithMessages = friendsList.map {
@@ -85,6 +86,24 @@ class JourneyViewModel : ViewModel() {
         println("bio ${newUserData.bio}")
     }
 
+    private fun sendMessage(messageText: String, friendUsername: String) {
+        println("message: $messageText")
+
+        val mountedMessage = Message(
+            date = LocalDateTime.now().toString(),
+            message = messageText,
+            receiverName = friendUsername,
+            senderName = userData.value.username
+        )
+
+        // TODO: send message service
+        friends.value.forEach {
+            if (it.user.username == friendUsername) {
+                it.messages.add(mountedMessage)
+            }
+        }
+    }
+
     private fun logOut() {}
 
     val handlers = JourneyHandlers(
@@ -94,7 +113,8 @@ class JourneyViewModel : ViewModel() {
         getUserRelation = ::getUserRelation,
         logOut = ::logOut,
         updateProfilePicture = ::updateProfilePicture,
-        updateUserData = ::updateUserData
+        updateUserData = ::updateUserData,
+        sendMessage = ::sendMessage
     )
 }
 
@@ -115,7 +135,8 @@ data class JourneyHandlers(
     val getUserRelation: (username: String) -> EUserRelation,
     val logOut: () -> Unit,
     val updateProfilePicture: (profilePicture: Uri) -> Unit,
-    val updateUserData: (newUserData: UserDataUpdate) -> Unit
+    val updateUserData: (newUserData: UserDataUpdate) -> Unit,
+    val sendMessage: (messageText: String, friendUsername: String) -> Unit
 )
 
 val journeyHandlersMock = JourneyHandlers(
@@ -127,7 +148,7 @@ val journeyHandlersMock = JourneyHandlers(
                 user = it,
                 messages = getFriendsMessagesMock.filter { message ->
                     message.receiverName == it.username || message.senderName == it.username
-                }
+                }.toMutableList()
             )
         }
     },
@@ -136,12 +157,14 @@ val journeyHandlersMock = JourneyHandlers(
     getUserRelation = { EUserRelation.USER },
     logOut = {},
     updateProfilePicture = {},
-    updateUserData = {}
+    updateUserData = {},
+    sendMessage = { _, _ -> }
 )
 
 data class User(
     val firstName: String,
     val lastName: String,
+    val id: String,
     val online: Boolean,
     val profilePicture: String? = null,
     val username: String,
@@ -154,6 +177,7 @@ data class UserData(
     val cellPhone: String,
     val email: String,
     val firstName: String,
+    val id: String,
     val lastName: String,
     val password: String,
     val profilePicture: String? = null,
@@ -177,7 +201,7 @@ data class Message(
 )
 
 data class Friend(
-    val messages: List<Message>,
+    val messages: MutableList<Message>,
     val online: Boolean = false,
     val user: User
 )
@@ -187,6 +211,7 @@ object JourneyMappers {
         User(
             firstName = it.firstName,
             lastName = it.lastName,
+            id = it.id,
             online = true,
             profilePicture = it.profilePicture,
             username = it.username,

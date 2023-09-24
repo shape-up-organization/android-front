@@ -90,10 +90,10 @@ fun ChatsListScreen(
                 .background(color = MaterialTheme.colorScheme.background)
                 .fillMaxWidth()
                 .padding(
-                    bottom = 16.dp,
-                    end = 16.dp,
-                    start = 16.dp,
-                    top = 8.dp
+                    bottom = 18.dp,
+                    end = 24.dp,
+                    start = 24.dp,
+                    top = 12.dp
                 ),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -133,7 +133,7 @@ fun ChatsListScreen(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier
                         .clickable {
-                            navigator.navigateArgs("${Screen.Profile.value}/${it.user.username}")
+                            navigator.navigateArgs("${Screen.Chat.value}/${it.user.username}")
                         }
                         .padding(
                             horizontal = 24.dp,
