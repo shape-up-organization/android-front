@@ -127,7 +127,7 @@ fun FeedScreen(
                 modifier = Modifier
                     .height(32.dp)
                     .width(32.dp),
-                onClick = { navigator.navigate(Screen.Feed) }
+                onClick = { navigator.navigate(Screen.ChatsList) }
             ) {
                 Icon(
                     contentDescription = stringResource(Icon.Chats.description),
@@ -140,10 +140,7 @@ fun FeedScreen(
             }
         }
 
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-        ) {
+        LazyColumn(modifier = Modifier.weight(1f)) {
             items(postsData.posts.value) {
                 val user = journeyHandlers.getUser(it.username)
                 if (user != null) {

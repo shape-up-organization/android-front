@@ -8,6 +8,7 @@ val getUserDataMock = UserData(
     cellPhone = "11983068373",
     email = "Georgia",
     firstName = "Georgia",
+    id = "1",
     lastName = "Johnston",
     password = "123",
     profilePicture = "https://picsum.photos/id/57/2448/3264",

@@ -5,16 +5,41 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.shapeup.service.friends.getAllFriendshipMock
+import com.shapeup.service.friends.getFriendsMessagesMock
 import com.shapeup.service.users.getUserDataMock
+import java.time.LocalDateTime
+import kotlin.random.Random
 
 class JourneyViewModel : ViewModel() {
-    val friends = mutableStateOf<List<User>>(emptyList())
+    val friends = mutableStateOf<List<Friend>>(emptyList())
     val userData = mutableStateOf(getUserDataMock)
 
-    private fun getFriends(): List<User>? {
+    private fun getFriends(): List<Friend> {
         // TODO: implement getFriends from service
-        friends.value = getAllFriendshipMock
+        val friendsList = getAllFriendshipMock
+
+        // TODO: implement getFriendsMessages from service
+        fun getFriendsMessages(username: String): MutableList<Message> {
+            return getFriendsMessagesMock.filter {
+                it.receiverName == username || it.senderName == username
+            }.toMutableList()
+        }
+
+        val friendsWithMessages = friendsList.map {
+            Friend(
+                messages = getFriendsMessages(it.username),
+                online = getFriendStatus(it.username),
+                user = it
+            )
+        }
+
+        friends.value = friendsWithMessages
         return friends.value
+    }
+
+    private fun getFriendStatus(username: String): Boolean {
+        // TODO: implement getFriendStatus from service
+        return Random.nextBoolean()
     }
 
     private fun getUser(username: String): User? {
@@ -22,8 +47,8 @@ class JourneyViewModel : ViewModel() {
             EUserRelation.USER -> JourneyMappers.userDataToUser(userData.value)
 
             EUserRelation.FRIEND -> friends.value.find {
-                it.username == username
-            }
+                it.user.username == username
+            }?.user
 
             // TODO: implement userGet from service before returning null
             else -> null
@@ -34,7 +59,7 @@ class JourneyViewModel : ViewModel() {
         if (userData.value.username == username) return EUserRelation.USER
 
         friends.value.forEach {
-            if (it.username == username) {
+            if (it.user.username == username) {
                 return EUserRelation.FRIEND
             }
         }
@@ -61,20 +86,40 @@ class JourneyViewModel : ViewModel() {
         println("bio ${newUserData.bio}")
     }
 
+    private fun sendMessage(messageText: String, friendUsername: String) {
+        println("message: $messageText")
+
+        val mountedMessage = Message(
+            date = LocalDateTime.now().toString(),
+            message = messageText,
+            receiverName = friendUsername,
+            senderName = userData.value.username
+        )
+
+        // TODO: send message service
+        friends.value.forEach {
+            if (it.user.username == friendUsername) {
+                it.messages.add(mountedMessage)
+            }
+        }
+    }
+
     private fun logOut() {}
 
     val handlers = JourneyHandlers(
         getFriends = ::getFriends,
+        getFriendStatus = ::getFriendStatus,
         getUser = ::getUser,
         getUserRelation = ::getUserRelation,
         logOut = ::logOut,
         updateProfilePicture = ::updateProfilePicture,
-        updateUserData = ::updateUserData
+        updateUserData = ::updateUserData,
+        sendMessage = ::sendMessage
     )
 }
 
 data class JourneyData(
-    val friends: MutableState<List<User>>,
+    val friends: MutableState<List<Friend>>,
     val userData: MutableState<UserData>
 )
 
@@ -84,26 +129,42 @@ val journeyDataMock = JourneyData(
 )
 
 data class JourneyHandlers(
-    val getFriends: () -> List<User>?,
+    val getFriends: () -> List<Friend>?,
+    val getFriendStatus: (username: String) -> Boolean,
     val getUser: (username: String) -> User?,
     val getUserRelation: (username: String) -> EUserRelation,
     val logOut: () -> Unit,
     val updateProfilePicture: (profilePicture: Uri) -> Unit,
-    val updateUserData: (newUserData: UserDataUpdate) -> Unit
+    val updateUserData: (newUserData: UserDataUpdate) -> Unit,
+    val sendMessage: (messageText: String, friendUsername: String) -> Unit
 )
 
 val journeyHandlersMock = JourneyHandlers(
-    getFriends = { getAllFriendshipMock },
+    getFriends = {
+        val friendsList = getAllFriendshipMock
+
+        friendsList.map {
+            Friend(
+                user = it,
+                messages = getFriendsMessagesMock.filter { message ->
+                    message.receiverName == it.username || message.senderName == it.username
+                }.toMutableList()
+            )
+        }
+    },
+    getFriendStatus = { Random.nextBoolean() },
     getUser = { JourneyMappers.userDataToUser(getUserDataMock) },
     getUserRelation = { EUserRelation.USER },
     logOut = {},
     updateProfilePicture = {},
-    updateUserData = {}
+    updateUserData = {},
+    sendMessage = { _, _ -> }
 )
 
 data class User(
     val firstName: String,
     val lastName: String,
+    val id: String,
     val online: Boolean,
     val profilePicture: String? = null,
     val username: String,
@@ -116,6 +177,7 @@ data class UserData(
     val cellPhone: String,
     val email: String,
     val firstName: String,
+    val id: String,
     val lastName: String,
     val password: String,
     val profilePicture: String? = null,
@@ -131,11 +193,25 @@ data class UserDataUpdate(
     val username: String
 )
 
+data class Message(
+    val date: String,
+    val message: String,
+    val receiverName: String,
+    val senderName: String
+)
+
+data class Friend(
+    val messages: MutableList<Message>,
+    val online: Boolean = false,
+    val user: User
+)
+
 object JourneyMappers {
     val userDataToUser: (userData: UserData) -> User = {
         User(
             firstName = it.firstName,
             lastName = it.lastName,
+            id = it.id,
             online = true,
             profilePicture = it.profilePicture,
             username = it.username,

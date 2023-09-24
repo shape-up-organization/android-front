@@ -487,7 +487,7 @@ fun CommentsBottomSheet(
                         .padding(horizontal = 24.dp)
                         .weight(1f)
                 ) {
-                    items(comments) {
+                    items(comments.reversed()) {
                         Row(
                             modifier = Modifier.padding(vertical = 16.dp),
                             verticalAlignment = Alignment.Top
@@ -592,6 +592,7 @@ fun CommentsBottomSheet(
                         value = commentText
                     )
                     IconButton(
+                        enabled = commentText.isNotBlank(),
                         modifier = Modifier
                             .height(40.dp)
                             .width(40.dp),
@@ -607,7 +608,10 @@ fun CommentsBottomSheet(
                                 .height(24.dp)
                                 .width(24.dp),
                             painter = painterResource(Icon.Send.value),
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = when (commentText.isNotBlank()) {
+                                true -> MaterialTheme.colorScheme.primary
+                                else -> MaterialTheme.colorScheme.tertiary
+                            }
                         )
                     }
                 }
