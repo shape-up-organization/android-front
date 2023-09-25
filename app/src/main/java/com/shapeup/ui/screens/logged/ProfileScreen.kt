@@ -458,10 +458,9 @@ fun ProfileScreen(
                     ) {
                         CardPost(
                             compactPost = true,
-                            getComments = postsHandlers.getCommentsByPostId,
                             navigator = navigator,
                             postData = it,
-                            sendComment = postsHandlers.sendComment,
+                            postsHandlers = postsHandlers,
                             user = user,
                             userRelation = userRelation
                         )

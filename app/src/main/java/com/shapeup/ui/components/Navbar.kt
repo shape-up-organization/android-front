@@ -1,22 +1,36 @@
 package com.shapeup.ui.components
 
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.BlendMode
@@ -25,9 +39,12 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 import coil.compose.rememberAsyncImagePainter
 import com.shapeup.R
+import com.shapeup.service.users.getUserDataMock
 import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
@@ -40,6 +57,29 @@ fun Navbar(
     data: JourneyData,
     navigator: Navigator
 ) {
+    var openPostOptions by remember { mutableStateOf(false) }
+    var enablePopupInteractions by remember { mutableStateOf(false) }
+
+    val popupAlpha by updateTransition(targetState = openPostOptions, label = "")
+        .animateFloat(
+            transitionSpec = { tween(durationMillis = 300) },
+            label = "popupAlpha"
+        ) {
+            if (it) 1f else 0f
+        }
+
+    LaunchedEffect(openPostOptions) {
+        if (openPostOptions) {
+            enablePopupInteractions = true
+        }
+    }
+
+    LaunchedEffect(popupAlpha) {
+        if (popupAlpha == 0f) {
+            enablePopupInteractions = false
+        }
+    }
+
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -63,30 +103,95 @@ fun Navbar(
             pageButton = EPageButtons.RANK
         )
 
-        IconButton(
-            modifier = Modifier
-                .offset(x = 0.dp, y = (-12).dp)
-                .height(64.dp)
-                .width(64.dp),
-            onClick = { navigator.navigate(EPageButtons.ADD.screen) }
-        ) {
-            Icon(
-                contentDescription = stringResource(EPageButtons.ADD.description),
+        Box {
+            IconButton(
                 modifier = Modifier
-                    .graphicsLayer(alpha = 0.99f)
-                    .drawWithCache {
-                        onDrawWithContent {
-                            drawContent()
-                            drawRect(
-                                XPUtils.getBorder(data.userData.value.xp),
-                                blendMode = BlendMode.SrcAtop
+                    .offset(x = 0.dp, y = (-12).dp)
+                    .height(64.dp)
+                    .width(64.dp),
+                onClick = { openPostOptions = !openPostOptions }
+            ) {
+                Icon(
+                    contentDescription = stringResource(EPageButtons.ADD.description),
+                    modifier = Modifier
+                        .graphicsLayer(alpha = 0.99f)
+                        .drawWithCache {
+                            onDrawWithContent {
+                                drawContent()
+                                drawRect(
+                                    XPUtils.getBorder(data.userData.value.xp),
+                                    blendMode = BlendMode.SrcAtop
+                                )
+                            }
+                        }
+                        .height(64.dp)
+                        .width(64.dp),
+                    painter = painterResource(EPageButtons.ADD.icon.value)
+                )
+            }
+
+            if (enablePopupInteractions) {
+                Popup(
+                    offset = IntOffset(0, -320),
+                    onDismissRequest = { openPostOptions = false }
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier
+                            .alpha(popupAlpha)
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp)
+                            .background(
+                                MaterialTheme.colorScheme.primaryContainer,
+                                shape = RoundedCornerShape(16.dp)
+                            )
+                            .padding(24.dp)
+                    ) {
+                        Button(
+                            modifier = Modifier
+                                .background(
+                                    MaterialTheme.colorScheme.primary,
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                                .weight(1f),
+                            onClick = { navigator.navigate(Screen.PostText) }
+                        ) {
+                            Icon(
+                                contentDescription = stringResource(Icon.Image.description),
+                                painter = painterResource(Icon.Image.value),
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                style = MaterialTheme.typography.labelMedium,
+                                text = stringResource(Icon.Image.description)
+                            )
+                        }
+                        Button(
+                            modifier = Modifier
+                                .background(
+                                    MaterialTheme.colorScheme.primary,
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                                .weight(1f),
+                            onClick = { navigator.navigate(Screen.PostText) }
+                        ) {
+                            Icon(
+                                contentDescription = stringResource(Icon.Text.description),
+                                painter = painterResource(Icon.Text.value),
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                style = MaterialTheme.typography.labelMedium,
+                                text = stringResource(Icon.Text.description)
                             )
                         }
                     }
-                    .height(64.dp)
-                    .width(64.dp),
-                painter = painterResource(EPageButtons.ADD.icon.value)
-            )
+                }
+            }
         }
 
         PageButton(
@@ -113,7 +218,7 @@ fun Navbar(
                     .clip(CircleShape)
                     .height(24.dp)
                     .width(24.dp),
-                painter = rememberAsyncImagePainter("https://picsum.photos/id/64/4326/2884")
+                painter = rememberAsyncImagePainter(getUserDataMock.profilePicture)
             )
         }
     }

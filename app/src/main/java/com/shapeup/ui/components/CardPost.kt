@@ -59,25 +59,25 @@ import com.shapeup.ui.utils.helpers.XPUtils
 import com.shapeup.ui.viewModels.logged.Comment
 import com.shapeup.ui.viewModels.logged.EUserRelation
 import com.shapeup.ui.viewModels.logged.Post
+import com.shapeup.ui.viewModels.logged.PostsHandlers
 import com.shapeup.ui.viewModels.logged.User
 
 @Composable
 fun CardPost(
     compactPost: Boolean = false,
     fullScreen: Boolean = false,
-    getComments: (String) -> List<Comment>?,
-    sendComment: (postId: String, commentMessage: String) -> Unit,
     navigator: Navigator,
     postData: Post,
+    postsHandlers: PostsHandlers,
     user: User,
     userRelation: EUserRelation
 ) {
     var comments by remember {
         mutableStateOf<List<Comment>>(emptyList())
     }
-
-    val expandCommentsBottomSheet = remember { mutableStateOf(false) }
+    var likedStatus by remember { mutableStateOf(postData.liked) }
     var expandOptionsMenu by remember { mutableStateOf(false) }
+    val expandCommentsBottomSheet = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -322,11 +322,14 @@ fun CardPost(
                 modifier = Modifier
                     .height(32.dp)
                     .width(32.dp),
-                onClick = { /*TODO*/ }
+                onClick = {
+                    postsHandlers.toggleLike(postData.id)
+                    likedStatus = !likedStatus
+                }
             ) {
                 Icon(
                     contentDescription = stringResource(
-                        when (postData.liked) {
+                        when (likedStatus) {
                             true -> Icon.HeartFilled.description
                             else -> Icon.HeartOutlined.description
                         }
@@ -335,7 +338,7 @@ fun CardPost(
                         .height(24.dp)
                         .width(24.dp),
                     painter = painterResource(
-                        when (postData.liked) {
+                        when (likedStatus) {
                             true -> Icon.HeartFilled.value
                             else -> Icon.HeartOutlined.value
                         }
@@ -376,7 +379,7 @@ fun CardPost(
                 onClick = {
                     expandCommentsBottomSheet.value = !expandCommentsBottomSheet.value
                     if (expandCommentsBottomSheet.value) {
-                        comments = getComments(postData.id) ?: emptyList()
+                        comments = postsHandlers.getCommentsByPostId(postData.id) ?: emptyList()
                     }
                 },
                 shape = RoundedCornerShape(24.dp)
@@ -446,7 +449,7 @@ fun CardPost(
         navigator = navigator,
         open = expandCommentsBottomSheet,
         sendComment = { commentMessage ->
-            sendComment(
+            postsHandlers.sendComment(
                 postData.id,
                 commentMessage
             )

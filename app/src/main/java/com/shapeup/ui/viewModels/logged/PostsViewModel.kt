@@ -1,5 +1,6 @@
 package com.shapeup.ui.viewModels.logged
 
+import android.net.Uri
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -35,6 +36,28 @@ class PostsViewModel : ViewModel() {
         return specificPosts.value
     }
 
+    private fun createPost(postData: PostCreation) {
+        if (postData.photoUrls.isNullOrEmpty()) {
+            if (postData.description.isNullOrBlank()) return
+
+            // TODO: implement createPostWithoutPhotos from service
+            println("description: ${postData.description}")
+            return
+        }
+
+        // TODO: implement createPost from service
+        println("description: ${postData.description}")
+        println("photos:\n")
+        postData.photoUrls.forEachIndexed { index, uri ->
+            println("\tphoto $index: $uri")
+        }
+    }
+
+    private fun toggleLike(postId: String) {
+        // TODO: implement toggleLikePost from service
+        println("toggle like post: $postId")
+    }
+
     private fun sendComment(postId: String, commentMessage: String) {
         // TODO: implement sendComment from service
         println("postId $postId")
@@ -46,6 +69,8 @@ class PostsViewModel : ViewModel() {
         getPosts = ::getPosts,
         getPostById = ::getPostById,
         getUserPosts = ::getUserPosts,
+        createPost = ::createPost,
+        toggleLike = ::toggleLike,
         sendComment = ::sendComment
     )
 }
@@ -65,6 +90,8 @@ data class PostsHandlers(
     val getPosts: () -> List<Post>?,
     val getPostById: (postId: String) -> Post?,
     val getUserPosts: (username: String) -> List<Post>?,
+    val createPost: (postData: PostCreation) -> Unit,
+    val toggleLike: (postId: String) -> Unit,
     val sendComment: (postId: String, commentMessage: String) -> Unit
 )
 
@@ -73,6 +100,8 @@ val postsHandlersMock = PostsHandlers(
     getPosts = { getPostsMock },
     getPostById = { getPostsMock[0] },
     getUserPosts = { getPostsMock },
+    createPost = { },
+    toggleLike = { },
     sendComment = { _, _ -> }
 )
 
@@ -82,9 +111,14 @@ data class Post(
     val createdAt: String,
     val description: String? = null,
     val id: String,
-    val liked: Boolean? = false,
+    val liked: Boolean = false,
     val photoUrls: List<String>,
     val username: String
+)
+
+data class PostCreation(
+    val description: String? = null,
+    val photoUrls: List<Uri>? = emptyList()
 )
 
 data class Comment(

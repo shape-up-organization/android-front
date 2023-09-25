@@ -64,6 +64,10 @@ enum class Icon(@DrawableRes val value: Int, val description: Int) {
         description = R.string.icon_home,
         value = R.drawable.icon_home
     ),
+    Image(
+        description = R.string.icon_image,
+        value = R.drawable.icon_image
+    ),
     Joystick(
         description = R.string.icon_joystick,
         value = R.drawable.icon_joystick
@@ -103,5 +107,9 @@ enum class Icon(@DrawableRes val value: Int, val description: Int) {
     Settings(
         description = R.string.icon_settings,
         value = R.drawable.icon_settings
+    ),
+    Text(
+        description = R.string.icon_text,
+        value = R.drawable.icon_text
     )
 }
