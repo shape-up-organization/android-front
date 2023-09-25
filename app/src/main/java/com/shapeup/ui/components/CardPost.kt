@@ -59,25 +59,25 @@ import com.shapeup.ui.utils.helpers.XPUtils
 import com.shapeup.ui.viewModels.logged.Comment
 import com.shapeup.ui.viewModels.logged.EUserRelation
 import com.shapeup.ui.viewModels.logged.Post
+import com.shapeup.ui.viewModels.logged.PostsHandlers
 import com.shapeup.ui.viewModels.logged.User
 
 @Composable
 fun CardPost(
     compactPost: Boolean = false,
     fullScreen: Boolean = false,
-    getComments: (String) -> List<Comment>?,
-    sendComment: (postId: String, commentMessage: String) -> Unit,
     navigator: Navigator,
     postData: Post,
+    postsHandlers: PostsHandlers,
     user: User,
     userRelation: EUserRelation
 ) {
     var comments by remember {
         mutableStateOf<List<Comment>>(emptyList())
     }
-
-    val expandCommentsBottomSheet = remember { mutableStateOf(false) }
+    var likedStatus by remember { mutableStateOf(postData.liked) }
     var expandOptionsMenu by remember { mutableStateOf(false) }
+    val expandCommentsBottomSheet = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -285,23 +285,18 @@ fun CardPost(
             }
         }
 
-        Carousel(data = postData.photoUrls)
+        if (postData.photoUrls.isNotEmpty()) {
+            Carousel(data = postData.photoUrls)
+        }
 
         if (postData.photoUrls.isEmpty()) {
             postData.description?.let {
                 Text(
                     color = MaterialTheme.colorScheme.onBackground,
-                    maxLines = when (fullScreen) {
-                        true -> Int.MAX_VALUE
-                        else -> 8
-                    },
+                    maxLines = Int.MAX_VALUE,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp),
-                    overflow = when (fullScreen) {
-                        true -> TextOverflow.Visible
-                        else -> TextOverflow.Ellipsis
-                    },
                     style = MaterialTheme.typography.bodySmall,
                     text = it
                 )
@@ -322,11 +317,14 @@ fun CardPost(
                 modifier = Modifier
                     .height(32.dp)
                     .width(32.dp),
-                onClick = { /*TODO*/ }
+                onClick = {
+                    postsHandlers.toggleLike(postData.id)
+                    likedStatus = !likedStatus
+                }
             ) {
                 Icon(
                     contentDescription = stringResource(
-                        when (postData.liked) {
+                        when (likedStatus) {
                             true -> Icon.HeartFilled.description
                             else -> Icon.HeartOutlined.description
                         }
@@ -335,7 +333,7 @@ fun CardPost(
                         .height(24.dp)
                         .width(24.dp),
                     painter = painterResource(
-                        when (postData.liked) {
+                        when (likedStatus) {
                             true -> Icon.HeartFilled.value
                             else -> Icon.HeartOutlined.value
                         }
@@ -376,7 +374,7 @@ fun CardPost(
                 onClick = {
                     expandCommentsBottomSheet.value = !expandCommentsBottomSheet.value
                     if (expandCommentsBottomSheet.value) {
-                        comments = getComments(postData.id) ?: emptyList()
+                        comments = postsHandlers.getCommentsByPostId(postData.id) ?: emptyList()
                     }
                 },
                 shape = RoundedCornerShape(24.dp)
@@ -415,11 +413,6 @@ fun CardPost(
                         else -> 2
                     },
                     modifier = Modifier
-                        .clickable {
-                            navigator.navigateArgs(
-                                "${Screen.Post.value}/${user.username}/${postData.id}"
-                            )
-                        }
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp)
                         .then(
@@ -427,7 +420,11 @@ fun CardPost(
                                 true ->
                                     Modifier.padding(bottom = 24.dp)
 
-                                else -> Modifier
+                                else -> Modifier.clickable {
+                                    navigator.navigateArgs(
+                                        "${Screen.Post.value}/${user.username}/${postData.id}"
+                                    )
+                                }
                             }
                         ),
                     overflow = when (fullScreen) {
@@ -446,7 +443,7 @@ fun CardPost(
         navigator = navigator,
         open = expandCommentsBottomSheet,
         sendComment = { commentMessage ->
-            sendComment(
+            postsHandlers.sendComment(
                 postData.id,
                 commentMessage
             )

@@ -87,7 +87,7 @@ fun EditProfileScreen(
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        updatedProfilePicture = uri
+        if (uri != null) updatedProfilePicture = uri
     }
 
     val focusManager = LocalFocusManager.current

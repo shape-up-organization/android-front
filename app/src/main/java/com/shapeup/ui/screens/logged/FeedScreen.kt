@@ -147,10 +147,9 @@ fun FeedScreen(
                     val userRelation = journeyHandlers.getUserRelation(it.username)
 
                     CardPost(
-                        getComments = postsHandlers.getCommentsByPostId,
                         navigator = navigator,
                         postData = it,
-                        sendComment = postsHandlers.sendComment,
+                        postsHandlers = postsHandlers,
                         user = user,
                         userRelation = userRelation
                     )

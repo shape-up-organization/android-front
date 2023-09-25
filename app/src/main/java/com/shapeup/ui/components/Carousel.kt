@@ -1,5 +1,6 @@
 package com.shapeup.ui.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -13,9 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -25,13 +28,17 @@ import coil.compose.rememberAsyncImagePainter
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Carousel(data: List<String>) {
-    val pagerState = rememberPagerState(initialPage = 0) { data.size }
+fun Carousel(
+    data: List<String> = emptyList(),
+    @SuppressLint("ModifierParameter") modifier: Modifier? = Modifier
+) {
+    val pagerState = key(data) { rememberPagerState(initialPage = 0) { data.size } }
     val maxHeight = (LocalConfiguration.current.screenHeightDp * 0.6).dp
 
     Box(modifier = Modifier.fillMaxSize()) {
         HorizontalPager(
             key = { data[it] },
+            modifier = modifier ?: Modifier,
             pageContent = { index ->
                 Image(
                     contentDescription = null,
@@ -39,7 +46,9 @@ fun Carousel(data: List<String>) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(maxHeight),
-                    painter = rememberAsyncImagePainter(model = data[index])
+                    painter = rememberAsyncImagePainter(
+                        model = data[index]
+                    )
                 )
             },
             state = pagerState
@@ -50,6 +59,11 @@ fun Carousel(data: List<String>) {
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 32.dp)
+                .background(
+                    MaterialTheme.colorScheme.primaryContainer,
+                    shape = CircleShape
+                )
+                .padding(all = 8.dp)
         ) {
             repeat(pagerState.pageCount) { index ->
                 Box(

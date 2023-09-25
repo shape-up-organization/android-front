@@ -10,6 +10,8 @@ import com.shapeup.ui.navigation.routes.logged.composables.screenFeed
 import com.shapeup.ui.navigation.routes.logged.composables.screenFriendshipRequest
 import com.shapeup.ui.navigation.routes.logged.composables.screenNotification
 import com.shapeup.ui.navigation.routes.logged.composables.screenPost
+import com.shapeup.ui.navigation.routes.logged.composables.screenPostFiles
+import com.shapeup.ui.navigation.routes.logged.composables.screenPostText
 import com.shapeup.ui.navigation.routes.logged.composables.screenProfile
 import com.shapeup.ui.utils.constants.Route
 import com.shapeup.ui.utils.constants.Screen
@@ -30,6 +32,10 @@ fun NavGraphBuilder.routeLogged(navController: NavHostController) {
         screenFriendshipRequest(navController)
 
         screenPost(navController)
+
+        screenPostText(navController)
+
+        screenPostFiles(navController)
 
         screenProfile(navController)
 
