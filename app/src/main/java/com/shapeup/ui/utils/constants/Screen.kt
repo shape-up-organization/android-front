@@ -11,7 +11,7 @@ enum class Screen(val value: String) {
     Notification("notification-screen"),
     Post("post-screen"),
     PostText("post-text-screen"),
-    PostFile("post-file-screen"),
+    PostFiles("post-files-screen"),
     Profile("profile-screen"),
     SignIn("sign-in-screen"),
     SignInVerificationCode("sign-in-verification-code-screen"),

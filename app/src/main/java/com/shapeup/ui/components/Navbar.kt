@@ -154,7 +154,7 @@ fun Navbar(
                                     shape = RoundedCornerShape(16.dp)
                                 )
                                 .weight(1f),
-                            onClick = { navigator.navigate(Screen.PostText) }
+                            onClick = { navigator.navigate(Screen.PostFiles) }
                         ) {
                             Icon(
                                 contentDescription = stringResource(Icon.Image.description),

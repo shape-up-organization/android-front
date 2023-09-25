@@ -15,7 +15,7 @@ val getAllFriendshipMock = listOf(
     ),
     User(
         firstName = "Fred",
-        lastName = "Augustss Don Corleo De San Judas Tireon",
+        lastName = "Augustss Don Corleo De San Judas Tireon Asdsasad",
         id = "3",
         online = false,
         profilePicture = null,

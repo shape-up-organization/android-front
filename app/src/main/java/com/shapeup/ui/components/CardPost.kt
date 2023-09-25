@@ -285,23 +285,18 @@ fun CardPost(
             }
         }
 
-        Carousel(data = postData.photoUrls)
+        if (postData.photoUrls.isNotEmpty()) {
+            Carousel(data = postData.photoUrls)
+        }
 
         if (postData.photoUrls.isEmpty()) {
             postData.description?.let {
                 Text(
                     color = MaterialTheme.colorScheme.onBackground,
-                    maxLines = when (fullScreen) {
-                        true -> Int.MAX_VALUE
-                        else -> 8
-                    },
+                    maxLines = Int.MAX_VALUE,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp),
-                    overflow = when (fullScreen) {
-                        true -> TextOverflow.Visible
-                        else -> TextOverflow.Ellipsis
-                    },
                     style = MaterialTheme.typography.bodySmall,
                     text = it
                 )
@@ -418,11 +413,6 @@ fun CardPost(
                         else -> 2
                     },
                     modifier = Modifier
-                        .clickable {
-                            navigator.navigateArgs(
-                                "${Screen.Post.value}/${user.username}/${postData.id}"
-                            )
-                        }
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp)
                         .then(
@@ -430,7 +420,11 @@ fun CardPost(
                                 true ->
                                     Modifier.padding(bottom = 24.dp)
 
-                                else -> Modifier
+                                else -> Modifier.clickable {
+                                    navigator.navigateArgs(
+                                        "${Screen.Post.value}/${user.username}/${postData.id}"
+                                    )
+                                }
                             }
                         ),
                     overflow = when (fullScreen) {
