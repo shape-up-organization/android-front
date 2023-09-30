@@ -67,9 +67,9 @@ fun SettingsScreen(
                     .height(88.dp)
                     .padding(all = 32.dp)
             ) {
-                Column {
-                    Text(text = "Account center")
-                }
+
+                Text(text = "Account center")
+
 
                 IconButton(onClick = { /*TODO*/ }) {
                     Icon(
@@ -93,9 +93,9 @@ fun SettingsScreen(
                     .height(88.dp)
                     .padding(all = 32.dp)
             ) {
-                Column {
-                    Text(text = "Help")
-                }
+
+                Text(text = "Help")
+
 
                 IconButton(onClick = { /*TODO*/ }) {
                     Icon(
@@ -120,9 +120,9 @@ fun SettingsScreen(
                     .height(88.dp)
                     .padding(all = 32.dp)
             ) {
-                Column {
-                    Text(text = "About")
-                }
+
+                Text(text = "About")
+
 
                 IconButton(onClick = { /*TODO*/ }) {
                     Icon(
