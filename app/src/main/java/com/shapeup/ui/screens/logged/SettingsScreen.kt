@@ -60,51 +60,7 @@ fun SettingsScreen(
                 .fillMaxWidth()
                 .padding(top = 24.dp)
         ) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(88.dp)
-                    .padding(all = 32.dp)
-            ) {
-
-                Text(text = "Account center")
-
-
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        contentDescription = stringResource(R.string.icon_arrow_forward),
-                        painter = painterResource(id = Icon.ArrowForward.value),
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-            }
-            Divider(
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .fillMaxWidth(),
-                thickness = 1.dp
-            )
-
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(88.dp)
-                    .padding(all = 32.dp)
-            ) {
-
-                Text(text = "Help")
-
-
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        contentDescription = stringResource(R.string.icon_arrow_forward),
-                        painter = painterResource(id = Icon.ArrowForward.value),
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-            }
+            RowIcon(text = "Account Center")
 
             Divider(
                 color = MaterialTheme.colorScheme.primary,
@@ -113,25 +69,17 @@ fun SettingsScreen(
                 thickness = 1.dp
             )
 
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
+            RowIcon(text = "Help")
+
+            Divider(
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(88.dp)
-                    .padding(all = 32.dp)
-            ) {
+                    .fillMaxWidth(),
+                thickness = 1.dp
+            )
 
-                Text(text = "About")
+            RowIcon(text = "About")
 
-
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        contentDescription = stringResource(R.string.icon_arrow_forward),
-                        painter = painterResource(id = Icon.ArrowForward.value),
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-            }
             Divider(
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
@@ -139,5 +87,30 @@ fun SettingsScreen(
                 thickness = 1.dp
             )
         }
+    }
+
+
+}
+
+
+@Composable
+fun RowIcon(text: String) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(88.dp)
+            .padding(all = 32.dp)
+    ) {
+        Text(text = text)
+
+        IconButton(onClick = { /*TODO*/ }) {
+            Icon(
+                contentDescription = stringResource(R.string.icon_arrow_forward),
+                painter = painterResource(id = Icon.ArrowForward.value),
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+        }
+
     }
 }
