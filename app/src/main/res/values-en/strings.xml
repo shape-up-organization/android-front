@@ -127,4 +127,6 @@
     <string name="txt_post_title">New Post</string>
     <string name="txt_post_button">Share</string>
     <string name="txt_post_form_field">Share your progress</string>
+    <!-- RANK -->
+    <string name="rank_header_title">Rank</string>
 </resources>
