@@ -27,16 +27,16 @@ import com.shapeup.ui.utils.helpers.Navigator
 
 @Composable
 @Preview
-fun AccountCenterPagePreview() {
+fun AccountCenterScreenPreview() {
     ShapeUpTheme {
-        AccountCenterPage(
+        AccountCenterScreen(
             navigator = Navigator()
         )
     }
 }
 
 @Composable
-fun AccountCenterPage(
+fun AccountCenterScreen(
     navigator: Navigator
 ) {
     BackHandler {
