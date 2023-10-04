@@ -273,7 +273,7 @@ enum class EPageButtons(
     RANK(
         description = R.string.icon_rank,
         icon = Icon.Rank,
-        screen = Screen.Feed
+        screen = Screen.Rank
     ),
     TRAININGS(
         description = R.string.icon_fitness_center,
