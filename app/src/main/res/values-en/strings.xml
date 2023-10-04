@@ -127,4 +127,19 @@
     <string name="txt_post_title">New Post</string>
     <string name="txt_post_button">Share</string>
     <string name="txt_post_form_field">Share your progress</string>
+    <!-- TRAININGS -->
+    <string name="txt_trainings_title">Trainings</string>
+    <string name="txt_trainings_your_xp">your xp:</string>
+    <string name="txt_trainings_monday">Monday</string>
+    <string name="txt_trainings_tuesday">Tuesday</string>
+    <string name="txt_trainings_wednesday">Wednesday</string>
+    <string name="txt_trainings_thursday">Thursday</string>
+    <string name="txt_trainings_friday">Friday</string>
+    <string name="txt_trainings_saturday">Saturday</string>
+    <string name="txt_trainings_sunday">Sunday</string>
+    <string name="txt_trainings_morning">morning</string>
+    <string name="txt_trainings_afternoon">afternoon</string>
+    <string name="txt_trainings_night">night</string>
+    <string name="txt_trainings_completed_trainings">completed trainings:</string>
+    <string name="txt_trainings_completed_weeks">completed weeks:</string>
 </resources>

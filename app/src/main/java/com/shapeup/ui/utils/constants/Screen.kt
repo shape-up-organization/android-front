@@ -17,5 +17,6 @@ enum class Screen(val value: String) {
     SignInVerificationCode("sign-in-verification-code-screen"),
     SignUp("sign-up-screen"),
     Splash("splash-screen"),
+    Trainings("trainings-screen"),
     Welcome("welcome-screen")
 }
