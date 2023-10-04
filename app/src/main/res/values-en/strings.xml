@@ -129,4 +129,6 @@
     <string name="txt_post_form_field">Share your progress</string>
     <!-- RANK -->
     <string name="rank_header_title">Rank</string>
+    <string name="rank_tab_global_title">Global</string>
+    <string name="rank_tab_friend_title">Friends</string>
 </resources>
