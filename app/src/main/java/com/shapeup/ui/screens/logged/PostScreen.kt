@@ -1,6 +1,5 @@
 package com.shapeup.ui.screens.logged
 
-import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.shapeup.service.posts.getPostsMock
@@ -15,10 +14,9 @@ import com.shapeup.ui.viewModels.logged.PostsHandlers
 import com.shapeup.ui.viewModels.logged.User
 import com.shapeup.ui.viewModels.logged.postsHandlersMock
 
-@SuppressLint("UnrememberedMutableState")
 @Preview
 @Composable
-fun PostPreview() {
+fun PostScreenPreview() {
     ShapeUpTheme {
         PostScreen(
             navigator = Navigator(),

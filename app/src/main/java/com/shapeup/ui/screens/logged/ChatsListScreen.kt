@@ -114,7 +114,7 @@ fun ChatsListScreen(
                     searchedName = it
                     friendsFiltered = journeyData.friends.value.filter { friend ->
                         ("${friend.user.firstName} ${friend.user.lastName}").contains(
-                            searchedName,
+                            it,
                             ignoreCase = true
                         )
                     }

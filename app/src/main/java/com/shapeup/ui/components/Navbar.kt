@@ -107,8 +107,8 @@ fun Navbar(
             IconButton(
                 modifier = Modifier
                     .offset(x = 0.dp, y = (-12).dp)
-                    .height(64.dp)
-                    .width(64.dp),
+                    .height(48.dp)
+                    .width(48.dp),
                 onClick = { openPostOptions = !openPostOptions }
             ) {
                 Icon(
@@ -124,8 +124,8 @@ fun Navbar(
                                 )
                             }
                         }
-                        .height(64.dp)
-                        .width(64.dp),
+                        .height(48.dp)
+                        .width(48.dp),
                     painter = painterResource(EPageButtons.ADD.icon.value)
                 )
             }
@@ -278,7 +278,7 @@ enum class EPageButtons(
     TRAININGS(
         description = R.string.icon_fitness_center,
         icon = Icon.FitnessCenter,
-        screen = Screen.Feed
+        screen = Screen.Trainings
     );
 
     companion object {

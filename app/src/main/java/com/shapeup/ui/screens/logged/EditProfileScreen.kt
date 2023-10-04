@@ -1,6 +1,5 @@
 package com.shapeup.ui.screens.logged
 
-import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -56,10 +55,9 @@ import com.shapeup.ui.viewModels.logged.UserDataUpdate
 import com.shapeup.ui.viewModels.logged.journeyDataMock
 import com.shapeup.ui.viewModels.logged.journeyHandlersMock
 
-@SuppressLint("UnrememberedMutableState")
 @Preview
 @Composable
-fun EditProfilePreview() {
+fun EditProfileScreenPreview() {
     ShapeUpTheme {
         EditProfileScreen(
             journeyData = journeyDataMock,

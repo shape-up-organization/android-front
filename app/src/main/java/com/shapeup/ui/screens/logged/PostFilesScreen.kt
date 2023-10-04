@@ -45,7 +45,7 @@ import com.shapeup.ui.viewModels.logged.postsHandlersMock
 
 @Preview
 @Composable
-fun PostFilesPreview() {
+fun PostFilesScreenPreview() {
     ShapeUpTheme {
         PostFilesScreen(
             navigator = Navigator(),
