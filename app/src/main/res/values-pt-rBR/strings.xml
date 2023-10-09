@@ -7,6 +7,7 @@
     <!-- ICONS -->
     <string name="icon_accept">Aceitar</string>
     <string name="icon_add">Adicionar</string>
+    <string name="icon_air">Ar</string>
     <string name="icon_arrow_back">Seta de retorno</string>
     <string name="icon_arrow_forward">Seta de avançar</string>
     <string name="icon_calendar">Calendário</string>
@@ -22,6 +23,8 @@
     <string name="icon_home">Página inicial</string>
     <string name="icon_image">Imagem</string>
     <string name="icon_joystick">Controle de vídeo game</string>
+    <string name="icon_minimal_arrow">Seta</string>
+    <string name="icon_mma">Luvas</string>
     <string name="icon_more">Mais</string>
     <string name="icon_notifications">Notificações</string>
     <string name="icon_pencil">Lápis</string>
@@ -130,6 +133,9 @@
     <!-- TRAININGS -->
     <string name="txt_trainings_title">Treinos</string>
     <string name="txt_trainings_your_xp">seu xp:</string>
+    <string name="txt_trainings_category">categoria:</string>
+    <string name="txt_trainings_minutes">minutos</string>
+    <string name="txt_trainings_delete">Remover</string>
     <string name="txt_trainings_monday">Segunda</string>
     <string name="txt_trainings_tuesday">Terça</string>
     <string name="txt_trainings_wednesday">Quarta</string>
@@ -142,4 +148,16 @@
     <string name="txt_trainings_night">noite</string>
     <string name="txt_trainings_completed_trainings">treinos completos:</string>
     <string name="txt_trainings_completed_weeks">semanas completas:</string>
+    <string name="txt_trainings_category_aerobic">aeróbico</string>
+    <string name="txt_trainings_category_health">vigor</string>
+    <string name="txt_trainings_category_fight">artes marciais</string>
+    <string name="txt_trainings_category_strength">força</string>
+    <string name="txt_trainings_classification_iron">Ferro</string>
+    <string name="txt_trainings_classification_bronze">Bronze</string>
+    <string name="txt_trainings_classification_silver">Prata</string>
+    <string name="txt_trainings_classification_gold">Ouro</string>
+    <string name="txt_trainings_classification_diamond">Diamante</string>
+    <string name="txt_trainings_classification_emerald">Esmeralda</string>
+    <string name="txt_trainings_classification_ruby">Rubi</string>
+    <string name="txt_trainings_classification_platinum">Platina</string>
 </resources>

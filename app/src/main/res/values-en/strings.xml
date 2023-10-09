@@ -7,6 +7,7 @@
     <!-- ICONS -->
     <string name="icon_accept">Accept</string>
     <string name="icon_add">Add</string>
+    <string name="icon_air">Air</string>
     <string name="icon_arrow_back">Return arrow</string>
     <string name="icon_arrow_forward">Forward arrow</string>
     <string name="icon_calendar">Calendar</string>
@@ -22,6 +23,8 @@
     <string name="icon_home">Home</string>
     <string name="icon_image">Image</string>
     <string name="icon_joystick">Joystick</string>
+    <string name="icon_minimal_arrow">Minimal arrow</string>
+    <string name="icon_mma">Glove</string>
     <string name="icon_more">More</string>
     <string name="icon_notifications">Notifications</string>
     <string name="icon_pencil">Pencil</string>
@@ -130,6 +133,9 @@
     <!-- TRAININGS -->
     <string name="txt_trainings_title">Trainings</string>
     <string name="txt_trainings_your_xp">your xp:</string>
+    <string name="txt_trainings_category">category:</string>
+    <string name="txt_trainings_minutes">minutes</string>
+    <string name="txt_trainings_delete">Delete</string>
     <string name="txt_trainings_monday">Monday</string>
     <string name="txt_trainings_tuesday">Tuesday</string>
     <string name="txt_trainings_wednesday">Wednesday</string>
@@ -142,4 +148,16 @@
     <string name="txt_trainings_night">night</string>
     <string name="txt_trainings_completed_trainings">completed trainings:</string>
     <string name="txt_trainings_completed_weeks">completed weeks:</string>
+    <string name="txt_trainings_category_aerobic">aerobic</string>
+    <string name="txt_trainings_category_health">health</string>
+    <string name="txt_trainings_category_fight">fight</string>
+    <string name="txt_trainings_category_strength">strength</string>
+    <string name="txt_trainings_classification_iron">Iron</string>
+    <string name="txt_trainings_classification_bronze">Bronze</string>
+    <string name="txt_trainings_classification_silver">Silver</string>
+    <string name="txt_trainings_classification_gold">Gold</string>
+    <string name="txt_trainings_classification_diamond">Diamond</string>
+    <string name="txt_trainings_classification_emerald">Emerald</string>
+    <string name="txt_trainings_classification_ruby">Ruby</string>
+    <string name="txt_trainings_classification_platinum">Platinum</string>
 </resources>

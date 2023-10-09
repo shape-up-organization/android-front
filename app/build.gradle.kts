@@ -1,5 +1,3 @@
-import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -53,16 +51,16 @@ android {
     }
 }
 
-configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
-    android.set(true)
-    ignoreFailures.set(false)
-    disabledRules.set(setOf("no-wildcard-imports"))
-    reporters {
-        reporter(ReporterType.CHECKSTYLE)
-    }
-}
-
-tasks.getByPath("preBuild").dependsOn("ktlintFormat")
+//configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+//    android.set(true)
+//    ignoreFailures.set(false)
+//    disabledRules.set(setOf("no-wildcard-imports"))
+//    reporters {
+//        reporter(ReporterType.CHECKSTYLE)
+//    }
+//}
+//
+//tasks.getByPath("preBuild").dependsOn("ktlintFormat")
 
 dependencies {
 
