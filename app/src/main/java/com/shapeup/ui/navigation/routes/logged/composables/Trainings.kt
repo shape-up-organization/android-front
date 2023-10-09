@@ -11,6 +11,7 @@ import com.shapeup.ui.utils.helpers.navigator
 import com.shapeup.ui.utils.helpers.viewModel
 import com.shapeup.ui.viewModels.logged.JourneyData
 import com.shapeup.ui.viewModels.logged.JourneyViewModel
+import com.shapeup.ui.viewModels.logged.TrainingsViewModel
 
 fun NavGraphBuilder.screenTrainings(navController: NavHostController) {
     composable(
@@ -21,13 +22,15 @@ fun NavGraphBuilder.screenTrainings(navController: NavHostController) {
         popExitTransition = { ExitTransition.None }
     ) {
         val journeyViewModel = it.viewModel<JourneyViewModel>(navController)
+        val trainingViewModel = it.viewModel<TrainingsViewModel>(navController)
 
         TrainingsScreen(
             journeyData = JourneyData(
                 friends = journeyViewModel.friends,
                 userData = journeyViewModel.userData
             ),
-            navigator = navController.navigator
+            navigator = navController.navigator,
+            trainingsHandlers = trainingViewModel.handlers
         )
     }
 }
