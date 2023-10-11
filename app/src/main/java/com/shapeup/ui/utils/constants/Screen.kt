@@ -18,7 +18,6 @@ enum class Screen(val value: String) {
     SignUp("sign-up-screen"),
     Splash("splash-screen"),
     Trainings("trainings-screen"),
-    Welcome("welcome-screen")
     Welcome("welcome-screen"),
     Rank("rank-screen")
 }
