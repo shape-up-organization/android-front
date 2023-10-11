@@ -121,6 +121,17 @@ fun ChangePasswordScreen(
                     value = "New password"
                 )
 
+                FormField(
+                    focusManager = focusManager,
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Next,
+                        keyboardType = KeyboardType.Text
+                    ),
+                    label = (""),
+                    supportingText = null,
+                    value = "Confirm your password"
+                )
+
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.End
