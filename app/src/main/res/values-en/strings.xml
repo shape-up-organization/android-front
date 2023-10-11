@@ -135,7 +135,10 @@
     <string name="txt_trainings_your_xp">your xp:</string>
     <string name="txt_trainings_category">category:</string>
     <string name="txt_trainings_minutes">minutes</string>
+    <string name="txt_trainings_add">Add</string>
     <string name="txt_trainings_delete">Delete</string>
+    <string name="txt_trainings_choose_training">Choose training</string>
+    <string name="txt_trainings_search_training">Search training</string>
     <string name="txt_trainings_monday">Monday</string>
     <string name="txt_trainings_tuesday">Tuesday</string>
     <string name="txt_trainings_wednesday">Wednesday</string>

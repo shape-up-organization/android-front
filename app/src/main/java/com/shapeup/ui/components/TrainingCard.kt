@@ -36,20 +36,31 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.shapeup.R
+import com.shapeup.ui.viewModels.logged.ETrainingPeriod
 import com.shapeup.ui.viewModels.logged.ETrainingStatus
+import com.shapeup.ui.viewModels.logged.EUpdateTrainingType
 import com.shapeup.ui.viewModels.logged.Training
+import com.shapeup.ui.viewModels.logged.TrainingsHandlers
+import com.shapeup.ui.viewModels.logged.UserTrainingPeriod
+import java.time.DayOfWeek
 
 @Composable
-fun TrainingCard(training: Training) {
-    var expandDetails by remember { mutableStateOf(false) }
-    val expandDuration = 400
+fun TrainingCard(
+    dayOfWeek: DayOfWeek,
+    period: ETrainingPeriod,
+    training: Training,
+    trainingsHandlers: TrainingsHandlers,
+    type: ETrainingCardType = ETrainingCardType.ADD
+) {
+    var expandTrainingDetails by remember { mutableStateOf(false) }
+    val expandTrainingDuration = 400
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .clip(RoundedCornerShape(16.dp))
             .clickable {
-                expandDetails = !expandDetails
+                expandTrainingDetails = !expandTrainingDetails
             }
             .background(MaterialTheme.colorScheme.primaryContainer)
             .fillMaxWidth()
@@ -112,9 +123,9 @@ fun TrainingCard(training: Training) {
                     .rotate(
                         rememberUpdatedState(
                             animateFloatAsState(
-                                animationSpec = tween(durationMillis = expandDuration),
+                                animationSpec = tween(durationMillis = expandTrainingDuration),
                                 label = "Arrow rotation",
-                                targetValue = when (expandDetails) {
+                                targetValue = when (expandTrainingDetails) {
                                     true -> -90f
                                     else -> 90f
                                 }
@@ -126,18 +137,55 @@ fun TrainingCard(training: Training) {
                 tint = MaterialTheme.colorScheme.tertiary
             )
 
-            Checkbox(
-                checked = training.status == ETrainingStatus.FINISHED,
-                enabled = training.status == ETrainingStatus.PENDING,
-                onCheckedChange = {
-                    /* TODO: finish training */
-                },
-            )
+            when (type) {
+                ETrainingCardType.ADD -> AssistChip(
+                    border = AssistChipDefaults.assistChipBorder(
+                        borderWidth = 0.dp
+                    ),
+                    colors = AssistChipDefaults.assistChipColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        labelColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    label = {
+                        Text(
+                            style = MaterialTheme.typography.bodyMedium,
+                            text = stringResource(R.string.txt_trainings_add)
+                        )
+                    },
+                    modifier = Modifier.padding(0.dp),
+                    onClick = {
+                        trainingsHandlers.updateTraining(
+                            dayOfWeek,
+                            UserTrainingPeriod(
+                                period = period,
+                                training = training
+                            ),
+                            EUpdateTrainingType.ADD
+                        )
+                    },
+                    shape = RoundedCornerShape(24.dp)
+                )
+
+                ETrainingCardType.EDIT -> Checkbox(
+                    checked = training.status == ETrainingStatus.FINISHED,
+                    enabled = training.status == ETrainingStatus.PENDING,
+                    onCheckedChange = {
+                        trainingsHandlers.updateTraining(
+                            dayOfWeek,
+                            UserTrainingPeriod(
+                                period = period,
+                                training = training
+                            ),
+                            EUpdateTrainingType.CHECK
+                        )
+                    },
+                )
+            }
         }
 
         ExpandableContent(
-            transitionDuration = expandDuration,
-            visible = expandDetails,
+            transitionDuration = expandTrainingDuration,
+            visible = expandTrainingDetails,
             content = {
                 Column(
                     modifier = Modifier.fillMaxSize(),
@@ -190,27 +238,43 @@ fun TrainingCard(training: Training) {
                             )
                         }
 
-                        AssistChip(
-                            border = AssistChipDefaults.assistChipBorder(
-                                borderWidth = 0.dp
-                            ),
-                            colors = AssistChipDefaults.assistChipColors(
-                                containerColor = MaterialTheme.colorScheme.error,
-                                labelColor = MaterialTheme.colorScheme.onError
-                            ),
-                            label = {
-                                Text(
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    text = stringResource(R.string.txt_trainings_delete)
-                                )
-                            },
-                            modifier = Modifier.padding(0.dp),
-                            onClick = { /* TODO: remove training */ },
-                            shape = RoundedCornerShape(24.dp)
-                        )
+                        if (type == ETrainingCardType.EDIT) {
+                            AssistChip(
+                                border = AssistChipDefaults.assistChipBorder(
+                                    borderWidth = 0.dp
+                                ),
+                                colors = AssistChipDefaults.assistChipColors(
+                                    containerColor = MaterialTheme.colorScheme.error,
+                                    labelColor = MaterialTheme.colorScheme.onError
+                                ),
+                                label = {
+                                    Text(
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        text = stringResource(R.string.txt_trainings_delete)
+                                    )
+                                },
+                                modifier = Modifier.padding(0.dp),
+                                onClick = {
+                                    trainingsHandlers.updateTraining(
+                                        dayOfWeek,
+                                        UserTrainingPeriod(
+                                            period = period,
+                                            training = training
+                                        ),
+                                        EUpdateTrainingType.REMOVE
+                                    )
+                                },
+                                shape = RoundedCornerShape(24.dp)
+                            )
+                        }
                     }
                 }
             }
         )
     }
+}
+
+enum class ETrainingCardType {
+    ADD,
+    EDIT
 }

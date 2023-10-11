@@ -21,6 +21,7 @@ import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,13 +29,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.shapeup.R
+import com.shapeup.ui.components.BottomSheet
+import com.shapeup.ui.components.BottomSheetModes
 import com.shapeup.ui.components.EPageButtons
+import com.shapeup.ui.components.ETrainingCardType
+import com.shapeup.ui.components.FormField
+import com.shapeup.ui.components.FormFieldType
 import com.shapeup.ui.components.Navbar
 import com.shapeup.ui.components.TrainingCard
 import com.shapeup.ui.theme.ShapeUpTheme
@@ -65,6 +72,8 @@ fun TrainingsScreen(
     trainingsHandlers: TrainingsHandlers
 ) {
     var daySelected by remember { mutableStateOf(DayOfWeek.MONDAY) }
+    var chosenPeriod by remember { mutableStateOf(ETrainingPeriod.MORNING) }
+    val openTrainingsListBottomSheet = remember { mutableStateOf(false) }
 
     val trainings = trainingsHandlers
         .getUserTrainings()
@@ -166,14 +175,21 @@ fun TrainingsScreen(
                         )
 
                         if (training != null) {
-                            TrainingCard(training = training)
+                            TrainingCard(
+                                dayOfWeek = daySelected,
+                                period = period,
+                                training = training,
+                                trainingsHandlers = trainingsHandlers,
+                                type = ETrainingCardType.EDIT
+                            )
                         } else {
                             Row(
                                 horizontalArrangement = Arrangement.Center,
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(16.dp))
                                     .clickable {
-                                        /* TODO: open trainings packs action */
+                                        openTrainingsListBottomSheet.value = true
+                                        chosenPeriod = period
                                     }
                                     .background(MaterialTheme.colorScheme.primaryContainer)
                                     .fillMaxWidth()
@@ -208,4 +224,84 @@ fun TrainingsScreen(
             navigator = navigator
         )
     }
+
+    TrainingsListBottomSheet(
+        open = openTrainingsListBottomSheet,
+        trainingsHandlers = trainingsHandlers,
+        dayOfWeek = daySelected,
+        period = chosenPeriod
+    )
+}
+
+@Composable
+fun TrainingsListBottomSheet(
+    open: MutableState<Boolean>,
+    trainingsHandlers: TrainingsHandlers,
+    dayOfWeek: DayOfWeek,
+    period: ETrainingPeriod
+) {
+    val trainingsPack by remember { mutableStateOf(trainingsHandlers.getTrainingsPacks()) }
+    var searchedTraining by remember { mutableStateOf("") }
+
+    val filteredTrainings = trainingsPack.filter {
+        it.name.contains(searchedTraining, ignoreCase = true) ||
+                stringResource(it.category.value).contains(searchedTraining, ignoreCase = true)
+    }
+
+    val focusManager = LocalFocusManager.current
+
+    BottomSheet(
+        containerColor = MaterialTheme.colorScheme.background,
+        mode = BottomSheetModes.MODAL,
+        open = open,
+        skipPartiallyExpanded = true,
+        title = stringResource(R.string.txt_trainings_choose_training),
+        content = {
+            Column(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            bottom = 20.dp,
+                            end = 24.dp,
+                            start = 24.dp,
+                            top = 8.dp
+                        ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    FormField(
+                        focusManager = focusManager,
+                        label = stringResource(R.string.txt_trainings_search_training),
+                        modifier = Modifier.weight(1f),
+                        onValueChange = { searchedTraining = it },
+                        type = FormFieldType.SEARCH,
+                        value = searchedTraining
+                    )
+                }
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp)
+                        .weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(filteredTrainings) {
+                        TrainingCard(
+                            dayOfWeek = dayOfWeek,
+                            period = period,
+                            training = it,
+                            trainingsHandlers = trainingsHandlers,
+                        )
+                    }
+                    item {
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                }
+            }
+        }
+    )
 }

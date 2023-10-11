@@ -27,26 +27,47 @@ class TrainingsViewModel : ViewModel() {
         return getTrainingsMock
     }
 
+    private fun updateTraining(
+        dayOfWeek: DayOfWeek,
+        trainingPeriod: UserTrainingPeriod,
+        type: EUpdateTrainingType
+    ) {
+        println("update type: ${type.name}")
+        println("dayOfWeek: $dayOfWeek")
+        println("period: ${trainingPeriod.period.name}")
+        println("trainingId: ${trainingPeriod.training.id}")
+    }
+
     val handlers = TrainingsHandlers(
         getTrainingsPacks = ::getTrainingsPacks,
-        getUserTrainings = ::getUserTrainings
+        getUserTrainings = ::getUserTrainings,
+        updateTraining = ::updateTraining
     )
 }
 
 data class TrainingsData(
     val userTrainings: MutableState<List<UserTrainingDay>>
 )
+
 val trainingsDataMock = TrainingsData(
     userTrainings = mutableStateOf(emptyList())
 )
 
 data class TrainingsHandlers(
     val getTrainingsPacks: () -> List<Training>,
-    val getUserTrainings: () -> List<UserTrainingDay>
+    val getUserTrainings: () -> List<UserTrainingDay>,
+    val updateTraining: (
+        dayOfWeek: DayOfWeek,
+        trainingPeriod: UserTrainingPeriod,
+        type: EUpdateTrainingType
+    ) -> Unit
+
 )
+
 val trainingsHandlersMock = TrainingsHandlers(
     getTrainingsPacks = { getTrainingsMock },
-    getUserTrainings = { getUserTrainingsMock }
+    getUserTrainings = { getUserTrainingsMock },
+    updateTraining = { _, _, _ -> }
 )
 
 enum class ETrainingCategory(
@@ -118,11 +139,13 @@ enum class ETrainingClassification(
         value = R.string.txt_trainings_classification_platinum
     )
 }
+
 enum class ETrainingStatus {
     FINISHED,
     PENDING,
     UNCOMPLETED
 }
+
 data class Training(
     val category: ETrainingCategory,
     val classification: ETrainingClassification,
@@ -141,6 +164,7 @@ enum class ETrainingPeriod(val value: Int) {
     AFTERNOON(value = R.string.txt_trainings_afternoon),
     NIGHT(value = R.string.txt_trainings_night)
 }
+
 data class UserTrainingPeriod(
     val period: ETrainingPeriod,
     val training: Training
@@ -150,3 +174,9 @@ data class UserTrainingDay(
     val trainings: List<UserTrainingPeriod>,
     val dayOfWeek: DayOfWeek
 )
+
+enum class EUpdateTrainingType {
+    ADD,
+    CHECK,
+    REMOVE
+}
