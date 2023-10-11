@@ -14,6 +14,7 @@ import com.shapeup.ui.navigation.routes.logged.composables.screenPostFiles
 import com.shapeup.ui.navigation.routes.logged.composables.screenPostText
 import com.shapeup.ui.navigation.routes.logged.composables.screenProfile
 import com.shapeup.ui.navigation.routes.logged.composables.screenTrainings
+import com.shapeup.ui.navigation.routes.logged.composables.screenRank
 import com.shapeup.ui.utils.constants.Route
 import com.shapeup.ui.utils.constants.Screen
 
@@ -43,5 +44,7 @@ fun NavGraphBuilder.routeLogged(navController: NavHostController) {
         screenEditProfile(navController)
 
         screenTrainings(navController)
+
+        screenRank(navController)
     }
 }

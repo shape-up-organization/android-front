@@ -130,6 +130,10 @@
     <string name="txt_post_title">Nova Publicação</string>
     <string name="txt_post_button">Compartilhar</string>
     <string name="txt_post_form_field">Compartilhe seu progresso</string>
+    <!-- RANK -->
+    <string name="rank_header_title">Rank</string>
+    <string name="rank_tab_global_title">Global</string>
+    <string name="rank_tab_friend_title">Amigos</string>
     <!-- TRAININGS -->
     <string name="txt_trainings_title">Treinos</string>
     <string name="txt_trainings_your_xp">seu xp:</string>

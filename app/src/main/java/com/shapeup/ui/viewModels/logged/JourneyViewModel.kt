@@ -104,6 +104,14 @@ class JourneyViewModel : ViewModel() {
         }
     }
 
+    private fun getRankFriends(): List<User> {
+        return getAllFriendshipMock.sortedByDescending { it.xp }
+    }
+
+    private fun getRankGlobal(): List<User> {
+        return getAllFriendshipMock.sortedByDescending { it.xp }
+    }
+
     private fun logOut() {}
 
     val handlers = JourneyHandlers(
@@ -114,7 +122,9 @@ class JourneyViewModel : ViewModel() {
         logOut = ::logOut,
         updateProfilePicture = ::updateProfilePicture,
         updateUserData = ::updateUserData,
-        sendMessage = ::sendMessage
+        sendMessage = ::sendMessage,
+        getRankFriends = ::getRankFriends,
+        getRankGlobal = ::getRankGlobal
     )
 }
 
@@ -136,7 +146,9 @@ data class JourneyHandlers(
     val logOut: () -> Unit,
     val updateProfilePicture: (profilePicture: Uri) -> Unit,
     val updateUserData: (newUserData: UserDataUpdate) -> Unit,
-    val sendMessage: (messageText: String, friendUsername: String) -> Unit
+    val sendMessage: (messageText: String, friendUsername: String) -> Unit,
+    val getRankFriends: () -> List<User>,
+    val getRankGlobal: () -> List<User>
 )
 
 val journeyHandlersMock = JourneyHandlers(
@@ -158,7 +170,13 @@ val journeyHandlersMock = JourneyHandlers(
     logOut = {},
     updateProfilePicture = {},
     updateUserData = {},
-    sendMessage = { _, _ -> }
+    sendMessage = { _, _ -> },
+    getRankFriends = {
+        getAllFriendshipMock.sortedByDescending { it.xp }
+    },
+    getRankGlobal = {
+        getAllFriendshipMock.sortedByDescending { it.xp }
+    }
 )
 
 data class User(
