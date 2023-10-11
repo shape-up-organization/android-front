@@ -15,7 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,19 +34,18 @@ import com.shapeup.ui.utils.helpers.Navigator
 @SuppressLint("UnrememberedMutableState")
 @Preview
 @Composable
-fun ChangePasswordPreview() {
+fun ChangeEmailPreview() {
     ShapeUpTheme {
-        ChangePasswordScreen(
+        ChangeEmailScreen(
             navigator = Navigator()
         )
     }
 }
 
 @Composable
-fun ChangePasswordScreen(
+fun ChangeEmailScreen(
     navigator: Navigator
 ) {
-
     val focusManager = LocalFocusManager.current
 
     BackHandler {
@@ -67,7 +65,7 @@ fun ChangePasswordScreen(
         ) {
             Header(
                 navigateTo = { navigator.navigateBack() },
-                text = "Change Password"
+                text = "Change E-mail"
             )
 
             IconButton(onClick = { navigator.navigateBack() }) {
@@ -78,6 +76,7 @@ fun ChangePasswordScreen(
                 )
             }
         }
+
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -107,48 +106,9 @@ fun ChangePasswordScreen(
                     ),
                     label = (""),
                     supportingText = null,
-                    value = "Old password"
+                    value =  ("New E-mail")
                 )
 
-                FormField(
-                    focusManager = focusManager,
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next,
-                        keyboardType = KeyboardType.Text
-                    ),
-                    label = (""),
-                    supportingText = null,
-                    value = "New password"
-                )
-
-                FormField(
-                    focusManager = focusManager,
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next,
-                        keyboardType = KeyboardType.Text
-                    ),
-                    label = (""),
-                    supportingText = null,
-                    value = "Confirm your password"
-                )
-
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.End
-                ) {
-
-                    TextButton(onClick = {
-                        //* TO DO *\\
-                    }
-                    ) {
-
-                        Text(
-                            style = MaterialTheme.typography.bodyMedium,
-                            text = ("Forgot Old password?"),
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                }
 
             }
         }
@@ -168,5 +128,3 @@ fun ChangePasswordScreen(
         }
     }
 }
-
-
