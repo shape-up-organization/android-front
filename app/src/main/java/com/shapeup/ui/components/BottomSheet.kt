@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomSheet(
+    containerColor: Color = MaterialTheme.colorScheme.primaryContainer,
     content: @Composable (ColumnScope.() -> Unit),
     mode: BottomSheetModes = BottomSheetModes.DEFAULT,
     open: MutableState<Boolean> = mutableStateOf(false),
@@ -52,7 +53,7 @@ fun BottomSheet(
 
     if (mode == BottomSheetModes.MODAL && open.value) {
         ModalBottomSheet(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            containerColor = containerColor,
             dragHandle = { BottomSheetDragHandler(title = title) },
             onDismissRequest = { open.value = false },
             shape = RoundedCornerShape(
@@ -91,7 +92,7 @@ fun BottomSheet(
         ) {
             BottomSheetScaffold(
                 scaffoldState = defaultState,
-                sheetContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                sheetContainerColor = containerColor,
                 sheetContent = content,
                 sheetDragHandle = { BottomSheetDragHandler(title = title) },
                 sheetPeekHeight = peekHeight,

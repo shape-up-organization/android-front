@@ -1,6 +1,5 @@
 package com.shapeup.ui.screens.logged
 
-import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -47,10 +46,9 @@ import com.shapeup.ui.viewModels.logged.postsDataMock
 import com.shapeup.ui.viewModels.logged.postsHandlersMock
 import kotlin.system.exitProcess
 
-@SuppressLint("UnrememberedMutableState")
 @Preview
 @Composable
-fun FeedPreview() {
+fun FeedScreenPreview() {
     ShapeUpTheme {
         FeedScreen(
             journeyData = journeyDataMock,

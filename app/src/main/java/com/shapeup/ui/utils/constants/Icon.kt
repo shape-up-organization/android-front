@@ -12,6 +12,10 @@ enum class Icon(@DrawableRes val value: Int, val description: Int) {
         description = R.string.icon_add,
         value = R.drawable.icon_add
     ),
+    Air(
+        description = R.string.icon_air,
+        value = R.drawable.icon_air
+    ),
     ArrowBack(
         description = R.string.icon_arrow_back,
         value = R.drawable.icon_arrow_back
@@ -71,6 +75,14 @@ enum class Icon(@DrawableRes val value: Int, val description: Int) {
     Joystick(
         description = R.string.icon_joystick,
         value = R.drawable.icon_joystick
+    ),
+    MinimalArrow(
+        description = R.string.icon_minimal_arrow,
+        value = R.drawable.icon_minimal_arrow
+    ),
+    Mma(
+        description = R.string.icon_mma,
+        value = R.drawable.icon_mma
     ),
     More(
         description = R.string.icon_more,
