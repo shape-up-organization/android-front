@@ -35,7 +35,17 @@ class SignInFormData(
     val password: MutableState<String>
 )
 
+val signInFormDataMock = SignInFormData(
+    email = mutableStateOf(""),
+    password = mutableStateOf("")
+)
+
 class SignInFormHandlers(
     val clearFormData: () -> Unit,
     val signIn: () -> Unit
+)
+
+val signInFormHandlersMock = SignInFormHandlers(
+    clearFormData = {},
+    signIn = {}
 )

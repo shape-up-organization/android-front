@@ -18,7 +18,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -36,6 +35,8 @@ import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
 import com.shapeup.ui.viewModels.auth.SignInFormData
 import com.shapeup.ui.viewModels.auth.SignInFormHandlers
+import com.shapeup.ui.viewModels.auth.signInFormDataMock
+import com.shapeup.ui.viewModels.auth.signInFormHandlersMock
 
 @SuppressLint("UnrememberedMutableState")
 @Preview
@@ -43,15 +44,9 @@ import com.shapeup.ui.viewModels.auth.SignInFormHandlers
 fun SignInPreview() {
     ShapeUpTheme {
         SignInScreen(
-            navigator = Navigator(),
-            data = SignInFormData(
-                email = mutableStateOf(""),
-                password = mutableStateOf("")
-            ),
-            handlers = SignInFormHandlers(
-                clearFormData = {},
-                signIn = {}
-            )
+            data = signInFormDataMock,
+            handlers = signInFormHandlersMock,
+            navigator = Navigator()
         )
     }
 }
