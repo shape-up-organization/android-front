@@ -6,8 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.shapeup.R
-import com.shapeup.service.trainings.getTrainingsMock
-import com.shapeup.service.trainings.getUserTrainingsMock
+import com.shapeup.api.services.trainings.getTrainingsMock
+import com.shapeup.api.services.trainings.getUserTrainingsMock
 import com.shapeup.ui.utils.helpers.Navigator
 import java.time.DayOfWeek
 

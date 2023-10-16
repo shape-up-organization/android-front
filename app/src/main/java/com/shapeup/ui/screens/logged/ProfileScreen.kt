@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import coil.compose.rememberAsyncImagePainter
 import com.shapeup.R
-import com.shapeup.service.users.getUserDataMock
+import com.shapeup.api.services.users.getUserDataMock
 import com.shapeup.ui.components.CardPost
 import com.shapeup.ui.components.EPageButtons
 import com.shapeup.ui.components.Navbar

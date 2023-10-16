@@ -1,4 +1,4 @@
-package com.shapeup.service.friends
+package com.shapeup.api.services.friends
 
 import com.shapeup.ui.viewModels.logged.Message
 import com.shapeup.ui.viewModels.logged.User

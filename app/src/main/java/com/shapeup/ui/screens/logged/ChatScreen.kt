@@ -51,7 +51,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.shapeup.R
-import com.shapeup.service.friends.getAllFriendshipMock
+import com.shapeup.api.services.friends.getAllFriendshipMock
 import com.shapeup.ui.components.FormField
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon

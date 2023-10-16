@@ -4,9 +4,9 @@ import android.net.Uri
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.shapeup.service.friends.getAllFriendshipMock
-import com.shapeup.service.friends.getFriendsMessagesMock
-import com.shapeup.service.users.getUserDataMock
+import com.shapeup.api.services.friends.getAllFriendshipMock
+import com.shapeup.api.services.friends.getFriendsMessagesMock
+import com.shapeup.api.services.users.getUserDataMock
 import java.time.LocalDateTime
 import kotlin.random.Random
 

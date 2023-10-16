@@ -2,8 +2,8 @@ package com.shapeup.ui.screens.logged
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.shapeup.service.posts.getPostsMock
-import com.shapeup.service.users.getUserDataMock
+import com.shapeup.api.services.posts.getPostsMock
+import com.shapeup.api.services.users.getUserDataMock
 import com.shapeup.ui.components.CardPost
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.helpers.Navigator
