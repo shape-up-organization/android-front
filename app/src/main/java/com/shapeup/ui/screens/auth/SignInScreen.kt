@@ -18,6 +18,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -37,6 +38,7 @@ import com.shapeup.ui.viewModels.auth.SignInFormData
 import com.shapeup.ui.viewModels.auth.SignInFormHandlers
 import com.shapeup.ui.viewModels.auth.signInFormDataMock
 import com.shapeup.ui.viewModels.auth.signInFormHandlersMock
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnrememberedMutableState")
 @Preview
@@ -58,6 +60,7 @@ fun SignInScreen(
     navigator: Navigator
 ) {
     val focusManager = LocalFocusManager.current
+    val coroutine = rememberCoroutineScope()
 
     BackHandler {
         handlers.clearFormData()
@@ -141,7 +144,15 @@ fun SignInScreen(
         ) {
             Button(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = handlers.signIn
+                onClick = {
+                    coroutine.launch {
+                        val response = handlers.signIn()
+
+//                        when (response.status) {
+//                            HttpStatusCode.OK -> navigator.navigate(Screen.Feed)
+//                        }
+                    }
+                }
             ) {
                 Text(
                     modifier = Modifier

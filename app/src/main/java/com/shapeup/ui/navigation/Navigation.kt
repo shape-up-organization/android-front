@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.shapeup.api.utils.helpers.SharedData
 import com.shapeup.ui.navigation.routes.auth.routeAuth
 import com.shapeup.ui.navigation.routes.logged.routeLogged
 import com.shapeup.ui.screens.SplashScreen
@@ -13,7 +14,10 @@ import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.navigator
 
 @Composable
-fun Navigation(navController: NavHostController) {
+fun Navigation(
+    navController: NavHostController,
+    sharedData: SharedData
+) {
     NavHost(
         navController = navController,
         startDestination = Screen.Splash.value
@@ -36,7 +40,10 @@ fun Navigation(navController: NavHostController) {
             SplashScreen(navController.navigator)
         }
 
-        routeAuth(navController)
+        routeAuth(
+            navController,
+            sharedData
+        )
 
         routeLogged(navController)
     }
