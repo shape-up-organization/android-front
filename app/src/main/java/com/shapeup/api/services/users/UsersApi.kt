@@ -6,6 +6,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
@@ -15,12 +16,21 @@ class UsersApi(
     private val sharedData: SharedData,
 ) : EUsersApi {
     override suspend fun signIn(payload: SignInPayload): SignInStatement {
-        val response = client.post("$BASE_URL/auth/login") {
-            contentType(ContentType.Application.Json)
-            setBody(payload)
+
+        var response: HttpResponse? = null
+
+        try {
+            response = client.post("$BASE_URL/auth/login") {
+                contentType(ContentType.Application.Json)
+                setBody(payload)
+            }
+        }
+        catch (_: Exception) {
+            println("ERROR: Timeout or Service Unavailable")
         }
 
-        return when (response.status) {
+
+        return when (response?.status) {
             HttpStatusCode.OK -> {
                 val data = response.body<SignInResponse>()
                 val token = sharedData.get("jwtToken")
@@ -35,7 +45,9 @@ class UsersApi(
                 )
             }
 
-            else -> SignInStatement(status = response.status)
+            else -> {
+                SignInStatement(status = response?.status ?: HttpStatusCode.ServiceUnavailable)
+            }
         }
     }
 }
