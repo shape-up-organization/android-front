@@ -56,6 +56,9 @@
     <string name="txt_sign_in_screen_email_input_label">E-mail</string>
     <string name="txt_sign_in_screen_title">Welcome Back</string>
     <string name="txt_sign_in_screen_forgot_password">Esqueceu a senha?</string>
+    <string name="txt_sign_in_required">Obrigatório</string>
+    <string name="txt_sign_in_invalid">Inválido</string>
+    <string name="txt_sign_in_invalid_format">Formato inválido</string>
     <!-- FORGOT PASSWORD -->
     <string name="txt_forgot_password_screen_title">Esqueceu a Senha?</string>
     <string name="txt_forgot_password_screen_email_input_label">E-mail</string>
