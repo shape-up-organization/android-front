@@ -2,6 +2,7 @@ package com.shapeup.api.utils.helpers
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
@@ -17,5 +18,8 @@ val AppClient = HttpClient(CIO)
         json(Json {
             ignoreUnknownKeys = true
         })
+    }
+    install(HttpTimeout) {
+        connectTimeoutMillis = 10000
     }
 }
