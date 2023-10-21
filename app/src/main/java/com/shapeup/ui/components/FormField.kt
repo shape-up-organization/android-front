@@ -31,7 +31,9 @@ import com.shapeup.ui.utils.helpers.PhoneNumberVisualTransformation
 
 @Composable
 fun FormField(
+    errorText: String? = null,
     focusManager: FocusManager? = null,
+    isError: Boolean = false,
     isPasswordHidden: MutableState<Boolean> = remember { mutableStateOf(true) },
     keyboardActions: KeyboardActions = KeyboardActions(
         onDone = { focusManager?.clearFocus() },
@@ -44,7 +46,7 @@ fun FormField(
     leadingIcon: Icon? = null,
     maxLines: Int = 1,
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
-    onValueChange: (String) -> Unit = {},
+    onValueChange: (value: String) -> Unit = {},
     readOnly: Boolean = false,
     supportingText: String? = null,
     trailingIcon: Icon? = null,
@@ -65,6 +67,7 @@ fun FormField(
             unfocusedBorderColor = Color.Transparent,
             unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer
         ),
+        isError = isError || !errorText.isNullOrEmpty(),
         keyboardActions = keyboardActions,
         keyboardOptions = when {
             keyboardOptions != null -> keyboardOptions
@@ -124,7 +127,7 @@ fun FormField(
         onValueChange = onValueChange,
         readOnly = readOnly,
         shape = RoundedCornerShape(16.dp),
-        supportingText = supportingText?.let { { Text(it) } },
+        supportingText = errorText?.let { { Text(it) } } ?: supportingText?.let { { Text(it) } },
         trailingIcon = {
             when {
                 trailingIcon != null -> {
