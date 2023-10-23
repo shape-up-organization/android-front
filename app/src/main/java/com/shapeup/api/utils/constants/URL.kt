@@ -1,3 +1,4 @@
 package com.shapeup.api.utils.constants
 
-const val BASE_URL = "http://192.168.1.104:7000/shapeup"
+// LOCAL API URL HERE
+const val BASE_URL = "http://192.168.1.105:7000/shapeup"

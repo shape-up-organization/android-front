@@ -1,4 +1,4 @@
-package com.shapeup.api.services.users
+package com.shapeup.api.services.auth
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
