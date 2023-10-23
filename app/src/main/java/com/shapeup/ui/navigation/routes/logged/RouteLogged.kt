@@ -17,6 +17,7 @@ import com.shapeup.ui.navigation.routes.logged.composables.screenTrainings
 import com.shapeup.ui.navigation.routes.logged.composables.screenRank
 import com.shapeup.ui.utils.constants.Route
 import com.shapeup.ui.utils.constants.Screen
+import screenSearch
 
 fun NavGraphBuilder.routeLogged(navController: NavHostController) {
     navigation(
@@ -46,5 +47,7 @@ fun NavGraphBuilder.routeLogged(navController: NavHostController) {
         screenTrainings(navController)
 
         screenRank(navController)
+
+        screenSearch(navController)
     }
 }

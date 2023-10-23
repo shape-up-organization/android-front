@@ -134,6 +134,9 @@
     <string name="rank_header_title">Rank</string>
     <string name="rank_tab_global_title">Global</string>
     <string name="rank_tab_friend_title">Amigos</string>
+    <string name="txt_rank_header_title">Rank</string>
+    <string name="txt_rank_tab_global_title">Global</string>
+    <string name="txt_rank_tab_friend_title">Amigos</string>
     <!-- TRAININGS -->
     <string name="txt_trainings_title">Treinos</string>
     <string name="txt_trainings_your_xp">seu xp:</string>
@@ -167,4 +170,7 @@
     <string name="txt_trainings_classification_emerald">Esmeralda</string>
     <string name="txt_trainings_classification_ruby">Rubi</string>
     <string name="txt_trainings_classification_platinum">Platina</string>
+    <!-- SEARCH -->
+    <string name="txt_search_input">Procurar usuários</string>
+    <string name="txt_is_friend">Amigo</string>
 </resources>
