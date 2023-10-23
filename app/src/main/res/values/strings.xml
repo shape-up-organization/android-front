@@ -42,6 +42,12 @@
     <string name="user_profile_pic">User profile picture</string>
     <string name="txt_date_picker_pick_data">Pick data</string>
 
+    <!-- FORM ERRORS -->
+    <string name="txt_errors_required">Required</string>
+    <string name="txt_errors_invalid">Invalid</string>
+    <string name="txt_errors_invalid_format">Invalid format</string>
+    <string name="txt_errors_send_code">Error sending code, try again</string>
+
     <!-- PAGES -->
     <!-- WELCOME -->
     <string name="txt_sign_in">Sign in</string>
@@ -57,9 +63,6 @@
     <string name="txt_sign_in_screen_email_input_label">E-mail</string>
     <string name="txt_sign_in_screen_title">Welcome Back</string>
     <string name="txt_sign_in_screen_forgot_password">Forgot password?</string>
-    <string name="txt_sign_in_required">Required</string>
-    <string name="txt_sign_in_invalid">Invalid</string>
-    <string name="txt_sign_in_invalid_format">Invalid format</string>
     <!-- FORGOT PASSWORD -->
     <string name="txt_forgot_password_screen_title">Forgot Password?</string>
     <string name="txt_forgot_password_screen_email_input_label">E-mail</string>

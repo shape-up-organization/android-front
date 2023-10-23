@@ -41,6 +41,12 @@
     <string name="user_profile_pic">Foto de perfil do usuário</string>
     <string name="txt_date_picker_pick_data">Escolher data</string>
 
+    <!-- FORM ERRORS -->
+    <string name="txt_errors_required">Obrigatório</string>
+    <string name="txt_errors_invalid">Inválido</string>
+    <string name="txt_errors_invalid_format">Formato inválido</string>
+    <string name="txt_errors_send_code">Erro ao enviar o código, tente novamente</string>
+
     <!-- PAGES -->
     <!-- WELCOME -->
     <string name="txt_sign_in">Entrar</string>
@@ -56,9 +62,6 @@
     <string name="txt_sign_in_screen_email_input_label">E-mail</string>
     <string name="txt_sign_in_screen_title">Welcome Back</string>
     <string name="txt_sign_in_screen_forgot_password">Esqueceu a senha?</string>
-    <string name="txt_sign_in_required">Obrigatório</string>
-    <string name="txt_sign_in_invalid">Inválido</string>
-    <string name="txt_sign_in_invalid_format">Formato inválido</string>
     <!-- FORGOT PASSWORD -->
     <string name="txt_forgot_password_screen_title">Esqueceu a Senha?</string>
     <string name="txt_forgot_password_screen_email_input_label">E-mail</string>

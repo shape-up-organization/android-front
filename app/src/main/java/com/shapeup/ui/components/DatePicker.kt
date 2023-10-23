@@ -24,8 +24,10 @@ import com.shapeup.ui.utils.helpers.DateHelper
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePicker(
+    errorText: String? = null,
     label: String = "",
     onDateSelected: (String) -> Unit = {},
+    supportingText: String? = null,
     value: String = ""
 ) {
     val dateHelper = DateHelper()
@@ -69,6 +71,7 @@ fun DatePicker(
     }
 
     FormField(
+        errorText = errorText,
         keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Done,
             keyboardType = KeyboardType.Number
@@ -81,6 +84,7 @@ fun DatePicker(
                 }
             },
         readOnly = true,
+        supportingText = supportingText,
         type = FormFieldType.DATE,
         value = selectedDate
     )

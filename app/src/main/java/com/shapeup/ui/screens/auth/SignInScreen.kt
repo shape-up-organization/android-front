@@ -59,6 +59,8 @@ fun SignInPreview() {
     }
 }
 
+const val ENABLE_FORGOT_PASSWORD = false
+
 @Composable
 fun SignInScreen(
     data: SignInFormData,
@@ -67,12 +69,12 @@ fun SignInScreen(
 ) {
     var isLoading by remember { mutableStateOf(false) }
     var wasFormOnceSubmitted by remember { mutableStateOf(false) }
-    var emailFormFieldError by remember { mutableStateOf<String?>(null) }
-    var passwordFormFieldError by remember { mutableStateOf<String?>(null) }
+    var emailFormFieldError by remember { mutableStateOf("") }
+    var passwordFormFieldError by remember { mutableStateOf("") }
     val isButtonEnabled by rememberUpdatedState(
         !wasFormOnceSubmitted ||
-                (emailFormFieldError.isNullOrEmpty() &&
-                        passwordFormFieldError.isNullOrEmpty() && !isLoading)
+                (emailFormFieldError.isEmpty() &&
+                        passwordFormFieldError.isEmpty() && !isLoading)
     )
 
 
@@ -80,22 +82,22 @@ fun SignInScreen(
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
 
-    fun validateEmail(): String? {
+    fun validateEmail(): String {
         emailFormFieldError = when {
-            wasFormOnceSubmitted && data.email.value.isEmpty() -> context.getString(R.string.txt_sign_in_required)
-            wasFormOnceSubmitted && !data.email.value.contains("@") -> context.getString(R.string.txt_sign_in_invalid_format)
+            wasFormOnceSubmitted && data.email.value.isEmpty() -> context.getString(R.string.txt_errors_required)
+            wasFormOnceSubmitted && !data.email.value.contains("@") -> context.getString(R.string.txt_errors_invalid_format)
 
-            else -> null
+            else -> ""
         }
 
         return emailFormFieldError
     }
 
-    fun validatePassword(): String? {
+    fun validatePassword(): String {
         passwordFormFieldError = when {
-            wasFormOnceSubmitted && data.password.value.isEmpty() -> context.getString(R.string.txt_sign_in_required)
+            wasFormOnceSubmitted && data.password.value.isEmpty() -> context.getString(R.string.txt_errors_required)
 
-            else -> null
+            else -> ""
         }
 
         return passwordFormFieldError
@@ -107,7 +109,7 @@ fun SignInScreen(
         val emailError = validateEmail()
         val passwordError = validatePassword()
 
-        if (!emailError.isNullOrEmpty() || !passwordError.isNullOrEmpty()) {
+        if (emailError.isNotEmpty() || passwordError.isNotEmpty()) {
             return
         }
 
@@ -121,8 +123,8 @@ fun SignInScreen(
             HttpStatusCode.OK -> navigator.navigate(Screen.Feed)
 
             else -> {
-                emailFormFieldError = context.getString(R.string.txt_sign_in_invalid)
-                passwordFormFieldError = context.getString(R.string.txt_sign_in_invalid)
+                emailFormFieldError = context.getString(R.string.txt_errors_invalid)
+                passwordFormFieldError = context.getString(R.string.txt_errors_invalid)
             }
         }
     }
@@ -202,7 +204,7 @@ fun SignInScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                if (false) {
+                if (ENABLE_FORGOT_PASSWORD) {
                     TextButton(onClick = { navigator.navigate(Screen.ForgotPassword) }) {
                         Text(
                             style = MaterialTheme.typography.bodyMedium,

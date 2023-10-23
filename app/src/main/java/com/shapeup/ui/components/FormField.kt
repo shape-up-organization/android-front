@@ -31,6 +31,7 @@ import com.shapeup.ui.utils.helpers.PhoneNumberVisualTransformation
 
 @Composable
 fun FormField(
+    enabled: Boolean = true,
     errorText: String? = null,
     focusManager: FocusManager? = null,
     isError: Boolean = false,
@@ -67,6 +68,7 @@ fun FormField(
             unfocusedBorderColor = Color.Transparent,
             unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer
         ),
+        enabled = enabled,
         isError = isError || !errorText.isNullOrEmpty(),
         keyboardActions = keyboardActions,
         keyboardOptions = when {
