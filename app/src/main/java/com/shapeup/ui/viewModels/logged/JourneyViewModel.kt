@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.shapeup.service.friends.getAllFriendshipMock
 import com.shapeup.service.friends.getFriendsMessagesMock
+import com.shapeup.service.users.getAllSearchUserDataMock
 import com.shapeup.service.users.getUserDataMock
 import java.time.LocalDateTime
 import kotlin.random.Random
@@ -112,6 +113,10 @@ class JourneyViewModel : ViewModel() {
         return getAllFriendshipMock.sortedByDescending { it.xp }
     }
 
+    private fun getSearchUsers(): List<User> {
+        return getAllSearchUserDataMock
+    }
+
     private fun logOut() {}
 
     val handlers = JourneyHandlers(
@@ -124,7 +129,8 @@ class JourneyViewModel : ViewModel() {
         updateUserData = ::updateUserData,
         sendMessage = ::sendMessage,
         getRankFriends = ::getRankFriends,
-        getRankGlobal = ::getRankGlobal
+        getRankGlobal = ::getRankGlobal,
+        getSearchUsers = ::getSearchUsers
     )
 }
 
@@ -148,7 +154,8 @@ data class JourneyHandlers(
     val updateUserData: (newUserData: UserDataUpdate) -> Unit,
     val sendMessage: (messageText: String, friendUsername: String) -> Unit,
     val getRankFriends: () -> List<User>,
-    val getRankGlobal: () -> List<User>
+    val getRankGlobal: () -> List<User>,
+    val getSearchUsers: () -> List<User>
 )
 
 val journeyHandlersMock = JourneyHandlers(
@@ -176,6 +183,9 @@ val journeyHandlersMock = JourneyHandlers(
     },
     getRankGlobal = {
         getAllFriendshipMock.sortedByDescending { it.xp }
+    },
+    getSearchUsers = {
+        getAllSearchUserDataMock
     }
 )
 
@@ -186,7 +196,8 @@ data class User(
     val online: Boolean,
     val profilePicture: String? = null,
     val username: String,
-    val xp: Int
+    val xp: Int,
+    val friendshipStatus: FriendshipStatus? = null
 )
 
 data class UserData(
@@ -222,6 +233,12 @@ data class Friend(
     val messages: MutableList<Message>,
     val online: Boolean = false,
     val user: User
+)
+
+data class FriendshipStatus(
+    val haveFriendRequest: Boolean,
+    val isFriend: Boolean,
+    val userSenderFriendshipRequest: String
 )
 
 object JourneyMappers {

@@ -67,7 +67,7 @@ fun RankScreen(
 ) {
     var tabSelected by remember { mutableIntStateOf(0) }
 
-    val titles = listOf(R.string.rank_tab_global_title, R.string.rank_tab_friend_title)
+    val titles = listOf(R.string.txt_rank_tab_global_title, R.string.txt_rank_tab_friend_title)
 
     var ranks by remember { mutableStateOf(journeyHandlers.getRankGlobal()) }
 
@@ -89,7 +89,7 @@ fun RankScreen(
                 Text(
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.titleLarge,
-                    text = stringResource(R.string.rank_header_title)
+                    text = stringResource(R.string.txt_rank_header_title)
                 )
             }
 
