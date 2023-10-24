@@ -6,9 +6,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.shapeup.api.services.friends.getAllFriendshipMock
 import com.shapeup.api.services.friends.getFriendsMessagesMock
+import com.shapeup.api.services.users.getAllSearchUserDataMock
 import com.shapeup.api.services.users.getUserDataMock
 import com.shapeup.api.utils.helpers.SharedData
-import com.shapeup.service.users.getAllSearchUserDataMock
 import java.time.LocalDateTime
 import kotlin.random.Random
 
