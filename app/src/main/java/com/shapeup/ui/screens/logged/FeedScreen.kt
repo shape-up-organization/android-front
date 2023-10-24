@@ -25,7 +25,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.shapeup.MainActivity
 import com.shapeup.R
 import com.shapeup.ui.components.CardPost
 import com.shapeup.ui.components.EPageButtons
@@ -44,7 +43,6 @@ import com.shapeup.ui.viewModels.logged.journeyDataMock
 import com.shapeup.ui.viewModels.logged.journeyHandlersMock
 import com.shapeup.ui.viewModels.logged.postsDataMock
 import com.shapeup.ui.viewModels.logged.postsHandlersMock
-import kotlin.system.exitProcess
 
 @Preview
 @Composable
@@ -71,8 +69,10 @@ fun FeedScreen(
     val focusManager = LocalFocusManager.current
 
     BackHandler {
-        MainActivity().finish()
-        exitProcess(0)
+//        MainActivity().finish()
+//        exitProcess(0)
+        journeyHandlers.signOut()
+        navigator.navigateClean(Screen.Splash)
     }
 
     Column(

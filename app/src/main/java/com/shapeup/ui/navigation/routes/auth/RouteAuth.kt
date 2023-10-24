@@ -4,6 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.navigation
 import com.shapeup.api.utils.helpers.SharedData
+import com.shapeup.ui.navigation.routes.auth.composables.screenAccountVerification
 import com.shapeup.ui.navigation.routes.auth.composables.screenSignIn
 import com.shapeup.ui.navigation.routes.auth.composables.screenSignUp
 import com.shapeup.ui.navigation.routes.auth.composables.screenWelcome
@@ -26,6 +27,10 @@ fun NavGraphBuilder.routeAuth(
         )
         routeForgotPassword(navController)
         screenSignUp(
+            navController,
+            sharedData
+        )
+        screenAccountVerification(
             navController,
             sharedData
         )

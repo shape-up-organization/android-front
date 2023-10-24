@@ -1,6 +1,7 @@
 package com.shapeup.ui.utils.constants
 
 enum class Screen(val value: String) {
+    AccountVerification("account-verification-screen"),
     ChangePassword("change-password-screen"),
     Chat("chat-screen"),
     ChatsList("chats-list-screen"),

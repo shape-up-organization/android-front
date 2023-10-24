@@ -7,12 +7,21 @@ import androidx.lifecycle.ViewModel
 import com.shapeup.api.services.friends.getAllFriendshipMock
 import com.shapeup.api.services.friends.getFriendsMessagesMock
 import com.shapeup.api.services.users.getUserDataMock
+import com.shapeup.api.utils.helpers.SharedData
 import java.time.LocalDateTime
 import kotlin.random.Random
 
 class JourneyViewModel : ViewModel() {
+    lateinit var sharedData: SharedData
+
     val friends = mutableStateOf<List<Friend>>(emptyList())
     val userData = mutableStateOf(getUserDataMock)
+
+    private fun signOut() {
+        sharedData.delete("jwtToken")
+        sharedData.delete("email")
+        sharedData.delete("password")
+    }
 
     private fun getFriends(): List<Friend> {
         // TODO: implement getFriends from service
@@ -115,6 +124,7 @@ class JourneyViewModel : ViewModel() {
     private fun logOut() {}
 
     val handlers = JourneyHandlers(
+        signOut = ::signOut,
         getFriends = ::getFriends,
         getFriendStatus = ::getFriendStatus,
         getUser = ::getUser,
@@ -139,6 +149,7 @@ val journeyDataMock = JourneyData(
 )
 
 data class JourneyHandlers(
+    val signOut: () -> Unit,
     val getFriends: () -> List<Friend>?,
     val getFriendStatus: (username: String) -> Boolean,
     val getUser: (username: String) -> User?,
@@ -152,6 +163,7 @@ data class JourneyHandlers(
 )
 
 val journeyHandlersMock = JourneyHandlers(
+    signOut = {},
     getFriends = {
         val friendsList = getAllFriendshipMock
 

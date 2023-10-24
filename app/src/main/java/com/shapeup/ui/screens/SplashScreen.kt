@@ -21,20 +21,27 @@ import com.shapeup.R
 import com.shapeup.ui.theme.GradientDark
 import com.shapeup.ui.theme.GradientLight
 import com.shapeup.ui.theme.ShapeUpTheme
-import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
+import com.shapeup.ui.viewModels.auth.SignInFormHandlers
+import com.shapeup.ui.viewModels.auth.signInFormHandlersMock
 import kotlinx.coroutines.delay
 
 @Preview
 @Composable
 fun SplashScreenPreview() {
     ShapeUpTheme {
-        SplashScreen(navigator = Navigator())
+        SplashScreen(
+            handlers = signInFormHandlersMock,
+            navigator = Navigator()
+        )
     }
 }
 
 @Composable
-fun SplashScreen(navigator: Navigator) {
+fun SplashScreen(
+    handlers: SignInFormHandlers,
+    navigator: Navigator
+) {
     val scale = remember {
         Animatable(0.3f)
     }
@@ -49,8 +56,8 @@ fun SplashScreen(navigator: Navigator) {
                 }
             )
         )
-        delay(1000L)
-        navigator.navigateClean(Screen.Welcome)
+        delay(600L)
+        handlers.startupVerification()
     }
 
     Box(

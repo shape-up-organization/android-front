@@ -12,6 +12,8 @@ import com.shapeup.ui.navigation.routes.logged.routeLogged
 import com.shapeup.ui.screens.SplashScreen
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.navigator
+import com.shapeup.ui.utils.helpers.viewModel
+import com.shapeup.ui.viewModels.auth.SignInViewModel
 
 @Composable
 fun Navigation(
@@ -37,7 +39,14 @@ fun Navigation(
                 )
             }
         ) {
-            SplashScreen(navController.navigator)
+            val signInViewModel = it.viewModel<SignInViewModel>(navController)
+            signInViewModel.navigator = navController.navigator
+            signInViewModel.sharedData = sharedData
+
+            SplashScreen(
+                handlers = signInViewModel.handlers,
+                navigator = navController.navigator
+            )
         }
 
         routeAuth(
@@ -45,6 +54,9 @@ fun Navigation(
             sharedData
         )
 
-        routeLogged(navController)
+        routeLogged(
+            navController,
+            sharedData
+        )
     }
 }

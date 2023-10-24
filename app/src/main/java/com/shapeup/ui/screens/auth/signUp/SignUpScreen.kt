@@ -38,8 +38,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.shapeup.R
-import com.shapeup.ui.screens.auth.signUp.steps.CodeStep
-import com.shapeup.ui.screens.auth.signUp.steps.CodeStepFormData
 import com.shapeup.ui.screens.auth.signUp.steps.EmailStep
 import com.shapeup.ui.screens.auth.signUp.steps.EmailStepFormData
 import com.shapeup.ui.screens.auth.signUp.steps.PasswordStep
@@ -99,7 +97,7 @@ fun SignUpScreen(
         println(response)
 
         when (response.status) {
-            HttpStatusCode.Created -> navigator.navigate(Screen.SignIn)
+            HttpStatusCode.Created -> navigator.navigate(Screen.AccountVerification)
 
             else -> hasError.value = false
         }
@@ -238,20 +236,8 @@ enum class Step(
                 hasError = hasError
             )
         }),
-    Code(
-        step = 3,
-        composable = { data, hasError, handlers ->
-            CodeStep(
-                CodeStepFormData(
-                    email = data.email,
-                    code = data.code
-                ),
-                hasError = hasError,
-                handlers = handlers
-            )
-        }),
     Phone(
-        step = 4,
+        step = 3,
         composable = { data, hasError, _ ->
             PhoneStep(
                 PhoneStepFormData(
@@ -261,7 +247,7 @@ enum class Step(
             )
         }),
     Username(
-        step = 5,
+        step = 4,
         composable = { data, hasError, _ ->
             UsernameStep(
                 UsernameStepFormData(
@@ -271,7 +257,7 @@ enum class Step(
             )
         }),
     Password(
-        step = 6,
+        step = 5,
         composable = { data, hasError, _ ->
             PasswordStep(
                 PasswordStepFormData(
@@ -282,7 +268,7 @@ enum class Step(
             )
         }),
     TermsAndPrivacy(
-        step = 7,
+        step = 6,
         composable = { _, _, _ ->
             TermsAndPrivacyStep()
         });

@@ -32,10 +32,12 @@ class AuthApi(
         return when (response?.status) {
             HttpStatusCode.OK -> {
                 val data = response.body<SignInResponse>()
-                val token = sharedData.get("jwtToken")
+                val email = sharedData.get("email")
 
-                if (token.isNullOrBlank()) {
-                    sharedData.save("jwtToken", data.jwtToken)
+                sharedData.save("jwtToken", data.jwtToken)
+                if (email.isNullOrBlank()) {
+                    sharedData.save("email", payload.email)
+                    sharedData.save("password", payload.password)
                 }
 
                 return SignInStatement(
