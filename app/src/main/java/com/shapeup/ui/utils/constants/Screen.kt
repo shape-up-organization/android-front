@@ -20,5 +20,6 @@ enum class Screen(val value: String) {
     Splash("splash-screen"),
     Trainings("trainings-screen"),
     Welcome("welcome-screen"),
-    Rank("rank-screen")
+    Rank("rank-screen"),
+    Search("search-screen")
 }

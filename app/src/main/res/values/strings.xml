@@ -143,6 +143,9 @@
     <string name="rank_header_title">Rank</string>
     <string name="rank_tab_global_title">Global</string>
     <string name="rank_tab_friend_title">Friends</string>
+    <string name="txt_rank_header_title">Rank</string>
+    <string name="txt_rank_tab_global_title">Global</string>
+    <string name="txt_rank_tab_friend_title">Friends</string>
     <!-- TRAININGS -->
     <string name="txt_trainings_title">Trainings</string>
     <string name="txt_trainings_your_xp">your xp:</string>
@@ -176,4 +179,7 @@
     <string name="txt_trainings_classification_emerald">Emerald</string>
     <string name="txt_trainings_classification_ruby">Ruby</string>
     <string name="txt_trainings_classification_platinum">Platinum</string>
+    <!-- SEARCH -->
+    <string name="txt_search_input">Search users</string>
+    <string name="txt_is_friend">Friend</string>
 </resources>
