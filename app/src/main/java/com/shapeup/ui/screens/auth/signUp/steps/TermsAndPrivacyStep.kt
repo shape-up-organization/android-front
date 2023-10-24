@@ -1,5 +1,6 @@
 package com.shapeup.ui.screens.auth.signUp.steps
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
@@ -12,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.shapeup.R
 import com.shapeup.ui.theme.ShapeUpTheme
 
+@SuppressLint("UnrememberedMutableState")
 @Preview
 @Composable
 fun TermsAndPrivacyStepPreview() {

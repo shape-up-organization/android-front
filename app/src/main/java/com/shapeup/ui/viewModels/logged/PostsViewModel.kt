@@ -4,8 +4,8 @@ import android.net.Uri
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.shapeup.service.posts.getCommentsByPostIdMock
-import com.shapeup.service.posts.getPostsMock
+import com.shapeup.api.services.posts.getCommentsByPostIdMock
+import com.shapeup.api.services.posts.getPostsMock
 import com.shapeup.ui.utils.helpers.Navigator
 
 class PostsViewModel : ViewModel() {

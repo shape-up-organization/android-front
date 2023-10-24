@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import com.shapeup.api.utils.helpers.SharedData
 import com.shapeup.ui.screens.auth.SignInScreen
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.navigator
@@ -12,7 +13,10 @@ import com.shapeup.ui.utils.helpers.viewModel
 import com.shapeup.ui.viewModels.auth.SignInFormData
 import com.shapeup.ui.viewModels.auth.SignInViewModel
 
-fun NavGraphBuilder.screenSignIn(navController: NavHostController) {
+fun NavGraphBuilder.screenSignIn(
+    navController: NavHostController,
+    sharedData: SharedData
+) {
     composable(
         route = Screen.SignIn.value,
         enterTransition = {
@@ -42,6 +46,7 @@ fun NavGraphBuilder.screenSignIn(navController: NavHostController) {
     ) {
         val signInViewModel = it.viewModel<SignInViewModel>(navController)
         signInViewModel.navigator = navController.navigator
+        signInViewModel.sharedData = sharedData
 
         SignInScreen(
             data = SignInFormData(

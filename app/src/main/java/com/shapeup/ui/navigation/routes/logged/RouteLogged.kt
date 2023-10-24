@@ -3,6 +3,7 @@ package com.shapeup.ui.navigation.routes.logged
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.navigation
+import com.shapeup.api.utils.helpers.SharedData
 import com.shapeup.ui.navigation.routes.logged.composables.screenChat
 import com.shapeup.ui.navigation.routes.logged.composables.screenChatsList
 import com.shapeup.ui.navigation.routes.logged.composables.screenEditProfile
@@ -19,12 +20,18 @@ import com.shapeup.ui.utils.constants.Route
 import com.shapeup.ui.utils.constants.Screen
 import screenSearch
 
-fun NavGraphBuilder.routeLogged(navController: NavHostController) {
+fun NavGraphBuilder.routeLogged(
+    navController: NavHostController,
+    sharedData: SharedData
+) {
     navigation(
         route = Route.Logged.value,
         startDestination = Screen.Feed.value
     ) {
-        screenFeed(navController)
+        screenFeed(
+            navController,
+            sharedData
+        )
 
         screenNotification(navController)
 

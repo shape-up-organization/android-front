@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import coil.compose.rememberAsyncImagePainter
 import com.shapeup.R
-import com.shapeup.service.users.getUserDataMock
+import com.shapeup.api.services.users.getUserDataMock
 import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator

@@ -1,4 +1,4 @@
-package com.shapeup.service.users
+package com.shapeup.api.services.users
 
 import com.shapeup.ui.viewModels.logged.FriendshipStatus
 import com.shapeup.ui.viewModels.logged.User
