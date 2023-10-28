@@ -13,7 +13,7 @@ import com.shapeup.ui.screens.SplashScreen
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.navigator
 import com.shapeup.ui.utils.helpers.viewModel
-import com.shapeup.ui.viewModels.auth.SignInViewModel
+import com.shapeup.ui.viewModels.auth.AuthViewModel
 
 @Composable
 fun Navigation(
@@ -39,13 +39,12 @@ fun Navigation(
                 )
             }
         ) {
-            val signInViewModel = it.viewModel<SignInViewModel>(navController)
-            signInViewModel.navigator = navController.navigator
-            signInViewModel.sharedData = sharedData
+            val authViewModel = it.viewModel<AuthViewModel>(navController)
+            authViewModel.navigator = navController.navigator
+            authViewModel.sharedData = sharedData
 
             SplashScreen(
-                handlers = signInViewModel.handlers,
-                navigator = navController.navigator
+                handlers = authViewModel.handlers
             )
         }
 

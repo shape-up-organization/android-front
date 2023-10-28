@@ -53,10 +53,10 @@ import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
-import com.shapeup.ui.viewModels.auth.SignUpFormData
-import com.shapeup.ui.viewModels.auth.SignUpFormHandlers
-import com.shapeup.ui.viewModels.auth.signUpFormDataMock
-import com.shapeup.ui.viewModels.auth.signUpFormHandlersMock
+import com.shapeup.ui.viewModels.auth.AuthData
+import com.shapeup.ui.viewModels.auth.AuthHandlers
+import com.shapeup.ui.viewModels.auth.authDataMock
+import com.shapeup.ui.viewModels.auth.authHandlersMock
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.launch
 
@@ -67,8 +67,8 @@ fun SignUpPreview() {
     ShapeUpTheme {
         SignUpScreen(
             activeStep = mutableIntStateOf(1),
-            data = signUpFormDataMock,
-            handlers = signUpFormHandlersMock,
+            data = authDataMock,
+            handlers = authHandlersMock,
             navigator = Navigator()
         )
     }
@@ -77,8 +77,8 @@ fun SignUpPreview() {
 @Composable
 fun SignUpScreen(
     activeStep: MutableState<Int>,
-    data: SignUpFormData,
-    handlers: SignUpFormHandlers,
+    data: AuthData,
+    handlers: AuthHandlers,
     navigator: Navigator
 ) {
     val hasError = remember { mutableStateOf(false) }
@@ -209,9 +209,9 @@ fun SignUpScreen(
 enum class Step(
     val step: Int,
     val composable: @Composable (
-        data: SignUpFormData,
+        data: AuthData,
         hasError: MutableState<Boolean>,
-        handlers: SignUpFormHandlers
+        handlers: AuthHandlers
     ) -> Unit
 ) {
     PersonalData(
@@ -315,9 +315,9 @@ enum class Step(
         @Composable
         fun Composable(
             activeStep: Int,
-            data: SignUpFormData,
+            data: AuthData,
             hasError: MutableState<Boolean>,
-            handlers: SignUpFormHandlers
+            handlers: AuthHandlers
         ): Unit? {
             return enumValues<Step>().find { it.step == activeStep }?.composable?.invoke(
                 data,

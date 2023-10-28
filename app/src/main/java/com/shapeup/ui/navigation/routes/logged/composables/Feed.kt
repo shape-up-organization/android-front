@@ -10,6 +10,7 @@ import com.shapeup.ui.screens.logged.FeedScreen
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.navigator
 import com.shapeup.ui.utils.helpers.viewModel
+import com.shapeup.ui.viewModels.auth.AuthViewModel
 import com.shapeup.ui.viewModels.logged.JourneyData
 import com.shapeup.ui.viewModels.logged.JourneyViewModel
 import com.shapeup.ui.viewModels.logged.PostsData
@@ -26,6 +27,10 @@ fun NavGraphBuilder.screenFeed(
         exitTransition = { ExitTransition.None },
         popExitTransition = { ExitTransition.None }
     ) {
+        val authViewModel = it.viewModel<AuthViewModel>(navController)
+        authViewModel.navigator = navController.navigator
+        authViewModel.sharedData = sharedData
+
         val journeyViewModel = it.viewModel<JourneyViewModel>(navController)
         journeyViewModel.sharedData = sharedData
 
@@ -38,6 +43,7 @@ fun NavGraphBuilder.screenFeed(
         postsViewModel.handlers.getPosts()
 
         FeedScreen(
+            authHandlers = authViewModel.handlers,
             journeyData = JourneyData(
                 friends = journeyViewModel.friends,
                 userData = journeyViewModel.userData

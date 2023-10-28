@@ -10,8 +10,8 @@ import com.shapeup.ui.screens.auth.SignInScreen
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.navigator
 import com.shapeup.ui.utils.helpers.viewModel
-import com.shapeup.ui.viewModels.auth.SignInFormData
-import com.shapeup.ui.viewModels.auth.SignInViewModel
+import com.shapeup.ui.viewModels.auth.AuthViewModel
+import com.shapeup.ui.viewModels.auth.AuthData
 
 fun NavGraphBuilder.screenSignIn(
     navController: NavHostController,
@@ -44,16 +44,23 @@ fun NavGraphBuilder.screenSignIn(
             )
         }
     ) {
-        val signInViewModel = it.viewModel<SignInViewModel>(navController)
-        signInViewModel.navigator = navController.navigator
-        signInViewModel.sharedData = sharedData
+        val authViewModel = it.viewModel<AuthViewModel>(navController)
+        authViewModel.navigator = navController.navigator
+        authViewModel.sharedData = sharedData
 
         SignInScreen(
-            data = SignInFormData(
-                email = signInViewModel.email,
-                password = signInViewModel.password
+            data = AuthData(
+                birth = authViewModel.birth,
+                cellPhone = authViewModel.cellPhone,
+                email = authViewModel.email,
+                name = authViewModel.name,
+                lastName = authViewModel.lastName,
+                password = authViewModel.password,
+                passwordConfirmation = authViewModel.passwordConfirmation,
+                username = authViewModel.username,
+                code = authViewModel.code
             ),
-            handlers = signInViewModel.handlers,
+            handlers = authViewModel.handlers,
             navigator = navController.navigator
         )
     }

@@ -46,8 +46,8 @@ import com.shapeup.ui.components.Loading
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
-import com.shapeup.ui.viewModels.auth.SignUpFormHandlers
-import com.shapeup.ui.viewModels.auth.signUpFormHandlersMock
+import com.shapeup.ui.viewModels.auth.AuthHandlers
+import com.shapeup.ui.viewModels.auth.authHandlersMock
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.launch
 
@@ -59,7 +59,7 @@ fun AccountVerificationScreenPreview() {
         AccountVerificationScreen(
             code = mutableStateOf(""),
             email = mutableStateOf(""),
-            handlers = signUpFormHandlersMock,
+            handlers = authHandlersMock,
             navigator = Navigator()
         )
     }
@@ -69,7 +69,7 @@ fun AccountVerificationScreenPreview() {
 fun AccountVerificationScreen(
     code: MutableState<String>,
     email: MutableState<String>,
-    handlers: SignUpFormHandlers,
+    handlers: AuthHandlers,
     navigator: Navigator
 ) {
     var isLoading by remember { mutableStateOf(false) }

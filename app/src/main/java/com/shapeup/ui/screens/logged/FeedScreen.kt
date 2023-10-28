@@ -35,6 +35,8 @@ import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
+import com.shapeup.ui.viewModels.auth.AuthHandlers
+import com.shapeup.ui.viewModels.auth.authHandlersMock
 import com.shapeup.ui.viewModels.logged.JourneyData
 import com.shapeup.ui.viewModels.logged.JourneyHandlers
 import com.shapeup.ui.viewModels.logged.PostsData
@@ -49,6 +51,7 @@ import com.shapeup.ui.viewModels.logged.postsHandlersMock
 fun FeedScreenPreview() {
     ShapeUpTheme {
         FeedScreen(
+            authHandlers = authHandlersMock,
             journeyData = journeyDataMock,
             journeyHandlers = journeyHandlersMock,
             postsData = postsDataMock,
@@ -60,6 +63,7 @@ fun FeedScreenPreview() {
 
 @Composable
 fun FeedScreen(
+    authHandlers: AuthHandlers,
     journeyData: JourneyData,
     journeyHandlers: JourneyHandlers,
     navigator: Navigator,
@@ -70,7 +74,7 @@ fun FeedScreen(
     BackHandler {
 //        MainActivity().finish()
 //        exitProcess(0)
-        journeyHandlers.signOut()
+        authHandlers.signOut()
         navigator.navigateClean(Screen.Splash)
     }
 

@@ -18,12 +18,6 @@ class JourneyViewModel : ViewModel() {
     val friends = mutableStateOf<List<Friend>>(emptyList())
     val userData = mutableStateOf(getUserDataMock)
 
-    private fun signOut() {
-        sharedData.delete("jwtToken")
-        sharedData.delete("email")
-        sharedData.delete("password")
-    }
-
     private fun getFriends(): List<Friend> {
         // TODO: implement getFriends from service
         val friendsList = getAllFriendshipMock
@@ -126,15 +120,11 @@ class JourneyViewModel : ViewModel() {
         return getAllSearchUserDataMock
     }
 
-    private fun logOut() {}
-
     val handlers = JourneyHandlers(
-        signOut = ::signOut,
         getFriends = ::getFriends,
         getFriendStatus = ::getFriendStatus,
         getUser = ::getUser,
         getUserRelation = ::getUserRelation,
-        logOut = ::logOut,
         updateProfilePicture = ::updateProfilePicture,
         updateUserData = ::updateUserData,
         sendMessage = ::sendMessage,
@@ -155,12 +145,10 @@ val journeyDataMock = JourneyData(
 )
 
 data class JourneyHandlers(
-    val signOut: () -> Unit,
     val getFriends: () -> List<Friend>?,
     val getFriendStatus: (username: String) -> Boolean,
     val getUser: (username: String) -> User?,
     val getUserRelation: (username: String) -> EUserRelation,
-    val logOut: () -> Unit,
     val updateProfilePicture: (profilePicture: Uri) -> Unit,
     val updateUserData: (newUserData: UserDataUpdate) -> Unit,
     val sendMessage: (messageText: String, friendUsername: String) -> Unit,
@@ -170,7 +158,6 @@ data class JourneyHandlers(
 )
 
 val journeyHandlersMock = JourneyHandlers(
-    signOut = {},
     getFriends = {
         val friendsList = getAllFriendshipMock
 
@@ -186,7 +173,6 @@ val journeyHandlersMock = JourneyHandlers(
     getFriendStatus = { Random.nextBoolean() },
     getUser = { JourneyMappers.userDataToUser(getUserDataMock) },
     getUserRelation = { EUserRelation.USER },
-    logOut = {},
     updateProfilePicture = {},
     updateUserData = {},
     sendMessage = { _, _ -> },

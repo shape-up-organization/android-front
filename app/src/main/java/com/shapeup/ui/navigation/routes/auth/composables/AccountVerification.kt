@@ -10,7 +10,7 @@ import com.shapeup.ui.screens.auth.signUp.AccountVerificationScreen
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.navigator
 import com.shapeup.ui.utils.helpers.viewModel
-import com.shapeup.ui.viewModels.auth.SignUpViewModel
+import com.shapeup.ui.viewModels.auth.AuthViewModel
 
 fun NavGraphBuilder.screenAccountVerification(
     navController: NavHostController,
@@ -23,7 +23,7 @@ fun NavGraphBuilder.screenAccountVerification(
         exitTransition = { ExitTransition.None },
         popExitTransition = { ExitTransition.None }
     ) {
-        val viewModel = it.viewModel<SignUpViewModel>(navController)
+        val viewModel = it.viewModel<AuthViewModel>(navController)
         viewModel.navigator = navController.navigator
         viewModel.sharedData = sharedData
 
