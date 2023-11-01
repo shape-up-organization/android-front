@@ -14,9 +14,9 @@ class DateHelper(private val locale: Locale = Locale.getDefault()) {
         return formatter.format(Date(value))
     }
 
-    fun fromFormFieldDateStringToServiceDate(value: String): String {
+    fun fromFormFieldDateStringToServiceDate(value: String, pattern: String = "MM/dd/yyyy"): String {
         val mediumPattern = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM, locale)
-        val desiredPattern = SimpleDateFormat("MM/dd/yyyy", locale)
+        val desiredPattern = SimpleDateFormat(pattern, locale)
 
         val date = mediumPattern.parse(value)
         return desiredPattern.format(date!!)

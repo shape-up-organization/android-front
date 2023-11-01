@@ -1,4 +1,4 @@
-package com.shapeup.service.posts
+package com.shapeup.api.services.posts
 
 import com.shapeup.ui.viewModels.logged.Comment
 import com.shapeup.ui.viewModels.logged.Post

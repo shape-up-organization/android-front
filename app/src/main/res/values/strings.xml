@@ -42,6 +42,12 @@
     <string name="user_profile_pic">User profile picture</string>
     <string name="txt_date_picker_pick_data">Pick data</string>
 
+    <!-- FORM ERRORS -->
+    <string name="txt_errors_required">Required</string>
+    <string name="txt_errors_invalid">Invalid</string>
+    <string name="txt_errors_invalid_format">Invalid format</string>
+    <string name="txt_errors_send_code">Error sending code, try again</string>
+
     <!-- PAGES -->
     <!-- WELCOME -->
     <string name="txt_sign_in">Sign in</string>
@@ -87,6 +93,8 @@
     <string name="txt_sign_up_screen_password_label">Password</string>
     <string name="txt_sign_up_screen_password_confirmation_label">Confirm your password</string>
     <string name="txt_sign_up_screen_bio_label">Bio</string>
+    <string name="txt_sign_up_screen_account_verification">Account verification</string>
+    <string name="txt_sign_up_screen_activate_account">Activate account</string>
     <!-- TERMS -->
     <string name="terms_title">Terms and Conditions</string>
     <string name="terms_body">" 1. Platform Usage\nYou are responsible for the proper use of our platform and must comply with all applicable laws and regulations. By using our services, you agree not to:\n\na) Post illegal, defamatory, offensive, obscene, threatening, or abusive content; \nb) Engage in fraudulent activities, such as phishing or identity fraud; \nc) Commit acts that could harm the platform or other users, such as using malware or spam; \nd) Violate the intellectual property rights of third parties; e) Access or attempt to access the platform through any means other than the interfaces provided by our social network.\n\n 2. User Account\nYou must have an account to use our services. By creating an account, you agree to provide accurate and up-to-date information and to keep it current. You also agree to protect your account and keep your password secure. We will not allow account sharing or the use of accounts by others.\n\n 3. Content Ownership\nYou retain ownership of the content you post on our platform, but you grant our social network a global, irrevocable, and non-exclusive license to use, reproduce, modify, publish, and distribute the content on our platform.\n\n 4. Modifications to Terms of Use\nWe may modify these terms of use at any time, and you will be notified of any significant changes. If you continue to use our services after the modification of the terms of use, it will be considered as your acceptance of the new terms.\n\n 5. Account Termination\nWe may terminate your account at any time, for any reason, without prior notice. You can terminate your account at any time by following the instructions on our platform.\n\n 6. Limitation of Liability\nWe are not responsible for any direct or indirect damages resulting from the use of our platform, including damages arising from errors, omissions, or interruptions of services.\n\n 7. Applicable Law and Jurisdiction\nThese terms of use are governed by the laws of the country where our social network is based, and any disputes will be exclusively resolved by the courts of that country. By using our services, you agree to comply with these terms of use. If you have any questions about these terms, please contact us.\n\n 8. Privacy\nWe collect and use information in accordance with our privacy policy."</string>

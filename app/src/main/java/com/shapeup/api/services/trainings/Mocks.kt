@@ -1,4 +1,4 @@
-package com.shapeup.service.trainings
+package com.shapeup.api.services.trainings
 
 import com.shapeup.ui.viewModels.logged.ETrainingCategory
 import com.shapeup.ui.viewModels.logged.ETrainingClassification

@@ -28,6 +28,8 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,13 +49,16 @@ import com.shapeup.ui.screens.auth.signUp.steps.PhoneStepFormData
 import com.shapeup.ui.screens.auth.signUp.steps.TermsAndPrivacyStep
 import com.shapeup.ui.screens.auth.signUp.steps.UsernameStep
 import com.shapeup.ui.screens.auth.signUp.steps.UsernameStepFormData
-import com.shapeup.ui.screens.auth.signUp.steps.VerificationCodeStep
-import com.shapeup.ui.screens.auth.signUp.steps.VerificationCodeStepFormData
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon
+import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
 import com.shapeup.ui.viewModels.auth.SignUpFormData
 import com.shapeup.ui.viewModels.auth.SignUpFormHandlers
+import com.shapeup.ui.viewModels.auth.signUpFormDataMock
+import com.shapeup.ui.viewModels.auth.signUpFormHandlersMock
+import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnrememberedMutableState")
 @Preview
@@ -62,22 +67,8 @@ fun SignUpPreview() {
     ShapeUpTheme {
         SignUpScreen(
             activeStep = mutableIntStateOf(1),
-            data = SignUpFormData(
-                birthday = mutableStateOf(""),
-                email = mutableStateOf(""),
-                firstName = mutableStateOf(""),
-                lastName = mutableStateOf(""),
-                password = mutableStateOf(""),
-                passwordConfirmation = mutableStateOf(""),
-                phone = mutableStateOf(""),
-                username = mutableStateOf(""),
-                verificationCode = mutableStateOf("")
-            ),
-            handlers = SignUpFormHandlers(
-                clearFormData = {},
-                signUp = {},
-                verifyCode = {}
-            ),
+            data = signUpFormDataMock,
+            handlers = signUpFormHandlersMock,
             navigator = Navigator()
         )
     }
@@ -90,11 +81,27 @@ fun SignUpScreen(
     handlers: SignUpFormHandlers,
     navigator: Navigator
 ) {
+    val hasError = remember { mutableStateOf(false) }
+
     val animatedProgress by animateFloatAsState(
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
         label = stringResource(R.string.txt_sign_up_screen_progress_bar),
         targetValue = Step.getStepProgress(activeStep = activeStep.value)
     )
+    val coroutine = rememberCoroutineScope()
+
+    suspend fun signUp() {
+        hasError.value = true
+        val response = handlers.signUp()
+
+        println(response)
+
+        when (response.status) {
+            HttpStatusCode.Created -> navigator.navigate(Screen.AccountVerification)
+
+            else -> hasError.value = false
+        }
+    }
 
     BackHandler {
         Step.returnStep(
@@ -117,7 +124,9 @@ fun SignUpScreen(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = {
+            IconButton(
+                enabled = !(hasError.value && Step.isAtLastStep(activeStep.value)),
+                onClick = {
                 Step.returnStep(
                     activeStep = activeStep,
                     clearData = handlers.clearFormData,
@@ -162,19 +171,24 @@ fun SignUpScreen(
         ) {
             Step.Composable(
                 activeStep = activeStep.value,
-                data = data
+                data = data,
+                hasError = hasError,
+                handlers = handlers
             )
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
+            enabled = !hasError.value,
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                Step.advanceStep(
-                    activeStep = activeStep,
-                    onFinish = handlers.signUp
-                )
+                coroutine.launch {
+                    Step.advanceStep(
+                        activeStep = activeStep,
+                        onFinish = { signUp() }
+                    )
+                }
             }
         ) {
             Text(
@@ -192,63 +206,88 @@ fun SignUpScreen(
     }
 }
 
-enum class Step(val step: Int, val composable: @Composable (data: SignUpFormData) -> Unit) {
-    PersonalData(step = 1, composable = {
-        PersonalDataStep(
-            PersonalDataStepFormData(
-                birthday = it.birthday,
-                firstName = it.firstName,
-                lastName = it.lastName
+enum class Step(
+    val step: Int,
+    val composable: @Composable (
+        data: SignUpFormData,
+        hasError: MutableState<Boolean>,
+        handlers: SignUpFormHandlers
+    ) -> Unit
+) {
+    PersonalData(
+        step = 1,
+        composable = { data, hasError, _ ->
+            PersonalDataStep(
+                data = PersonalDataStepFormData(
+                    birth = data.birth,
+                    name = data.name,
+                    lastName = data.lastName
+                ),
+                hasError = hasError
             )
-        )
-    }),
-    Email(step = 2, composable = {
-        EmailStep(
-            EmailStepFormData(email = it.email)
-        )
-    }),
-    VerificationCode(step = 3, composable = {
-        VerificationCodeStep(
-            VerificationCodeStepFormData(
-                email = it.email,
-                verificationCode = it.verificationCode
+        }),
+    Email(
+        step = 2,
+        composable = { data, hasError, _ ->
+            EmailStep(
+                EmailStepFormData(
+                    email = data.email
+                ),
+                hasError = hasError
             )
-        )
-    }),
-    Phone(step = 4, composable = {
-        PhoneStep(
-            PhoneStepFormData(
-                phone = it.phone
+        }),
+    Phone(
+        step = 3,
+        composable = { data, hasError, _ ->
+            PhoneStep(
+                PhoneStepFormData(
+                    cellPhone = data.cellPhone
+                ),
+                hasError = hasError,
             )
-        )
-    }),
-    Username(step = 5, composable = {
-        UsernameStep(
-            UsernameStepFormData(
-                username = it.username
+        }),
+    Username(
+        step = 4,
+        composable = { data, hasError, _ ->
+            UsernameStep(
+                UsernameStepFormData(
+                    username = data.username
+                ),
+                hasError = hasError
             )
-        )
-    }),
-    Password(step = 6, composable = {
-        PasswordStep(
-            PasswordStepFormData(
-                password = it.password,
-                passwordConfirmation = it.passwordConfirmation
+        }),
+    Password(
+        step = 5,
+        composable = { data, hasError, _ ->
+            PasswordStep(
+                PasswordStepFormData(
+                    password = data.password,
+                    passwordConfirmation = data.passwordConfirmation
+                ),
+                hasError = hasError
             )
-        )
-    }),
-    TermsAndPrivacy(step = 7, composable = {
-        TermsAndPrivacyStep()
-    });
+        }),
+    TermsAndPrivacy(
+        step = 6,
+        composable = { _, _, _ ->
+            TermsAndPrivacyStep()
+        });
 
     companion object {
-        fun advanceStep(activeStep: MutableState<Int>, onFinish: () -> Unit) {
-            if (activeStep.value < getMaxSteps()) {
-                activeStep.value += 1
+        fun isAtLastStep(activeStep: Int): Boolean {
+            return activeStep == getMaxSteps()
+        }
+
+        suspend fun advanceStep(
+            activeStep: MutableState<Int>,
+            onFinish: suspend () -> Unit
+        ) {
+            if (isAtLastStep(activeStep.value)) {
+                onFinish()
                 return
             }
 
-            onFinish()
+            activeStep.value += 1
         }
 
         fun returnStep(
@@ -270,12 +309,21 @@ enum class Step(val step: Int, val composable: @Composable (data: SignUpFormData
         }
 
         fun getStepProgress(activeStep: Int): Float {
-            return activeStep * 1.0f / Step.getMaxSteps()
+            return activeStep * 1.0f / getMaxSteps()
         }
 
         @Composable
-        fun Composable(data: SignUpFormData, activeStep: Int): Unit? {
-            return enumValues<Step>().find { it.step == activeStep }?.composable?.invoke(data)
+        fun Composable(
+            activeStep: Int,
+            data: SignUpFormData,
+            hasError: MutableState<Boolean>,
+            handlers: SignUpFormHandlers
+        ): Unit? {
+            return enumValues<Step>().find { it.step == activeStep }?.composable?.invoke(
+                data,
+                hasError,
+                handlers
+            )
         }
     }
 }
