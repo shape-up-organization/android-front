@@ -26,6 +26,7 @@ fun NavGraphBuilder.screenTrainings(navController: NavHostController) {
 
         TrainingsScreen(
             journeyData = JourneyData(
+                initialLoad = journeyViewModel.initialLoad,
                 friends = journeyViewModel.friends,
                 userData = journeyViewModel.userData
             ),

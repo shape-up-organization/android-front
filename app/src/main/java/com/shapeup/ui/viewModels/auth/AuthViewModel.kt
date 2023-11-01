@@ -1,5 +1,4 @@
 package com.shapeup.ui.viewModels.auth
-
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -9,6 +8,8 @@ import com.shapeup.api.services.auth.ConfirmEmailStatement
 import com.shapeup.api.services.auth.EAuthApi
 import com.shapeup.api.services.auth.SendEmailCodePayload
 import com.shapeup.api.services.auth.SendEmailCodeStatement
+import com.shapeup.api.services.auth.SignInPayload
+import com.shapeup.api.services.auth.SignInStatement
 import com.shapeup.api.services.auth.SignUpPayload
 import com.shapeup.api.services.auth.SignUpStatement
 import com.shapeup.api.utils.helpers.SharedData
@@ -16,7 +17,7 @@ import com.shapeup.ui.utils.helpers.DateHelper
 import com.shapeup.ui.utils.helpers.Navigator
 import io.ktor.http.HttpStatusCode
 
-class SignUpViewModel : ViewModel() {
+class AuthViewModel : ViewModel() {
     lateinit var navigator: Navigator
     lateinit var sharedData: SharedData
 
@@ -44,6 +45,23 @@ class SignUpViewModel : ViewModel() {
         passwordConfirmation.value = ""
         username.value = ""
         code.value = ""
+    }
+
+    private fun signOut() {
+        sharedData.delete("jwtToken")
+        sharedData.delete("email")
+        sharedData.delete("password")
+    }
+
+    private suspend fun signIn(): SignInStatement {
+        val authApi = EAuthApi.create(sharedData)
+
+        val payload = SignInPayload(
+            email = email.value,
+            password = password.value
+        )
+
+        return authApi.signIn(payload)
     }
 
     private suspend fun signUp(): SignUpStatement {
@@ -86,15 +104,17 @@ class SignUpViewModel : ViewModel() {
         return authApi.confirmEmail(payload)
     }
 
-    val handlers = SignUpFormHandlers(
+    val handlers = AuthHandlers(
         clearFormData = ::clearFormData,
+        signOut = ::signOut,
+        signIn = ::signIn,
         signUp = ::signUp,
         sendEmailCode = ::sendEmailCode,
         confirmEmail = ::confirmEmail
     )
 }
 
-class SignUpFormData(
+class AuthData(
     val birth: MutableState<String>,
     val cellPhone: MutableState<String>,
     val email: MutableState<String>,
@@ -106,7 +126,7 @@ class SignUpFormData(
     val code: MutableState<String>
 )
 
-val signUpFormDataMock = SignUpFormData(
+val authDataMock = AuthData(
     birth = mutableStateOf(""),
     cellPhone = mutableStateOf(""),
     email = mutableStateOf(""),
@@ -118,15 +138,24 @@ val signUpFormDataMock = SignUpFormData(
     code = mutableStateOf("")
 )
 
-class SignUpFormHandlers(
+class AuthHandlers(
     val clearFormData: () -> Unit,
+    val signOut: () -> Unit,
+    val signIn: suspend () -> SignInStatement,
     val signUp: suspend () -> SignUpStatement,
     val sendEmailCode: suspend () -> SendEmailCodeStatement,
     val confirmEmail: suspend () -> ConfirmEmailStatement
 )
 
-val signUpFormHandlersMock = SignUpFormHandlers(
+val authHandlersMock = AuthHandlers(
+    signOut = {},
     clearFormData = {},
+    signIn = suspend {
+        SignInStatement(
+            data = null,
+            status = HttpStatusCode.ServiceUnavailable
+        )
+    },
     signUp = suspend {
         SignUpStatement(
             status = HttpStatusCode.ServiceUnavailable

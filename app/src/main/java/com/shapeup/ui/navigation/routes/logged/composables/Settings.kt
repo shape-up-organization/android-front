@@ -24,6 +24,7 @@ fun NavGraphBuilder.screenSettings(navController: NavHostController) {
 
         SettingsScreen(
             journeyData = JourneyData(
+                initialLoad = journeyViewModel.initialLoad,
                 friends = journeyViewModel.friends,
                 userData = journeyViewModel.userData
             ),

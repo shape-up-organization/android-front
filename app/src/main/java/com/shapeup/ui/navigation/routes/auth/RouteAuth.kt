@@ -25,7 +25,10 @@ fun NavGraphBuilder.routeAuth(
             navController,
             sharedData
         )
-        routeForgotPassword(navController)
+        routeForgotPassword(
+            navController,
+            sharedData
+        )
         screenSignUp(
             navController,
             sharedData

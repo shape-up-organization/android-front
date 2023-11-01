@@ -24,6 +24,7 @@ fun NavGraphBuilder.screenRank(navController: NavHostController) {
 
         RankScreen(
             journeyData = JourneyData(
+                initialLoad = journeyViewModel.initialLoad,
                 friends = journeyViewModel.friends,
                 userData = journeyViewModel.userData
             ),

@@ -1,5 +1,6 @@
 package com.shapeup.ui.screens
 
+import android.content.Context
 import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -15,15 +16,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.shapeup.R
+import com.shapeup.api.utils.helpers.SharedData
 import com.shapeup.ui.theme.GradientDark
 import com.shapeup.ui.theme.GradientLight
 import com.shapeup.ui.theme.ShapeUpTheme
+import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
-import com.shapeup.ui.viewModels.auth.SignInFormHandlers
-import com.shapeup.ui.viewModels.auth.signInFormHandlersMock
+import com.shapeup.ui.viewModels.auth.AuthData
+import com.shapeup.ui.viewModels.auth.AuthHandlers
+import com.shapeup.ui.viewModels.auth.authDataMock
+import com.shapeup.ui.viewModels.auth.authHandlersMock
+import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.delay
 
 @Preview
@@ -31,7 +38,8 @@ import kotlinx.coroutines.delay
 fun SplashScreenPreview() {
     ShapeUpTheme {
         SplashScreen(
-            handlers = signInFormHandlersMock,
+            data = authDataMock,
+            handlers = authHandlersMock,
             navigator = Navigator()
         )
     }
@@ -39,12 +47,21 @@ fun SplashScreenPreview() {
 
 @Composable
 fun SplashScreen(
-    handlers: SignInFormHandlers,
+    data: AuthData,
+    handlers: AuthHandlers,
     navigator: Navigator
 ) {
     val scale = remember {
         Animatable(0.3f)
     }
+
+    val sharedData =
+        SharedData(
+            LocalContext.current.getSharedPreferences(
+                "shapeup",
+                Context.MODE_PRIVATE
+            )
+        )
 
     LaunchedEffect(key1 = true) {
         scale.animateTo(
@@ -57,7 +74,28 @@ fun SplashScreen(
             )
         )
         delay(600L)
-        handlers.startupVerification()
+
+        val emailShared = sharedData.get("email")
+        val passwordShared = sharedData.get("password")
+
+        when {
+            !emailShared.isNullOrBlank() && !passwordShared.isNullOrBlank() -> {
+                data.email.value = emailShared
+                data.password.value = passwordShared
+
+                val response = handlers.signIn()
+
+                println(response)
+
+                when (response.status) {
+                    HttpStatusCode.OK -> navigator.navigate(Screen.Feed)
+
+                    else -> navigator.navigate(Screen.Welcome)
+                }
+            }
+
+            else -> navigator.navigate(Screen.Welcome)
+        }
     }
 
     Box(

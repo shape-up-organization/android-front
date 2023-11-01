@@ -35,15 +35,15 @@ import androidx.compose.ui.unit.dp
 import com.shapeup.R
 import com.shapeup.ui.components.FormField
 import com.shapeup.ui.components.FormFieldType
-import com.shapeup.ui.components.Loading
 import com.shapeup.ui.components.Header
+import com.shapeup.ui.components.Loading
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
-import com.shapeup.ui.viewModels.auth.SignInFormData
-import com.shapeup.ui.viewModels.auth.SignInFormHandlers
-import com.shapeup.ui.viewModels.auth.signInFormDataMock
-import com.shapeup.ui.viewModels.auth.signInFormHandlersMock
+import com.shapeup.ui.viewModels.auth.AuthData
+import com.shapeup.ui.viewModels.auth.AuthHandlers
+import com.shapeup.ui.viewModels.auth.authDataMock
+import com.shapeup.ui.viewModels.auth.authHandlersMock
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.launch
 
@@ -52,8 +52,8 @@ import kotlinx.coroutines.launch
 fun SignInPreview() {
     ShapeUpTheme {
         SignInScreen(
-            data = signInFormDataMock,
-            handlers = signInFormHandlersMock,
+            data = authDataMock,
+            handlers = authHandlersMock,
             navigator = Navigator()
         )
     }
@@ -63,8 +63,8 @@ const val ENABLE_FORGOT_PASSWORD = false
 
 @Composable
 fun SignInScreen(
-    data: SignInFormData,
-    handlers: SignInFormHandlers,
+    data: AuthData,
+    handlers: AuthHandlers,
     navigator: Navigator
 ) {
     var isLoading by remember { mutableStateOf(false) }

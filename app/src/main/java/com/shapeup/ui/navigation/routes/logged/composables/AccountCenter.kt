@@ -24,6 +24,7 @@ fun NavGraphBuilder.screenAccountCenter(navController: NavHostController) {
 
         AccountCenterScreen(
             journeyData = JourneyData(
+                initialLoad = journeyViewModel.initialLoad,
                 friends = journeyViewModel.friends,
                 userData = journeyViewModel.userData
             ),

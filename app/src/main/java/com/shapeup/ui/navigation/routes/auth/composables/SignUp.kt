@@ -10,8 +10,8 @@ import com.shapeup.ui.screens.auth.signUp.SignUpScreen
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.navigator
 import com.shapeup.ui.utils.helpers.viewModel
-import com.shapeup.ui.viewModels.auth.SignUpFormData
-import com.shapeup.ui.viewModels.auth.SignUpViewModel
+import com.shapeup.ui.viewModels.auth.AuthData
+import com.shapeup.ui.viewModels.auth.AuthViewModel
 
 fun NavGraphBuilder.screenSignUp(
     navController: NavHostController,
@@ -44,24 +44,24 @@ fun NavGraphBuilder.screenSignUp(
             )
         }
     ) {
-        val viewModel = it.viewModel<SignUpViewModel>(navController)
-        viewModel.navigator = navController.navigator
-        viewModel.sharedData = sharedData
+        val authViewModel = it.viewModel<AuthViewModel>(navController)
+        authViewModel.navigator = navController.navigator
+        authViewModel.sharedData = sharedData
 
         SignUpScreen(
-            activeStep = viewModel.activeStep,
-            data = SignUpFormData(
-                birth = viewModel.birth,
-                cellPhone = viewModel.cellPhone,
-                email = viewModel.email,
-                name = viewModel.name,
-                lastName = viewModel.lastName,
-                password = viewModel.password,
-                passwordConfirmation = viewModel.passwordConfirmation,
-                username = viewModel.username,
-                code = viewModel.code
+            activeStep = authViewModel.activeStep,
+            data = AuthData(
+                birth = authViewModel.birth,
+                cellPhone = authViewModel.cellPhone,
+                email = authViewModel.email,
+                name = authViewModel.name,
+                lastName = authViewModel.lastName,
+                password = authViewModel.password,
+                passwordConfirmation = authViewModel.passwordConfirmation,
+                username = authViewModel.username,
+                code = authViewModel.code
             ),
-            handlers = viewModel.handlers,
+            handlers = authViewModel.handlers,
             navigator = navController.navigator
         )
     }

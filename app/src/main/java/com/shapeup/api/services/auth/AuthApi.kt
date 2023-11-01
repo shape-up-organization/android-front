@@ -1,6 +1,7 @@
 package com.shapeup.api.services.auth
 
 import com.shapeup.api.utils.constants.BASE_URL
+import com.shapeup.api.utils.constants.SharedDataValues
 import com.shapeup.api.utils.helpers.SharedData
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -32,12 +33,12 @@ class AuthApi(
         return when (response?.status) {
             HttpStatusCode.OK -> {
                 val data = response.body<SignInResponse>()
-                val email = sharedData.get("email")
+                val email = sharedData.get(SharedDataValues.Email.value)
 
-                sharedData.save("jwtToken", data.jwtToken)
+                sharedData.save(SharedDataValues.JwtToken.value, data.jwtToken)
                 if (email.isNullOrBlank()) {
-                    sharedData.save("email", payload.email)
-                    sharedData.save("password", payload.password)
+                    sharedData.save(SharedDataValues.Email.value, payload.email)
+                    sharedData.save(SharedDataValues.Password.value, payload.password)
                 }
 
                 return SignInStatement(

@@ -24,6 +24,7 @@ fun NavGraphBuilder.screenChatsList(navController: NavHostController) {
 
         ChatsListScreen(
             journeyData = JourneyData(
+                initialLoad = journeyViewModel.initialLoad,
                 friends = journeyViewModel.friends,
                 userData = journeyViewModel.userData
             ),
