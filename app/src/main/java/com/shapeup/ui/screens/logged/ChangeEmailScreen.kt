@@ -30,6 +30,10 @@ import com.shapeup.ui.components.Header
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.helpers.Navigator
+import com.shapeup.ui.viewModels.logged.JourneyData
+import com.shapeup.ui.viewModels.logged.JourneyHandlers
+import com.shapeup.ui.viewModels.logged.journeyDataMock
+import com.shapeup.ui.viewModels.logged.journeyHandlersMock
 
 @SuppressLint("UnrememberedMutableState")
 @Preview
@@ -37,6 +41,8 @@ import com.shapeup.ui.utils.helpers.Navigator
 fun ChangeEmailPreview() {
     ShapeUpTheme {
         ChangeEmailScreen(
+            journeyData = journeyDataMock,
+            journeyHandlers = journeyHandlersMock,
             navigator = Navigator()
         )
     }
@@ -44,6 +50,8 @@ fun ChangeEmailPreview() {
 
 @Composable
 fun ChangeEmailScreen(
+    journeyData: JourneyData,
+    journeyHandlers: JourneyHandlers,
     navigator: Navigator
 ) {
     val focusManager = LocalFocusManager.current
@@ -108,8 +116,6 @@ fun ChangeEmailScreen(
                     supportingText = null,
                     value =  ("New E-mail")
                 )
-
-
             }
         }
 

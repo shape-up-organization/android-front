@@ -31,6 +31,10 @@ import com.shapeup.ui.components.Header
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.helpers.Navigator
+import com.shapeup.ui.viewModels.logged.JourneyData
+import com.shapeup.ui.viewModels.logged.JourneyHandlers
+import com.shapeup.ui.viewModels.logged.journeyDataMock
+import com.shapeup.ui.viewModels.logged.journeyHandlersMock
 
 @SuppressLint("UnrememberedMutableState")
 @Preview
@@ -38,6 +42,8 @@ import com.shapeup.ui.utils.helpers.Navigator
 fun ChangePasswordPreview() {
     ShapeUpTheme {
         ChangePasswordScreen(
+            journeyData = journeyDataMock,
+            journeyHandlers = journeyHandlersMock,
             navigator = Navigator()
         )
     }
@@ -45,6 +51,8 @@ fun ChangePasswordPreview() {
 
 @Composable
 fun ChangePasswordScreen(
+    journeyData: JourneyData,
+    journeyHandlers: JourneyHandlers,
     navigator: Navigator
 ) {
 

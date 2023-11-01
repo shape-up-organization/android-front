@@ -181,4 +181,9 @@
     <!-- SEARCH -->
     <string name="txt_search_input">Procurar usuários</string>
     <string name="txt_is_friend">Amigo</string>
+    <!-- SETTINGS -->
+    <string name="txt_settings_title">Configurações</string>
+    <string name="txt_settings_account_center">Conta</string>
+    <string name="txt_settings_help">Ajuda</string>
+    <string name="txt_settings_about">Sobre</string>
 </resources>
