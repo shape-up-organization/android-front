@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -30,10 +31,13 @@ import com.shapeup.R
 import com.shapeup.ui.components.FormField
 import com.shapeup.ui.components.Header
 import com.shapeup.ui.theme.ShapeUpTheme
+import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
 import com.shapeup.ui.viewModels.logged.PostCreation
 import com.shapeup.ui.viewModels.logged.PostsHandlers
 import com.shapeup.ui.viewModels.logged.postsHandlersMock
+import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -52,9 +56,31 @@ fun PostTextScreen(
     postsHandlers: PostsHandlers
 ) {
     var description by remember { mutableStateOf("") }
+    var loading by remember { mutableStateOf(false) }
 
+    val coroutine = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
     val fieldHeight = (LocalConfiguration.current.screenHeightDp * 0.6).dp
+
+    fun createPost() {
+        coroutine.launch {
+            loading = true
+
+            val response = postsHandlers.createPost(
+                PostCreation(
+                    description = description
+                )
+            )
+
+            when (response.status) {
+                HttpStatusCode.Created -> {
+                    navigator.navigateClean(Screen.Feed)
+                }
+
+                else -> loading = false
+            }
+        }
+    }
 
     BackHandler {
         navigator.navigateBack()
@@ -95,15 +121,12 @@ fun PostTextScreen(
                     else -> MaterialTheme.colorScheme.tertiary
                 }
             ),
-            enabled = description.isNotBlank(),
+            enabled = !loading && description.isNotBlank(),
             modifier = Modifier.fillMaxWidth(),
-            onClick = {
-                postsHandlers.createPost(PostCreation(description = description))
-            }
+            onClick = { createPost() }
         ) {
             Text(
-                modifier = Modifier
-                    .padding(vertical = 12.dp),
+                modifier = Modifier.padding(vertical = 12.dp),
                 style = MaterialTheme.typography.bodyLarge,
                 text = stringResource(R.string.txt_post_button)
             )

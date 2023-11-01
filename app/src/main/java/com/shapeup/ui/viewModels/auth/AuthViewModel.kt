@@ -1,5 +1,4 @@
 package com.shapeup.ui.viewModels.auth
-
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -14,7 +13,6 @@ import com.shapeup.api.services.auth.SignInStatement
 import com.shapeup.api.services.auth.SignUpPayload
 import com.shapeup.api.services.auth.SignUpStatement
 import com.shapeup.api.utils.helpers.SharedData
-import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.DateHelper
 import com.shapeup.ui.utils.helpers.Navigator
 import io.ktor.http.HttpStatusCode
@@ -66,32 +64,6 @@ class AuthViewModel : ViewModel() {
         return authApi.signIn(payload)
     }
 
-    private suspend fun startupVerification() {
-//        val jwtTokenShared = sharedData.get("jwtToken")
-        val emailShared = sharedData.get("email")
-        val passwordShared = sharedData.get("password")
-
-        when {
-//            !jwtTokenShared.isNullOrBlank() -> navigator.navigate(Screen.Feed)
-            !emailShared.isNullOrBlank() && !passwordShared.isNullOrBlank() -> {
-                email.value = emailShared
-                password.value = passwordShared
-
-                val response = signIn()
-
-                println(response)
-
-                when (response.status) {
-                    HttpStatusCode.OK -> navigator.navigate(Screen.Feed)
-
-                    else -> navigator.navigate(Screen.Welcome)
-                }
-            }
-
-            else -> navigator.navigate(Screen.Welcome)
-        }
-    }
-
     private suspend fun signUp(): SignUpStatement {
         val authApi = EAuthApi.create(sharedData)
 
@@ -136,7 +108,6 @@ class AuthViewModel : ViewModel() {
         clearFormData = ::clearFormData,
         signOut = ::signOut,
         signIn = ::signIn,
-        startupVerification = ::startupVerification,
         signUp = ::signUp,
         sendEmailCode = ::sendEmailCode,
         confirmEmail = ::confirmEmail
@@ -171,7 +142,6 @@ class AuthHandlers(
     val clearFormData: () -> Unit,
     val signOut: () -> Unit,
     val signIn: suspend () -> SignInStatement,
-    val startupVerification: suspend () -> Unit,
     val signUp: suspend () -> SignUpStatement,
     val sendEmailCode: suspend () -> SendEmailCodeStatement,
     val confirmEmail: suspend () -> ConfirmEmailStatement
@@ -186,7 +156,6 @@ val authHandlersMock = AuthHandlers(
             status = HttpStatusCode.ServiceUnavailable
         )
     },
-    startupVerification = suspend {},
     signUp = suspend {
         SignUpStatement(
             status = HttpStatusCode.ServiceUnavailable

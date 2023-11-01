@@ -24,6 +24,7 @@ fun NavGraphBuilder.screenEditProfile(navController: NavHostController) {
 
         EditProfileScreen(
             journeyData = JourneyData(
+                initialLoad = journeyViewModel.initialLoad,
                 friends = journeyViewModel.friends,
                 userData = journeyViewModel.userData
             ),

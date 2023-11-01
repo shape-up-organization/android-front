@@ -35,6 +35,7 @@ fun NavGraphBuilder.screenProfile(navController: NavHostController) {
 
             ProfileScreen(
                 journeyData = JourneyData(
+                    initialLoad = journeyViewModel.initialLoad,
                     friends = journeyViewModel.friends,
                     userData = journeyViewModel.userData
                 ),
@@ -65,6 +66,7 @@ fun NavGraphBuilder.screenProfile(navController: NavHostController) {
 
         ProfileScreen(
             journeyData = JourneyData(
+                initialLoad = journeyViewModel.initialLoad,
                 friends = journeyViewModel.friends,
                 userData = journeyViewModel.userData
             ),

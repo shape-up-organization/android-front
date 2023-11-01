@@ -32,6 +32,7 @@ fun NavGraphBuilder.screenChat(navController: NavHostController) {
             if (userData != null) {
                 ChatScreen(
                     journeyData = JourneyData(
+                        initialLoad = journeyViewModel.initialLoad,
                         friends = journeyViewModel.friends,
                         userData = journeyViewModel.userData
                     ),

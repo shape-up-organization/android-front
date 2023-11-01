@@ -36,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,19 +53,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import coil.compose.rememberAsyncImagePainter
 import com.shapeup.R
+import com.shapeup.api.services.posts.Post
 import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
 import com.shapeup.ui.utils.helpers.XPUtils
 import com.shapeup.ui.viewModels.logged.Comment
 import com.shapeup.ui.viewModels.logged.EUserRelation
-import com.shapeup.ui.viewModels.logged.Post
 import com.shapeup.ui.viewModels.logged.PostsHandlers
 import com.shapeup.ui.viewModels.logged.User
+import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun CardPost(
     compactPost: Boolean = false,
+    deletePost: ((postId: String) -> Unit?)? = null,
     fullScreen: Boolean = false,
     navigator: Navigator,
     postData: Post,
@@ -72,12 +78,85 @@ fun CardPost(
     user: User,
     userRelation: EUserRelation
 ) {
-    var comments by remember {
-        mutableStateOf<List<Comment>>(emptyList())
-    }
+    var comments by remember { mutableStateOf<List<Comment>?>(null) }
+    var likesQuantity by remember { mutableIntStateOf(postData.countLike) }
     var likedStatus by remember { mutableStateOf(postData.liked) }
+    var loadingComments by remember { mutableStateOf(false) }
     var expandOptionsMenu by remember { mutableStateOf(false) }
     val expandCommentsBottomSheet = remember { mutableStateOf(false) }
+
+    val coroutine = rememberCoroutineScope()
+
+    fun getComments() {
+        coroutine.launch {
+            loadingComments = true
+
+            comments = postsHandlers.getCommentsByPostId(postData.id).data ?: emptyList()
+
+            withContext(Dispatchers.IO) {
+                Thread.sleep(500)
+                loadingComments = false
+            }
+        }
+    }
+
+    fun sendComment(commentMessage: String) {
+        coroutine.launch {
+            loadingComments = true
+
+            val response = postsHandlers.sendComment(
+                postData.id,
+                commentMessage
+            )
+
+            when (response.status) {
+                HttpStatusCode.Created -> getComments()
+
+                else -> withContext(Dispatchers.IO) {
+                    Thread.sleep(500)
+                    loadingComments = false
+                }
+            }
+        }
+    }
+
+    fun toggleLike() {
+        coroutine.launch {
+            val initialLiked = likedStatus
+
+            if (initialLiked) {
+                likesQuantity -= 1
+            } else {
+                likesQuantity += 1
+            }
+
+            likedStatus = !likedStatus
+
+            val response = postsHandlers.toggleLike(postData.id)
+
+            if (response.status != HttpStatusCode.NoContent) {
+                likedStatus = initialLiked
+
+                if (initialLiked) {
+                    likesQuantity += 1
+                } else {
+                    likesQuantity -= 1
+                }
+            }
+        }
+    }
+
+    fun deletePostLocal() {
+        coroutine.launch {
+            if (deletePost != null) {
+                deletePost(postData.id)
+                return@launch
+            }
+
+            postsHandlers.deletePost(postData.id)
+            navigator.navigateBack()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -213,7 +292,7 @@ fun CardPost(
 
                         if (userRelation == EUserRelation.USER) {
                             DropdownMenuItem(
-                                onClick = { /*TODO: */ },
+                                onClick = { deletePostLocal() },
                                 text = {
                                     Text(
                                         color = MaterialTheme.colorScheme.error,
@@ -317,10 +396,7 @@ fun CardPost(
                 modifier = Modifier
                     .height(32.dp)
                     .width(32.dp),
-                onClick = {
-                    postsHandlers.toggleLike(postData.id)
-                    likedStatus = !likedStatus
-                }
+                onClick = { toggleLike() }
             ) {
                 Icon(
                     contentDescription = stringResource(
@@ -350,7 +426,7 @@ fun CardPost(
                 modifier = Modifier.weight(1f),
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.labelMedium,
-                text = "${postData.countLike} ${stringResource(R.string.txt_feed_likes)}"
+                text = "$likesQuantity ${stringResource(R.string.txt_feed_likes)}"
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -367,14 +443,14 @@ fun CardPost(
                     Text(
                         style = MaterialTheme.typography.labelMedium,
                         text = "${postData.countComments} " +
-                            stringResource(R.string.txt_feed_comments)
+                                stringResource(R.string.txt_feed_comments)
                     )
                 },
                 modifier = Modifier.padding(0.dp),
                 onClick = {
                     expandCommentsBottomSheet.value = !expandCommentsBottomSheet.value
                     if (expandCommentsBottomSheet.value) {
-                        comments = postsHandlers.getCommentsByPostId(postData.id) ?: emptyList()
+                        getComments()
                     }
                 },
                 shape = RoundedCornerShape(24.dp)
@@ -440,22 +516,19 @@ fun CardPost(
 
     CommentsBottomSheet(
         comments = comments,
-        navigator = navigator,
+        loading = loadingComments,
         open = expandCommentsBottomSheet,
-        sendComment = { commentMessage ->
-            postsHandlers.sendComment(
-                postData.id,
-                commentMessage
-            )
-        }
+        navigator = navigator,
+        sendComment = { sendComment(it) }
     )
 }
 
 @Composable
 fun CommentsBottomSheet(
-    comments: List<Comment>,
-    navigator: Navigator,
+    comments: List<Comment>?,
+    loading: Boolean,
     open: MutableState<Boolean>,
+    navigator: Navigator,
     sendComment: (commentMessage: String) -> Unit
 ) {
     var openProfileImageDialog by remember { mutableStateOf(false) }
@@ -484,7 +557,21 @@ fun CommentsBottomSheet(
                         .padding(horizontal = 24.dp)
                         .weight(1f)
                 ) {
-                    items(comments.reversed()) {
+                    item {
+                        ExpandableContent(
+                            visible = loading || comments == null,
+                            content = {
+                                Row(
+                                    horizontalArrangement = Arrangement.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 16.dp)
+                                ) {
+                                    Loading()
+                                }
+                            })
+                    }
+                    items(comments?.reversed() ?: emptyList()) {
                         Row(
                             modifier = Modifier.padding(vertical = 16.dp),
                             verticalAlignment = Alignment.Top
@@ -577,6 +664,7 @@ fun CommentsBottomSheet(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     FormField(
+                        enabled = !loading,
                         focusManager = focusManager,
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Default,
@@ -589,7 +677,7 @@ fun CommentsBottomSheet(
                         value = commentText
                     )
                     IconButton(
-                        enabled = commentText.isNotBlank(),
+                        enabled = !loading && commentText.isNotBlank(),
                         modifier = Modifier
                             .height(40.dp)
                             .width(40.dp),

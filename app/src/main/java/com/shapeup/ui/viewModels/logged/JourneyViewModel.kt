@@ -4,10 +4,12 @@ import android.net.Uri
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.auth0.android.jwt.JWT
 import com.shapeup.api.services.friends.getAllFriendshipMock
 import com.shapeup.api.services.friends.getFriendsMessagesMock
 import com.shapeup.api.services.users.getAllSearchUserDataMock
 import com.shapeup.api.services.users.getUserDataMock
+import com.shapeup.api.utils.constants.SharedDataValues
 import com.shapeup.api.utils.helpers.SharedData
 import java.time.LocalDateTime
 import kotlin.random.Random
@@ -15,10 +17,33 @@ import kotlin.random.Random
 class JourneyViewModel : ViewModel() {
     lateinit var sharedData: SharedData
 
+    val initialLoad = mutableStateOf(true)
     val friends = mutableStateOf<List<Friend>>(emptyList())
     val userData = mutableStateOf(getUserDataMock)
 
-    private fun getFriends(): List<Friend> {
+    private fun setupUser() {
+        val sharedJwtToken = sharedData.get(SharedDataValues.JwtToken.value)
+
+        if (!sharedJwtToken.isNullOrBlank()) {
+            val jwt = JWT(sharedJwtToken)
+
+            userData.value = UserData(
+                biography = jwt.getClaim("biography").asString() ?: "",
+                birth = jwt.getClaim("birth").asString() ?: "",
+                cellPhone = jwt.getClaim("cellPhone").asString() ?: "",
+                email = sharedData.get(SharedDataValues.Email.value) ?: "",
+                firstName = jwt.getClaim("name").asString() ?: "",
+                id = jwt.getClaim("id").asString() ?: "",
+                lastName = jwt.getClaim("lastName").asString() ?: "",
+                password = sharedData.get(SharedDataValues.Password.value) ?: "",
+                profilePicture = jwt.getClaim("profilePicture").asString(),
+                username = jwt.getClaim("username").asString() ?: "",
+                xp = jwt.getClaim("xp").asInt() ?: 0
+            )
+        }
+    }
+
+    private suspend fun getFriends(): List<Friend> {
         // TODO: implement getFriends from service
         val friendsList = getAllFriendshipMock
 
@@ -46,16 +71,16 @@ class JourneyViewModel : ViewModel() {
         return Random.nextBoolean()
     }
 
-    private fun getUser(username: String): User? {
+    private fun getUser(username: String): User {
         return when (getUserRelation(username)) {
             EUserRelation.USER -> JourneyMappers.userDataToUser(userData.value)
 
             EUserRelation.FRIEND -> friends.value.find {
                 it.user.username == username
-            }?.user
+            }!!.user
 
             // TODO: implement userGet from service before returning null
-            else -> null
+            else -> JourneyMappers.userDataToUser(userData.value)
         }
     }
 
@@ -121,6 +146,7 @@ class JourneyViewModel : ViewModel() {
     }
 
     val handlers = JourneyHandlers(
+        setupUser = ::setupUser,
         getFriends = ::getFriends,
         getFriendStatus = ::getFriendStatus,
         getUser = ::getUser,
@@ -135,19 +161,22 @@ class JourneyViewModel : ViewModel() {
 }
 
 data class JourneyData(
+    val initialLoad: MutableState<Boolean>,
     val friends: MutableState<List<Friend>>,
     val userData: MutableState<UserData>
 )
 
 val journeyDataMock = JourneyData(
+    initialLoad = mutableStateOf(true),
     friends = mutableStateOf(emptyList()),
     userData = mutableStateOf(getUserDataMock)
 )
 
 data class JourneyHandlers(
-    val getFriends: () -> List<Friend>?,
+    val setupUser: () -> Unit,
+    val getFriends: suspend () -> List<Friend>?,
     val getFriendStatus: (username: String) -> Boolean,
-    val getUser: (username: String) -> User?,
+    val getUser: (username: String) -> User,
     val getUserRelation: (username: String) -> EUserRelation,
     val updateProfilePicture: (profilePicture: Uri) -> Unit,
     val updateUserData: (newUserData: UserDataUpdate) -> Unit,
@@ -158,7 +187,8 @@ data class JourneyHandlers(
 )
 
 val journeyHandlersMock = JourneyHandlers(
-    getFriends = {
+    setupUser = {},
+    getFriends = suspend {
         val friendsList = getAllFriendshipMock
 
         friendsList.map {
@@ -199,7 +229,7 @@ data class User(
 )
 
 data class UserData(
-    val bio: String? = "",
+    val biography: String? = "",
     val birth: String,
     val cellPhone: String,
     val email: String,

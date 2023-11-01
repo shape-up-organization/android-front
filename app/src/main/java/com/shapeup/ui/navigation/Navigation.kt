@@ -13,6 +13,7 @@ import com.shapeup.ui.screens.SplashScreen
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.navigator
 import com.shapeup.ui.utils.helpers.viewModel
+import com.shapeup.ui.viewModels.auth.AuthData
 import com.shapeup.ui.viewModels.auth.AuthViewModel
 
 @Composable
@@ -44,7 +45,19 @@ fun Navigation(
             authViewModel.sharedData = sharedData
 
             SplashScreen(
-                handlers = authViewModel.handlers
+                data = AuthData(
+                    birth = authViewModel.birth,
+                    cellPhone = authViewModel.cellPhone,
+                    email = authViewModel.email,
+                    name = authViewModel.name,
+                    lastName = authViewModel.lastName,
+                    password = authViewModel.password,
+                    passwordConfirmation = authViewModel.passwordConfirmation,
+                    username = authViewModel.username,
+                    code = authViewModel.code
+                ),
+                handlers = authViewModel.handlers,
+                navigator = navController.navigator
             )
         }
 

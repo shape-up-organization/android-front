@@ -5,7 +5,7 @@ import com.shapeup.ui.viewModels.logged.User
 import com.shapeup.ui.viewModels.logged.UserData
 
 val getUserDataMock = UserData(
-    bio = "Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet",
+    biography = "Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet",
     birth = "2003/09/09",
     cellPhone = "11983068373",
     email = "Georgia",

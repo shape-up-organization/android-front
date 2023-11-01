@@ -21,6 +21,7 @@ fun NavGraphBuilder.screenSearch(navController: NavHostController) {
 
         SearchScreen(
             journeyData = JourneyData(
+                initialLoad = journeyViewModel.initialLoad,
                 friends = journeyViewModel.friends,
                 userData = journeyViewModel.userData
             ),

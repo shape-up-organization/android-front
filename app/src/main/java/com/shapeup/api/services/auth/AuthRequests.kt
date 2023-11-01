@@ -14,11 +14,9 @@ data class SignUpPayload(
     val birth: String,
     val email: String,
     val name: String,
-    @SerialName("last_name")
-    val lastName: String,
+    @SerialName("last_name") val lastName: String,
     val password: String,
-    @SerialName("cell_phone")
-    val cellPhone: String,
+    @SerialName("cell_phone") val cellPhone: String,
     val username: String
 )
 

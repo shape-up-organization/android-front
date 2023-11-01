@@ -23,10 +23,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -38,10 +40,13 @@ import com.shapeup.ui.components.Carousel
 import com.shapeup.ui.components.FormField
 import com.shapeup.ui.components.Header
 import com.shapeup.ui.theme.ShapeUpTheme
+import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
 import com.shapeup.ui.viewModels.logged.PostCreation
 import com.shapeup.ui.viewModels.logged.PostsHandlers
 import com.shapeup.ui.viewModels.logged.postsHandlersMock
+import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -60,10 +65,10 @@ fun PostFilesScreen(
     postsHandlers: PostsHandlers
 ) {
     var description by remember { mutableStateOf("") }
-    var photoUrls by remember {
-        mutableStateOf<List<Uri>>(emptyList())
-    }
+    var photoUrls by remember { mutableStateOf<List<Uri>>(emptyList()) }
+    var loading by remember { mutableStateOf(false) }
 
+    val coroutine = rememberCoroutineScope()
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetMultipleContents()
     ) { uris ->
@@ -75,6 +80,36 @@ fun PostFilesScreen(
 
     val containerHeight = (LocalConfiguration.current.screenHeightDp * 0.6).dp
     val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
+
+    fun createPost() {
+        coroutine.launch {
+            loading = true
+            val photos = photoUrls.map {
+                context.contentResolver.openInputStream(it)
+                    ?.use { new -> new.buffered().readBytes() }
+            }
+
+            val response = postsHandlers.createPost(
+                PostCreation(
+                    description = description,
+                    photoUrls = photos
+                )
+            )
+
+            when (response.status) {
+                HttpStatusCode.Created -> {
+                    navigator.navigateClean(Screen.Feed)
+                }
+
+                HttpStatusCode.OK -> {
+                    navigator.navigateClean(Screen.Feed)
+                }
+
+                else -> loading = false
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         launcher.launch("image/*")
@@ -143,20 +178,12 @@ fun PostFilesScreen(
                     else -> MaterialTheme.colorScheme.tertiary
                 }
             ),
-            enabled = photoUrls.isNotEmpty(),
+            enabled = !loading && photoUrls.isNotEmpty(),
             modifier = Modifier.fillMaxWidth(),
-            onClick = {
-                postsHandlers.createPost(
-                    PostCreation(
-                        description = description,
-                        photoUrls = photoUrls
-                    )
-                )
-            }
+            onClick = { createPost() }
         ) {
             Text(
-                modifier = Modifier
-                    .padding(vertical = 12.dp),
+                modifier = Modifier.padding(vertical = 12.dp),
                 style = MaterialTheme.typography.bodyLarge,
                 text = stringResource(R.string.txt_post_button)
             )

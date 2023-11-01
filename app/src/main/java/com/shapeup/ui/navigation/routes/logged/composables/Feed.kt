@@ -36,15 +36,12 @@ fun NavGraphBuilder.screenFeed(
 
         val postsViewModel = it.viewModel<PostsViewModel>(navController)
         postsViewModel.navigator = navController.navigator
-
-        if (journeyViewModel.friends.value.isEmpty()) {
-            journeyViewModel.handlers.getFriends()
-        }
-        postsViewModel.handlers.getPosts()
+        postsViewModel.sharedData = sharedData
 
         FeedScreen(
             authHandlers = authViewModel.handlers,
             journeyData = JourneyData(
+                initialLoad = journeyViewModel.initialLoad,
                 friends = journeyViewModel.friends,
                 userData = journeyViewModel.userData
             ),

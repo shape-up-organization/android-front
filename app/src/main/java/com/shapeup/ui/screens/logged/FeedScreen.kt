@@ -21,6 +21,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -30,6 +36,8 @@ import androidx.compose.ui.unit.dp
 import com.shapeup.R
 import com.shapeup.ui.components.CardPost
 import com.shapeup.ui.components.EPageButtons
+import com.shapeup.ui.components.ExpandableContent
+import com.shapeup.ui.components.Loading
 import com.shapeup.ui.components.Navbar
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon
@@ -45,6 +53,10 @@ import com.shapeup.ui.viewModels.logged.journeyDataMock
 import com.shapeup.ui.viewModels.logged.journeyHandlersMock
 import com.shapeup.ui.viewModels.logged.postsDataMock
 import com.shapeup.ui.viewModels.logged.postsHandlersMock
+import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Preview
 @Composable
@@ -70,10 +82,56 @@ fun FeedScreen(
     postsData: PostsData,
     postsHandlers: PostsHandlers
 ) {
+    var loadingPosts by remember { mutableStateOf(journeyData.initialLoad.value) }
+
+    val coroutine = rememberCoroutineScope()
+
+    suspend fun getFriends() {
+        val response = journeyHandlers.getFriends()
+    }
+
+    suspend fun getPosts() {
+        loadingPosts = true
+        val response = postsHandlers.getPosts()
+
+        when (response.status) {
+            HttpStatusCode.OK -> postsData.posts.value = response.data ?: emptyList()
+        }
+
+        withContext(Dispatchers.IO) {
+            Thread.sleep(500)
+            loadingPosts = false
+        }
+    }
+
+    fun deletePost(postId: String) {
+        coroutine.launch {
+            loadingPosts = true
+
+            val response = postsHandlers.deletePost(postId)
+
+            if (response.status == HttpStatusCode.OK) {
+                getPosts()
+            } else {
+                loadingPosts = false
+            }
+        }
+    }
+
+    LaunchedEffect(key1 = journeyData.initialLoad.value) {
+        if (journeyData.initialLoad.value) {
+            journeyHandlers.setupUser()
+            getFriends()
+            journeyData.initialLoad.value = false
+        }
+        getPosts()
+    }
+
 
     BackHandler {
 //        MainActivity().finish()
 //        exitProcess(0)
+        journeyData.initialLoad.value = true
         authHandlers.signOut()
         navigator.navigateClean(Screen.Splash)
     }
@@ -167,42 +225,50 @@ fun FeedScreen(
         }
 
         LazyColumn(modifier = Modifier.weight(1f)) {
-            items(postsData.posts.value) {
-                val user = journeyHandlers.getUser(it.username)
-                if (user != null) {
-                    val userRelation = journeyHandlers.getUserRelation(it.username)
-
-                    CardPost(
-                        navigator = navigator,
-                        postData = it,
-                        postsHandlers = postsHandlers,
-                        user = user,
-                        userRelation = userRelation
-                    )
-
-                    Spacer(
-                        modifier = with(Modifier) {
-                            height(
-                                when {
-                                    it.description.isNullOrBlank() ||
-                                            it.photoUrls.isEmpty() -> 4.dp
-
-                                    else -> 32.dp
-                                }
-                            )
+            item {
+                ExpandableContent(
+                    visible = loadingPosts,
+                    content = {
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Loading()
                         }
-                    )
+                })
+            }
+            items(postsData.posts.value) {
+                CardPost(
+                    deletePost = { postId -> deletePost(postId) },
+                    navigator = navigator,
+                    postData = it,
+                    postsHandlers = postsHandlers,
+                    user = journeyHandlers.getUser(it.username),
+                    userRelation = journeyHandlers.getUserRelation(it.username)
+                )
 
-                    Divider(
-                        color = MaterialTheme.colorScheme.tertiaryContainer,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 48.dp),
-                        thickness = 1.dp
-                    )
+                Spacer(
+                    modifier = with(Modifier) {
+                        height(
+                            when {
+                                it.description.isNullOrBlank() ||
+                                        it.photoUrls.isEmpty() -> 4.dp
 
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
+                                else -> 32.dp
+                            }
+                        )
+                    }
+                )
+
+                Divider(
+                    color = MaterialTheme.colorScheme.tertiaryContainer,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 48.dp),
+                    thickness = 1.dp
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
 

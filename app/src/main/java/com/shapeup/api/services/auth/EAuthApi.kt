@@ -5,6 +5,7 @@ import com.shapeup.api.utils.helpers.SharedData
 
 interface EAuthApi {
     suspend fun signIn(payload: SignInPayload): SignInStatement
+
     suspend fun signUp(payload: SignUpPayload): SignUpStatement
 
     suspend fun sendEmailCode(payload: SendEmailCodePayload): SendEmailCodeStatement

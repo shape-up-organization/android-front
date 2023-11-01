@@ -30,12 +30,11 @@ fun NavGraphBuilder.screenPost(navController: NavHostController) {
             postsViewModel.navigator = navController.navigator
 
             val postId = it.arguments?.getString("postId")
-            val postData = postId?.let { itPostId -> postsViewModel.handlers.getPostById(itPostId) }
 
-            if (postData != null) {
+            if (postId != null) {
                 PostScreen(
                     navigator = navController.navigator,
-                    postData = postData,
+                    postId = postId,
                     postsHandlers = postsViewModel.handlers,
                     user = user,
                     userRelation = journeyViewModel.handlers.getUserRelation(user.username)
