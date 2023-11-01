@@ -23,13 +23,20 @@ import androidx.compose.ui.unit.dp
 import com.shapeup.ui.components.Header
 import com.shapeup.ui.components.RowSettings
 import com.shapeup.ui.theme.ShapeUpTheme
+import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
+import com.shapeup.ui.viewModels.logged.JourneyData
+import com.shapeup.ui.viewModels.logged.JourneyHandlers
+import com.shapeup.ui.viewModels.logged.journeyDataMock
+import com.shapeup.ui.viewModels.logged.journeyHandlersMock
 
 @Composable
 @Preview
 fun AccountCenterScreenPreview() {
     ShapeUpTheme {
         AccountCenterScreen(
+            journeyData = journeyDataMock,
+            journeyHandlers = journeyHandlersMock,
             navigator = Navigator()
         )
     }
@@ -37,6 +44,8 @@ fun AccountCenterScreenPreview() {
 
 @Composable
 fun AccountCenterScreen(
+    journeyData: JourneyData,
+    journeyHandlers: JourneyHandlers,
     navigator: Navigator
 ) {
     BackHandler {
@@ -61,7 +70,10 @@ fun AccountCenterScreen(
                 .padding(top = 24.dp)
         ) {
 
-            RowSettings(text = "Change Address")
+            RowSettings(
+                text = "Change Address",
+                screen = { navigator.navigate(Screen.ChangeAddress) }
+            )
 
             Divider(
                 color = MaterialTheme.colorScheme.primary,
@@ -69,8 +81,10 @@ fun AccountCenterScreen(
                     .fillMaxWidth(),
                 thickness = 1.dp
             )
-            RowSettings(text = "Change e-mail")
-
+            RowSettings(
+                text = "Change e-mail",
+                screen = { navigator.navigate(Screen.ChangeEmail) }
+            )
 
             Divider(
                 color = MaterialTheme.colorScheme.primary,
@@ -78,7 +92,10 @@ fun AccountCenterScreen(
                     .fillMaxWidth(),
                 thickness = 1.dp
             )
-            RowSettings(text = "Change mobile number")
+            RowSettings(
+                text = "Change mobile number",
+                screen = { navigator.navigate(Screen.ChangeNumber) }
+            )
 
             Divider(
                 color = MaterialTheme.colorScheme.primary,
@@ -86,7 +103,10 @@ fun AccountCenterScreen(
                     .fillMaxWidth(),
                 thickness = 1.dp
             )
-            RowSettings(text = "Change birthday")
+            RowSettings(
+                text = "Change birthday",
+                screen = { navigator.navigate(Screen.ChangeBirthday) }
+            )
 
             Divider(
                 color = MaterialTheme.colorScheme.primary,
@@ -94,7 +114,10 @@ fun AccountCenterScreen(
                     .fillMaxWidth(),
                 thickness = 1.dp
             )
-            RowSettings(text = "Change password")
+            RowSettings(
+                text = "Change password",
+                screen = { navigator.navigate(Screen.ChangePasswordSettings) }
+            )
 
             Divider(
                 color = MaterialTheme.colorScheme.primary,
@@ -143,7 +166,6 @@ fun AccountCenterScreen(
                             .padding(vertical = 12.dp)
                     )
                 }
-
             }
         }
     }

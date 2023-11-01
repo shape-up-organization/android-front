@@ -181,4 +181,9 @@
     <!-- SEARCH -->
     <string name="txt_search_input">Search users</string>
     <string name="txt_is_friend">Friend</string>
+    <!-- SETTINGS -->
+    <string name="txt_settings_title">Settings</string>
+    <string name="txt_settings_account_center">Account center</string>
+    <string name="txt_settings_help">Help</string>
+    <string name="txt_settings_about">About</string>
 </resources>

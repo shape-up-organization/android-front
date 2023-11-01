@@ -31,7 +31,9 @@ import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.helpers.Navigator
 import com.shapeup.ui.viewModels.logged.JourneyData
+import com.shapeup.ui.viewModels.logged.JourneyHandlers
 import com.shapeup.ui.viewModels.logged.journeyDataMock
+import com.shapeup.ui.viewModels.logged.journeyHandlersMock
 
 @SuppressLint("UnrememberedMutableState")
 @Preview
@@ -40,6 +42,7 @@ fun ChangeAddressPreview() {
     ShapeUpTheme {
         ChangeAddressScreen(
             journeyData = journeyDataMock,
+            journeyHandlers = journeyHandlersMock,
             navigator = Navigator()
         )
     }
@@ -48,6 +51,7 @@ fun ChangeAddressPreview() {
 @Composable
 fun ChangeAddressScreen(
     journeyData: JourneyData,
+    journeyHandlers: JourneyHandlers,
     navigator: Navigator
 ) {
    // var updatedZipCode by remember { mutableStateOf(journeyData.userData.value.firstName) }
@@ -184,5 +188,4 @@ fun ChangeAddressScreen(
             )
         }
     }
-
 }

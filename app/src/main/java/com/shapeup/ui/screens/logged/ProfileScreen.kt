@@ -240,7 +240,7 @@ fun ProfileScreen(
                                     )
                                 }
 
-                                IconButton(onClick = { navigator.navigate(Screen.Profile) }) {
+                                IconButton(onClick = { navigator.navigate(Screen.Settings) }) {
                                     Icon(
                                         contentDescription = stringResource(
                                             Icon.Settings.description
