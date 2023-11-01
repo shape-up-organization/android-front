@@ -94,7 +94,7 @@ fun AccountCenterScreen(
             )
             RowSettings(
                 text = "Change mobile number",
-                screen = { navigator.navigate(Screen.AccountCenter) }
+                screen = { navigator.navigate(Screen.ChangeNumber) }
             )
 
             Divider(
@@ -105,7 +105,7 @@ fun AccountCenterScreen(
             )
             RowSettings(
                 text = "Change birthday",
-                screen = { navigator.navigate(Screen.AccountCenter) }
+                screen = { navigator.navigate(Screen.ChangeBirthday) }
             )
 
             Divider(
@@ -116,7 +116,7 @@ fun AccountCenterScreen(
             )
             RowSettings(
                 text = "Change password",
-                screen = { navigator.navigate(Screen.AccountCenter) }
+                screen = { navigator.navigate(Screen.ChangePasswordSettings) }
             )
 
             Divider(

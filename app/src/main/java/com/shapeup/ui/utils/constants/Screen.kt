@@ -24,5 +24,8 @@ enum class Screen(val value: String) {
     Settings("settings-screen"),
     AccountCenter("account-center-screen"),
     ChangeAddress("change-address-screen"),
-    ChangeEmail("change-email-screen")
+    ChangeEmail("change-email-screen"),
+    ChangeNumber("change-number-screen"),
+    ChangePasswordSettings("change-password-settings-screen"),
+    ChangeBirthday("change-birthday-screen")
 }
