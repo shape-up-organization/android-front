@@ -24,6 +24,7 @@ fun NavGraphBuilder.screenChangeEmail(navController: NavHostController) {
 
         ChangeEmailScreen(
             journeyData = JourneyData(
+                initialLoad = journeyViewModel.initialLoad,
                 friends = journeyViewModel.friends,
                 userData = journeyViewModel.userData
             ),

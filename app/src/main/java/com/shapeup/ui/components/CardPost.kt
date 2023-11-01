@@ -292,7 +292,10 @@ fun CardPost(
 
                         if (userRelation == EUserRelation.USER) {
                             DropdownMenuItem(
-                                onClick = { deletePostLocal() },
+                                onClick = {
+                                    expandOptionsMenu = false
+                                    deletePostLocal()
+                                },
                                 text = {
                                     Text(
                                         color = MaterialTheme.colorScheme.error,

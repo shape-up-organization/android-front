@@ -24,6 +24,7 @@ fun NavGraphBuilder.screenChangePasswordSettings(navController: NavHostControlle
 
         ChangePasswordScreen(
             journeyData = JourneyData(
+                initialLoad = journeyViewModel.initialLoad,
                 friends = journeyViewModel.friends,
                 userData = journeyViewModel.userData
             ),

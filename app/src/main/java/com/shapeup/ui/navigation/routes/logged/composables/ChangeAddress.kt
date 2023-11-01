@@ -24,6 +24,7 @@ fun NavGraphBuilder.screenChangeAddress(navController: NavHostController) {
 
         ChangeAddressScreen(
             journeyData = JourneyData(
+                initialLoad = journeyViewModel.initialLoad,
                 friends = journeyViewModel.friends,
                 userData = journeyViewModel.userData
             ),

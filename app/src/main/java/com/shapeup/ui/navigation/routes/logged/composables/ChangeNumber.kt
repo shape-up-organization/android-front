@@ -24,6 +24,7 @@ fun NavGraphBuilder.screenChangeNumber(navController: NavHostController) {
 
         ChangeNumberScreen(
             journeyData = JourneyData(
+                initialLoad = journeyViewModel.initialLoad,
                 friends = journeyViewModel.friends,
                 userData = journeyViewModel.userData
             ),

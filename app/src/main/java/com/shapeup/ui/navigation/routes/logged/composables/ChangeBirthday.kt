@@ -24,6 +24,7 @@ fun NavGraphBuilder.screenChangeBirthday(navController: NavHostController) {
 
         ChangeBirthdayScreen(
             journeyData = JourneyData(
+                initialLoad = journeyViewModel.initialLoad,
                 friends = journeyViewModel.friends,
                 userData = journeyViewModel.userData
             ),
