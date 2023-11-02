@@ -1,9 +1,7 @@
 package com.shapeup.api.services.users
 
 import com.shapeup.ui.viewModels.logged.FriendshipStatus
-import com.shapeup.ui.viewModels.logged.User
 import com.shapeup.ui.viewModels.logged.UserData
-import com.shapeup.ui.viewModels.logged.UserSearch
 
 val getUserDataMock = UserData(
     biography = "Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet",
@@ -43,5 +41,22 @@ val getAllSearchUserDataMock = listOf(
             isFriend = true,
             userSenderFriendshipRequest = ""
         )
+    )
+)
+
+val getRankGlobalDataMock = listOf(
+    UserRank(
+        firstName = "Georgia Collins",
+        lastName = "Johnston",
+        profilePicture = "https://picsum.photos/id/57/2448/3264",
+        username = "g_johnston",
+        xp = 1200,
+    ),
+    UserRank(
+        firstName = "Will",
+        lastName = "Sigma",
+        profilePicture = "https://picsum.photos/id/56/2880/1920",
+        username = "will_sigma",
+        xp = 700,
     )
 )

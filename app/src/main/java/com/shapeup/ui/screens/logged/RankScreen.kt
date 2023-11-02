@@ -20,10 +20,12 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,7 +38,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.shapeup.R
+import com.shapeup.api.services.users.RankType
+import com.shapeup.api.services.users.UserRank
 import com.shapeup.ui.components.EPageButtons
+import com.shapeup.ui.components.ExpandableContent
+import com.shapeup.ui.components.Loading
 import com.shapeup.ui.components.Navbar
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Screen
@@ -46,6 +52,8 @@ import com.shapeup.ui.viewModels.logged.JourneyData
 import com.shapeup.ui.viewModels.logged.JourneyHandlers
 import com.shapeup.ui.viewModels.logged.journeyDataMock
 import com.shapeup.ui.viewModels.logged.journeyHandlersMock
+import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -65,11 +73,29 @@ fun RankScreen(
     journeyHandlers: JourneyHandlers,
     navigator: Navigator
 ) {
-    var tabSelected by remember { mutableIntStateOf(0) }
-
     val titles = listOf(R.string.txt_rank_tab_global_title, R.string.txt_rank_tab_friend_title)
 
-    var ranks by remember { mutableStateOf(journeyHandlers.getRankGlobal()) }
+    var loadingRank by remember { mutableStateOf(true) }
+    var tabSelected by remember { mutableIntStateOf(0) }
+    var ranks by remember { mutableStateOf<List<UserRank>>(emptyList()) }
+
+    val coroutine = rememberCoroutineScope()
+
+    fun getRank(type: RankType) {
+        coroutine.launch {
+            loadingRank = true
+            val response = journeyHandlers.getRank(type)
+            loadingRank = false
+
+            when (response.status) {
+                HttpStatusCode.OK -> ranks = response.data ?: emptyList()
+            }
+        }
+    }
+
+    LaunchedEffect(key1 = true) {
+        getRank(RankType.GLOBAL)
+    }
 
     Column(
         modifier = Modifier
@@ -101,12 +127,12 @@ fun RankScreen(
                     Tab(
                         onClick = {
                             tabSelected = index
-                            ranks =
-                                when (tabSelected) {
-                                    0 -> journeyHandlers.getRankGlobal()
-                                    1 -> journeyHandlers.getRankFriends()
-                                    else -> journeyHandlers.getRankGlobal()
-                                }
+
+                            when (tabSelected) {
+                                0 -> getRank(RankType.GLOBAL)
+                                1 -> getRank(RankType.FRIENDS)
+                                else -> getRank(RankType.GLOBAL)
+                            }
                         },
                         selected = tabSelected == index,
                         text = {
@@ -120,6 +146,32 @@ fun RankScreen(
             }
 
             LazyColumn(modifier = Modifier.weight(1f)) {
+                item {
+                    ExpandableContent(
+                        visible = loadingRank,
+                        content = {
+                            Row(
+                                horizontalArrangement = Arrangement.Center,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 16.dp)
+                            ) {
+                                Loading()
+                            }
+                        })
+                }
+                item {
+                    ExpandableContent(
+                        visible = !loadingRank && ranks.isEmpty(),
+                        content = {
+                            Row(
+                                horizontalArrangement = Arrangement.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(text = stringResource(R.string.txt_rank_error))
+                            }
+                        })
+                }
                 itemsIndexed(ranks) { index, it ->
                     Spacer(
                         modifier = Modifier

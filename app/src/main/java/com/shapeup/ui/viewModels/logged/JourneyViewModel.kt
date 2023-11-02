@@ -8,9 +8,13 @@ import com.auth0.android.jwt.JWT
 import com.shapeup.api.services.friends.getAllFriendshipMock
 import com.shapeup.api.services.friends.getFriendsMessagesMock
 import com.shapeup.api.services.users.EUsersApi
+import com.shapeup.api.services.users.GetRankPayload
+import com.shapeup.api.services.users.GetRankStatement
+import com.shapeup.api.services.users.RankType
 import com.shapeup.api.services.users.SearchUsersPayload
 import com.shapeup.api.services.users.SearchUsersStatement
 import com.shapeup.api.services.users.getAllSearchUserDataMock
+import com.shapeup.api.services.users.getRankGlobalDataMock
 import com.shapeup.api.services.users.getUserDataMock
 import com.shapeup.api.utils.constants.SharedDataValues
 import com.shapeup.api.utils.helpers.SharedData
@@ -138,12 +142,20 @@ class JourneyViewModel : ViewModel() {
         }
     }
 
-    private fun getRankFriends(): List<User> {
-        return getAllFriendshipMock.sortedByDescending { it.xp }
-    }
+    private suspend fun getRank(type: RankType): GetRankStatement {
+        val usersApi = EUsersApi.create(sharedData)
 
-    private fun getRankGlobal(): List<User> {
-        return getAllFriendshipMock.sortedByDescending { it.xp }
+        val response = usersApi.getRank(
+            GetRankPayload(
+                type = type,
+                page = 0,
+                size = 20
+            )
+        )
+
+        println(response)
+
+        return response
     }
 
     private suspend fun searchUsers(searchedUser: String): SearchUsersStatement {
@@ -169,8 +181,7 @@ class JourneyViewModel : ViewModel() {
         updateProfilePicture = ::updateProfilePicture,
         updateUserData = ::updateUserData,
         sendMessage = ::sendMessage,
-        getRankFriends = ::getRankFriends,
-        getRankGlobal = ::getRankGlobal,
+        getRank = ::getRank,
         searchUsers = ::searchUsers
     )
 }
@@ -196,8 +207,7 @@ data class JourneyHandlers(
     val updateProfilePicture: (profilePicture: Uri) -> Unit,
     val updateUserData: (newUserData: UserDataUpdate) -> Unit,
     val sendMessage: (messageText: String, friendUsername: String) -> Unit,
-    val getRankFriends: () -> List<User>,
-    val getRankGlobal: () -> List<User>,
+    val getRank: suspend (type: RankType) -> GetRankStatement,
     val searchUsers: suspend (searchedUser: String) -> SearchUsersStatement
 )
 
@@ -221,11 +231,11 @@ val journeyHandlersMock = JourneyHandlers(
     updateProfilePicture = {},
     updateUserData = {},
     sendMessage = { _, _ -> },
-    getRankFriends = {
-        getAllFriendshipMock.sortedByDescending { it.xp }
-    },
-    getRankGlobal = {
-        getAllFriendshipMock.sortedByDescending { it.xp }
+    getRank = {
+        GetRankStatement(
+            data = getRankGlobalDataMock.sortedByDescending { it.xp },
+            status = HttpStatusCode.OK
+        )
     },
     searchUsers = {
         SearchUsersStatement(
@@ -241,17 +251,6 @@ data class User(
     val lastName: String,
     val id: String,
     val online: Boolean,
-    val profilePicture: String? = null,
-    val username: String,
-    val xp: Int,
-    val friendshipStatus: FriendshipStatus? = null
-)
-
-@Serializable
-data class UserSearch(
-    val biography: String? = null,
-    val firstName: String,
-    val lastName: String,
     val profilePicture: String? = null,
     val username: String,
     val xp: Int,

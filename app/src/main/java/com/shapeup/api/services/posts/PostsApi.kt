@@ -53,13 +53,6 @@ class PostsApi(
                 )
             }
 
-            HttpStatusCode.NoContent -> {
-                return GetPostsPaginatedStatement(
-                    content = response.bodyAsText(),
-                    status = response.status
-                )
-            }
-
             else -> {
                 GetPostsPaginatedStatement(
                     content = response?.bodyAsText(),

@@ -41,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.shapeup.R
+import com.shapeup.api.services.users.UserSearch
 import com.shapeup.ui.components.ExpandableContent
 import com.shapeup.ui.components.FormField
 import com.shapeup.ui.components.FormFieldType
@@ -52,7 +53,6 @@ import com.shapeup.ui.utils.helpers.Navigator
 import com.shapeup.ui.utils.helpers.XPUtils
 import com.shapeup.ui.viewModels.logged.JourneyData
 import com.shapeup.ui.viewModels.logged.JourneyHandlers
-import com.shapeup.ui.viewModels.logged.UserSearch
 import com.shapeup.ui.viewModels.logged.journeyDataMock
 import com.shapeup.ui.viewModels.logged.journeyHandlersMock
 import io.ktor.http.HttpStatusCode
