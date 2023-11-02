@@ -3,6 +3,7 @@ package com.shapeup.api.services.users
 import com.shapeup.ui.viewModels.logged.FriendshipStatus
 import com.shapeup.ui.viewModels.logged.User
 import com.shapeup.ui.viewModels.logged.UserData
+import com.shapeup.ui.viewModels.logged.UserSearch
 
 val getUserDataMock = UserData(
     biography = "Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet",
@@ -19,29 +20,24 @@ val getUserDataMock = UserData(
 )
 
 val getAllSearchUserDataMock = listOf(
-    User(
+    UserSearch(
         firstName = "Georgia Collins",
-        id = "1",
         lastName = "Johnston",
         profilePicture = "https://picsum.photos/id/57/2448/3264",
         username = "g_johnston",
         xp = 1200,
-        online = true,
         friendshipStatus = FriendshipStatus(
             haveFriendRequest = true,
             isFriend = false,
             userSenderFriendshipRequest = ""
         )
     ),
-
-    User(
+    UserSearch(
         firstName = "Georgia",
-        id = "2",
         lastName = "Johnston",
         profilePicture = "https://picsum.photos/id/57/2448/3264",
         username = "g_johnston",
         xp = 700,
-        online = false,
         friendshipStatus = FriendshipStatus(
             haveFriendRequest = false,
             isFriend = true,

@@ -7,10 +7,15 @@ import androidx.lifecycle.ViewModel
 import com.auth0.android.jwt.JWT
 import com.shapeup.api.services.friends.getAllFriendshipMock
 import com.shapeup.api.services.friends.getFriendsMessagesMock
+import com.shapeup.api.services.users.EUsersApi
+import com.shapeup.api.services.users.SearchUsersPayload
+import com.shapeup.api.services.users.SearchUsersStatement
 import com.shapeup.api.services.users.getAllSearchUserDataMock
 import com.shapeup.api.services.users.getUserDataMock
 import com.shapeup.api.utils.constants.SharedDataValues
 import com.shapeup.api.utils.helpers.SharedData
+import io.ktor.http.HttpStatusCode
+import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 import kotlin.random.Random
 
@@ -141,8 +146,18 @@ class JourneyViewModel : ViewModel() {
         return getAllFriendshipMock.sortedByDescending { it.xp }
     }
 
-    private fun getSearchUsers(): List<User> {
-        return getAllSearchUserDataMock
+    private suspend fun searchUsers(searchedUser: String): SearchUsersStatement {
+        val usersApi = EUsersApi.create(sharedData)
+
+        val response = usersApi.searchUsers(
+            SearchUsersPayload(
+                nameOrUsername = searchedUser
+            )
+        )
+
+        println(response)
+
+        return response
     }
 
     val handlers = JourneyHandlers(
@@ -156,7 +171,7 @@ class JourneyViewModel : ViewModel() {
         sendMessage = ::sendMessage,
         getRankFriends = ::getRankFriends,
         getRankGlobal = ::getRankGlobal,
-        getSearchUsers = ::getSearchUsers
+        searchUsers = ::searchUsers
     )
 }
 
@@ -183,7 +198,7 @@ data class JourneyHandlers(
     val sendMessage: (messageText: String, friendUsername: String) -> Unit,
     val getRankFriends: () -> List<User>,
     val getRankGlobal: () -> List<User>,
-    val getSearchUsers: () -> List<User>
+    val searchUsers: suspend (searchedUser: String) -> SearchUsersStatement
 )
 
 val journeyHandlersMock = JourneyHandlers(
@@ -212,16 +227,31 @@ val journeyHandlersMock = JourneyHandlers(
     getRankGlobal = {
         getAllFriendshipMock.sortedByDescending { it.xp }
     },
-    getSearchUsers = {
-        getAllSearchUserDataMock
+    searchUsers = {
+        SearchUsersStatement(
+            data = getAllSearchUserDataMock,
+            status = HttpStatusCode.OK
+        )
     }
 )
 
 data class User(
+    val biography: String? = null,
     val firstName: String,
     val lastName: String,
     val id: String,
     val online: Boolean,
+    val profilePicture: String? = null,
+    val username: String,
+    val xp: Int,
+    val friendshipStatus: FriendshipStatus? = null
+)
+
+@Serializable
+data class UserSearch(
+    val biography: String? = null,
+    val firstName: String,
+    val lastName: String,
     val profilePicture: String? = null,
     val username: String,
     val xp: Int,
@@ -263,10 +293,11 @@ data class Friend(
     val user: User
 )
 
+@Serializable
 data class FriendshipStatus(
     val haveFriendRequest: Boolean,
     val isFriend: Boolean,
-    val userSenderFriendshipRequest: String
+    val userSenderFriendshipRequest: String? = null
 )
 
 object JourneyMappers {
