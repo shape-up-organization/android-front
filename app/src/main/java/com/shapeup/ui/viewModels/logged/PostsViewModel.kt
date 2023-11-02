@@ -59,8 +59,9 @@ class PostsViewModel : ViewModel() {
 
         println(response)
 
-        if (response.status === HttpStatusCode.OK && !response.data.isNullOrEmpty()) {
-            posts.value = response.data
+        when (response.status) {
+            HttpStatusCode.OK -> posts.value = response.data!!
+            HttpStatusCode.NoContent -> posts.value = emptyList()
         }
 
         return response
@@ -69,9 +70,11 @@ class PostsViewModel : ViewModel() {
     private suspend fun getPostById(postId: String): GetPostByIdStatement {
         val postsApi = EPostsApi.create(sharedData)
 
-        val response = postsApi.getPostById(GetPostByIdPayload(
-            postId = postId
-        ))
+        val response = postsApi.getPostById(
+            GetPostByIdPayload(
+                postId = postId
+            )
+        )
 
         println(response)
 
@@ -203,10 +206,12 @@ val postsHandlersMock = PostsHandlers(
             status = HttpStatusCode.NoContent
         )
     },
-    getPostById = { GetPostByIdStatement(
-        data = getPostsMock[0],
-        status = HttpStatusCode.OK
-    ) },
+    getPostById = {
+        GetPostByIdStatement(
+            data = getPostsMock[0],
+            status = HttpStatusCode.OK
+        )
+    },
     getUserPosts = { getPostsMock },
     createPost = { CreatePostStatement(status = HttpStatusCode.Created) },
     toggleLike = {

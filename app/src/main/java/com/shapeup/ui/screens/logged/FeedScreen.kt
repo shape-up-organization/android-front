@@ -92,11 +92,8 @@ fun FeedScreen(
 
     suspend fun getPosts() {
         loadingPosts = true
-        val response = postsHandlers.getPosts()
 
-        when (response.status) {
-            HttpStatusCode.OK -> postsData.posts.value = response.data ?: emptyList()
-        }
+        postsHandlers.getPosts()
 
         withContext(Dispatchers.IO) {
             Thread.sleep(500)
