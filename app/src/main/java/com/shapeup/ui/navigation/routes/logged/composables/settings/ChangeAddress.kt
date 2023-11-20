@@ -1,20 +1,20 @@
-package com.shapeup.ui.navigation.routes.logged.composables
+package com.shapeup.ui.navigation.routes.logged.composables.settings
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.shapeup.ui.screens.logged.ChangeNumberScreen
+import com.shapeup.ui.screens.logged.settings.ChangeAddressScreen
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.navigator
 import com.shapeup.ui.utils.helpers.viewModel
 import com.shapeup.ui.viewModels.logged.JourneyData
 import com.shapeup.ui.viewModels.logged.JourneyViewModel
 
-fun NavGraphBuilder.screenChangeNumber(navController: NavHostController) {
+fun NavGraphBuilder.screenChangeAddress(navController: NavHostController) {
     composable(
-        route = Screen.ChangeNumber.value,
+        route = Screen.ChangeAddress.value,
         enterTransition = { EnterTransition.None },
         popEnterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None },
@@ -22,7 +22,7 @@ fun NavGraphBuilder.screenChangeNumber(navController: NavHostController) {
     ) {
         val journeyViewModel = it.viewModel<JourneyViewModel>(navController)
 
-        ChangeNumberScreen(
+        ChangeAddressScreen(
             journeyData = JourneyData(
                 initialLoad = journeyViewModel.initialLoad,
                 friends = journeyViewModel.friends,

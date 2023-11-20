@@ -1,4 +1,4 @@
-package com.shapeup.ui.screens.logged
+package com.shapeup.ui.screens.logged.settings
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
@@ -6,10 +6,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -18,14 +19,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.shapeup.ui.components.FormField
+import com.shapeup.R
+import com.shapeup.ui.components.DatePicker
 import com.shapeup.ui.components.Header
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon
@@ -38,9 +37,9 @@ import com.shapeup.ui.viewModels.logged.journeyHandlersMock
 @SuppressLint("UnrememberedMutableState")
 @Preview
 @Composable
-fun ChangeEmailPreview() {
+fun ChangeBirthdayPreview() {
     ShapeUpTheme {
-        ChangeEmailScreen(
+        ChangeBirthdayScreen(
             journeyData = journeyDataMock,
             journeyHandlers = journeyHandlersMock,
             navigator = Navigator()
@@ -49,13 +48,11 @@ fun ChangeEmailPreview() {
 }
 
 @Composable
-fun ChangeEmailScreen(
+fun ChangeBirthdayScreen(
     journeyData: JourneyData,
     journeyHandlers: JourneyHandlers,
     navigator: Navigator
 ) {
-    val focusManager = LocalFocusManager.current
-
     BackHandler {
         navigator.navigateBack()
     }
@@ -73,7 +70,7 @@ fun ChangeEmailScreen(
         ) {
             Header(
                 navigateTo = { navigator.navigateBack() },
-                text = "Change E-mail"
+                text = stringResource(R.string.txt_change_birthday_title)
             )
 
             IconButton(onClick = { navigator.navigateBack() }) {
@@ -95,27 +92,11 @@ fun ChangeEmailScreen(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                FormField(
-                    focusManager = focusManager,
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next,
-                        keyboardType = KeyboardType.Text
-                    ),
-                    label = (""),
-                    supportingText = null,
-                    value = "Check the code in your email"
-                )
+                Spacer(modifier = Modifier.height(16.dp))
 
-                FormField(
-                    focusManager = focusManager,
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next,
-                        keyboardType = KeyboardType.Text
-                    ),
-                    label = (""),
-                    supportingText = null,
-                    value =  ("New E-mail")
-                )
+                DatePicker(
+                    label = (stringResource(R.string.txt_change_birthday_new_birthday)),
+                    )
             }
         }
 
@@ -129,8 +110,9 @@ fun ChangeEmailScreen(
                 modifier = Modifier
                     .padding(vertical = 12.dp),
                 style = MaterialTheme.typography.bodyLarge,
-                text = "Save Changes"
+                text = stringResource(R.string.txt_change_birthday_save_changes)
             )
         }
     }
 }
+

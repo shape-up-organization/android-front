@@ -1,4 +1,4 @@
-package com.shapeup.ui.screens.logged
+package com.shapeup.ui.screens.logged.settings
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
@@ -15,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +26,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.shapeup.R
 import com.shapeup.ui.components.FormField
 import com.shapeup.ui.components.Header
 import com.shapeup.ui.theme.ShapeUpTheme
@@ -38,9 +40,9 @@ import com.shapeup.ui.viewModels.logged.journeyHandlersMock
 @SuppressLint("UnrememberedMutableState")
 @Preview
 @Composable
-fun ChangeAddressPreview() {
+fun ChangePasswordPreview() {
     ShapeUpTheme {
-        ChangeAddressScreen(
+        ChangePasswordScreen(
             journeyData = journeyDataMock,
             journeyHandlers = journeyHandlersMock,
             navigator = Navigator()
@@ -49,19 +51,11 @@ fun ChangeAddressPreview() {
 }
 
 @Composable
-fun ChangeAddressScreen(
+fun ChangePasswordScreen(
     journeyData: JourneyData,
     journeyHandlers: JourneyHandlers,
     navigator: Navigator
 ) {
-   // var updatedZipCode by remember { mutableStateOf(journeyData.userData.value.firstName) }
-    //var updatedStreetName by remember { mutableStateOf(journeyData.userData.value.lastName) }
-   // var updatedCityName by remember { mutableStateOf(journeyData.userData.value.username) }
-   // var updatedState by remember { mutableStateOf(journeyData.userData.value.bio ?: "") }
-   // var updatedContry by remember { mutableStateOf(journeyData.userData.value.bio ?: "") }
-   // var updatedNumber by remember { mutableStateOf(journeyData.userData.value.bio ?: "") }
-   // var updatedComplement by remember { mutableStateOf(journeyData.userData.value.bio ?: "") }
-
 
     val focusManager = LocalFocusManager.current
 
@@ -82,7 +76,7 @@ fun ChangeAddressScreen(
         ) {
             Header(
                 navigateTo = { navigator.navigateBack() },
-                text = "Change Address"
+                text = stringResource(R.string.txt_change_password_title)
             )
 
             IconButton(onClick = { navigator.navigateBack() }) {
@@ -94,7 +88,9 @@ fun ChangeAddressScreen(
             }
         }
         Column(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(32.dp)
         ) {
             Column(
@@ -107,29 +103,9 @@ fun ChangeAddressScreen(
                         imeAction = ImeAction.Next,
                         keyboardType = KeyboardType.Text
                     ),
-                    label = ("Zip code"),
+                    label = (""),
                     supportingText = null,
-                    value = "Zip Code"
-                )
-                FormField(
-                    focusManager = focusManager,
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next,
-                        keyboardType = KeyboardType.Text
-                    ),
-                    label = ("Street Name"),
-                    supportingText = null,
-                    value = "Street"
-                )
-                FormField(
-                    focusManager = focusManager,
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next,
-                        keyboardType = KeyboardType.Text
-                    ),
-                    label =("City"),
-                    supportingText = null,
-                    value = "City"
+                    value = stringResource(R.string.txt_change_password_check_email)
                 )
 
                 FormField(
@@ -138,54 +114,68 @@ fun ChangeAddressScreen(
                         imeAction = ImeAction.Next,
                         keyboardType = KeyboardType.Text
                     ),
-                    label = ("State"),
+                    label = (""),
                     supportingText = null,
-                    value = "State"
+                    value = stringResource(R.string.txt_change_password_old_password)
                 )
+
                 FormField(
                     focusManager = focusManager,
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Next,
                         keyboardType = KeyboardType.Text
                     ),
-                    label = ("Contry"),
+                    label = (""),
                     supportingText = null,
-                    value = "Contry"
+                    value = stringResource(R.string.txt_change_password_new_password)
                 )
+
                 FormField(
                     focusManager = focusManager,
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Next,
                         keyboardType = KeyboardType.Text
                     ),
-                    label = ("Number"),
+                    label = (""),
                     supportingText = null,
-                    value = "Number"
+                    value = stringResource(R.string.txt_change_password_confirm_your_password)
                 )
-                FormField(
-                    focusManager = focusManager,
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next
-                    ),
-                    label = ("Complement"),
-                    supportingText = null,
-                    value = "Complement"
-                )
+
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.End
+                ) {
+
+                    TextButton(onClick = {
+                        //* TO DO *\\
+                    }
+                    ) {
+
+                        Text(
+                            style = MaterialTheme.typography.bodyMedium,
+                            text = (stringResource(R.string.txt_change_password_forgot_password)),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
+
             }
         }
 
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                //* TO DO *\\
+                // * TO DO *\\
             }
         ) {
             Text(
                 modifier = Modifier
                     .padding(vertical = 12.dp),
                 style = MaterialTheme.typography.bodyLarge,
-                text = "Save Changes"
+                text = stringResource(R.string.txt_change_password_save_changes)
             )
         }
     }
 }
+
+
