@@ -1,4 +1,6 @@
-package com.shapeup.ui.screens.logged
+package com.shapeup.ui.screens.logged.settings
+
+
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
@@ -15,7 +17,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +27,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.shapeup.R
 import com.shapeup.ui.components.FormField
 import com.shapeup.ui.components.Header
 import com.shapeup.ui.theme.ShapeUpTheme
@@ -39,9 +41,9 @@ import com.shapeup.ui.viewModels.logged.journeyHandlersMock
 @SuppressLint("UnrememberedMutableState")
 @Preview
 @Composable
-fun ChangePasswordPreview() {
+fun ChangeNumberPreview() {
     ShapeUpTheme {
-        ChangePasswordScreen(
+        ChangeNumberScreen(
             journeyData = journeyDataMock,
             journeyHandlers = journeyHandlersMock,
             navigator = Navigator()
@@ -50,7 +52,7 @@ fun ChangePasswordPreview() {
 }
 
 @Composable
-fun ChangePasswordScreen(
+fun ChangeNumberScreen(
     journeyData: JourneyData,
     journeyHandlers: JourneyHandlers,
     navigator: Navigator
@@ -75,7 +77,7 @@ fun ChangePasswordScreen(
         ) {
             Header(
                 navigateTo = { navigator.navigateBack() },
-                text = "Change Password"
+                text = stringResource(R.string.txt_change_number_title)
             )
 
             IconButton(onClick = { navigator.navigateBack() }) {
@@ -104,7 +106,7 @@ fun ChangePasswordScreen(
                     ),
                     label = (""),
                     supportingText = null,
-                    value = "Check the code in your email"
+                    value = stringResource(R.string.txt_change_number_check_number)
                 )
 
                 FormField(
@@ -115,7 +117,7 @@ fun ChangePasswordScreen(
                     ),
                     label = (""),
                     supportingText = null,
-                    value = "Old password"
+                    value = stringResource(R.string.txt_change_number_old)
                 )
 
                 FormField(
@@ -126,38 +128,8 @@ fun ChangePasswordScreen(
                     ),
                     label = (""),
                     supportingText = null,
-                    value = "New password"
+                    value = stringResource(R.string.txt_change_number_new)
                 )
-
-                FormField(
-                    focusManager = focusManager,
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next,
-                        keyboardType = KeyboardType.Text
-                    ),
-                    label = (""),
-                    supportingText = null,
-                    value = "Confirm your password"
-                )
-
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.End
-                ) {
-
-                    TextButton(onClick = {
-                        //* TO DO *\\
-                    }
-                    ) {
-
-                        Text(
-                            style = MaterialTheme.typography.bodyMedium,
-                            text = ("Forgot Old password?"),
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                }
-
             }
         }
 
@@ -171,7 +143,7 @@ fun ChangePasswordScreen(
                 modifier = Modifier
                     .padding(vertical = 12.dp),
                 style = MaterialTheme.typography.bodyLarge,
-                text = "Save Changes"
+                text = stringResource(R.string.txt_change_number_save_changes)
             )
         }
     }
