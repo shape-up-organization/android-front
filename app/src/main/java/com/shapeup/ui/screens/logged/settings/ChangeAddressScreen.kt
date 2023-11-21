@@ -1,6 +1,4 @@
-package com.shapeup.ui.screens.logged
-
-
+package com.shapeup.ui.screens.logged.settings
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
@@ -27,6 +25,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.shapeup.R
 import com.shapeup.ui.components.FormField
 import com.shapeup.ui.components.Header
 import com.shapeup.ui.theme.ShapeUpTheme
@@ -40,9 +39,9 @@ import com.shapeup.ui.viewModels.logged.journeyHandlersMock
 @SuppressLint("UnrememberedMutableState")
 @Preview
 @Composable
-fun ChangeNumberPreview() {
+fun ChangeAddressPreview() {
     ShapeUpTheme {
-        ChangeNumberScreen(
+        ChangeAddressScreen(
             journeyData = journeyDataMock,
             journeyHandlers = journeyHandlersMock,
             navigator = Navigator()
@@ -51,11 +50,18 @@ fun ChangeNumberPreview() {
 }
 
 @Composable
-fun ChangeNumberScreen(
+fun ChangeAddressScreen(
     journeyData: JourneyData,
     journeyHandlers: JourneyHandlers,
     navigator: Navigator
 ) {
+   // var updatedZipCode by remember { mutableStateOf(journeyData.userData.value.firstName) }
+    //var updatedStreetName by remember { mutableStateOf(journeyData.userData.value.lastName) }
+   // var updatedCityName by remember { mutableStateOf(journeyData.userData.value.username) }
+   // var updatedState by remember { mutableStateOf(journeyData.userData.value.bio ?: "") }
+   // var updatedContry by remember { mutableStateOf(journeyData.userData.value.bio ?: "") }
+   // var updatedNumber by remember { mutableStateOf(journeyData.userData.value.bio ?: "") }
+   // var updatedComplement by remember { mutableStateOf(journeyData.userData.value.bio ?: "") }
 
     val focusManager = LocalFocusManager.current
 
@@ -76,7 +82,7 @@ fun ChangeNumberScreen(
         ) {
             Header(
                 navigateTo = { navigator.navigateBack() },
-                text = "Change Number"
+                text = stringResource(R.string.txt_change_address_title)
             )
 
             IconButton(onClick = { navigator.navigateBack() }) {
@@ -88,9 +94,7 @@ fun ChangeNumberScreen(
             }
         }
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(16.dp),
+            modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(32.dp)
         ) {
             Column(
@@ -103,9 +107,29 @@ fun ChangeNumberScreen(
                         imeAction = ImeAction.Next,
                         keyboardType = KeyboardType.Text
                     ),
-                    label = (""),
+                    label = (stringResource(R.string.txt_change_address_zip_code)),
                     supportingText = null,
-                    value = "Check the code in your number"
+                    value = stringResource(R.string.txt_change_address_zip_code)
+                )
+                FormField(
+                    focusManager = focusManager,
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Next,
+                        keyboardType = KeyboardType.Text
+                    ),
+                    label = (stringResource(R.string.txt_change_address_street_name)),
+                    supportingText = null,
+                    value = stringResource(R.string.txt_change_address_street_name)
+                )
+                FormField(
+                    focusManager = focusManager,
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Next,
+                        keyboardType = KeyboardType.Text
+                    ),
+                    label =(stringResource(R.string.txt_change_address_city)),
+                    supportingText = null,
+                    value = stringResource(R.string.txt_change_address_city)
                 )
 
                 FormField(
@@ -114,40 +138,54 @@ fun ChangeNumberScreen(
                         imeAction = ImeAction.Next,
                         keyboardType = KeyboardType.Text
                     ),
-                    label = (""),
+                    label = (stringResource(R.string.txt_change_address_state)),
                     supportingText = null,
-                    value = "Old number"
+                    value = stringResource(R.string.txt_change_address_state)
                 )
-
                 FormField(
                     focusManager = focusManager,
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Next,
                         keyboardType = KeyboardType.Text
                     ),
-                    label = (""),
+                    label = (stringResource(R.string.txt_change_address_country)),
                     supportingText = null,
-                    value = "New number"
+                    value = stringResource(R.string.txt_change_address_country)
                 )
-
-
+                FormField(
+                    focusManager = focusManager,
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Next,
+                        keyboardType = KeyboardType.Text
+                    ),
+                    label = (stringResource(R.string.txt_change_address_number)),
+                    supportingText = null,
+                    value = stringResource(R.string.txt_change_address_number)
+                )
+                FormField(
+                    focusManager = focusManager,
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Next
+                    ),
+                    label = (stringResource(R.string.txt_change_address_complement)),
+                    supportingText = null,
+                    value = stringResource(R.string.txt_change_address_complement),
+                )
             }
         }
 
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                // * TO DO *\\
+                //* TO DO *\\
             }
         ) {
             Text(
                 modifier = Modifier
                     .padding(vertical = 12.dp),
                 style = MaterialTheme.typography.bodyLarge,
-                text = "Save Changes"
+                text = stringResource(R.string.txt_change_address_save_changes),
             )
         }
     }
 }
-
-
