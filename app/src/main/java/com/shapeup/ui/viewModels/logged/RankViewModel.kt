@@ -1,20 +1,14 @@
 package com.shapeup.ui.viewModels.logged
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.shapeup.api.services.posts.CreatePostStatement
-import com.shapeup.api.services.posts.DeletePostStatement
-import com.shapeup.api.services.posts.GetCommentsByPostsIdPaginatedStatement
-import com.shapeup.api.services.posts.GetPostByIdStatement
-import com.shapeup.api.services.posts.GetPostsPaginatedStatement
-import com.shapeup.api.services.posts.Post
-import com.shapeup.api.services.posts.SendCommentStatement
-import com.shapeup.api.services.posts.ToggleLikeStatement
 import com.shapeup.api.services.rank.ERankApi
 import com.shapeup.api.services.rank.GetFriendsRankPaginatedPayload
 import com.shapeup.api.services.rank.GetFriendsRankPaginatedStatement
 import com.shapeup.api.services.rank.GetGlobalRankPaginatedPayload
 import com.shapeup.api.services.rank.GetGlobalRankPaginatedStatement
+import com.shapeup.api.services.rank.getRankMock
 import com.shapeup.api.utils.helpers.SharedData
 import com.shapeup.ui.utils.helpers.Navigator
 import io.ktor.http.HttpStatusCode
@@ -63,11 +57,44 @@ class RankViewModel : ViewModel() {
         return response
     }
 
-    val handlers = GlobalRankHandlers(
-        getGlobalRank = ::getGlobalRank
+    val handlers = RankHandlers(
+        getGlobalRank = ::getGlobalRank,
+        getFriendsRank = ::getFriendsRank
     )
 }
 
-data class GlobalRankHandlers(
-    val getGlobalRank: suspend () -> GetGlobalRankPaginatedStatement
+data class RankHandlers(
+    val getGlobalRank: suspend () -> GetGlobalRankPaginatedStatement,
+    val getFriendsRank: suspend () -> GetFriendsRankPaginatedStatement
+)
+
+val rankHandlersMock = RankHandlers(
+    getFriendsRank = {
+        GetFriendsRankPaginatedStatement(
+            data = getRankMock ,
+            status = HttpStatusCode.OK
+        )
+    },
+    getGlobalRank = {
+        GetGlobalRankPaginatedStatement(
+            data = getRankMock ,
+            status = HttpStatusCode.OK
+        )
+    }
+)
+
+data class RankGlobalData(
+    val rankGlobal: MutableState<List<User>>
+)
+
+data class RankFriendsData(
+    val rankFriends: MutableState<List<User>>
+)
+
+val rankFriendsDataMock = RankFriendsData(
+    rankFriends = mutableStateOf(emptyList())
+)
+
+val rankGlobalDataMock = RankGlobalData(
+    rankGlobal = mutableStateOf(emptyList())
 )
