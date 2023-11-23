@@ -1,5 +1,8 @@
 package com.shapeup.api.services.friends
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class RequestFriendship(
     val id: String,
     val usernameSender: String,
@@ -7,6 +10,7 @@ data class RequestFriendship(
     val accepted: Boolean,
 )
 
+@Serializable
 data class AcceptFriendship(
     val id: String,
     val usernameSender: String,
@@ -14,6 +18,7 @@ data class AcceptFriendship(
     val accepted: Boolean,
 )
 
+@Serializable
 data class Friendship(
     val id: String,
     val firstName: String,
