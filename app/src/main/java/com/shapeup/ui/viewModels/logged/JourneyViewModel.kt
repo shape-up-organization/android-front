@@ -94,7 +94,7 @@ class JourneyViewModel : ViewModel() {
             else -> {
                 val usersApi = EUsersApi.create(sharedData)
 
-                val response = usersApi.getUser(
+                val response = usersApi.findByUsername(
                     GetUserPayload(
                         username = username
                     )
