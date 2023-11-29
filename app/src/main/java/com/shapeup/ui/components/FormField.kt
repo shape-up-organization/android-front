@@ -54,11 +54,6 @@ fun FormField(
     type: FormFieldType = FormFieldType.DEFAULT,
     value: String = ""
 ) {
-    val isDateType = type == FormFieldType.DATE
-    val isPasswordType = type == FormFieldType.PASSWORD
-    val isPhoneType = type == FormFieldType.PHONE
-    val isSearchType = type == FormFieldType.SEARCH
-
     OutlinedTextField(
         colors = OutlinedTextFieldDefaults.colors(
             disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -71,20 +66,23 @@ fun FormField(
         enabled = enabled,
         isError = isError || !errorText.isNullOrEmpty(),
         keyboardActions = keyboardActions,
-        keyboardOptions = when {
-            keyboardOptions != null -> keyboardOptions
+        keyboardOptions = keyboardOptions ?: when(type) {
+            FormFieldType.NUMBER -> KeyboardOptions(
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Number
+            )
 
-            isPasswordType -> KeyboardOptions(
+            FormFieldType.PASSWORD -> KeyboardOptions(
                 imeAction = ImeAction.Done,
                 keyboardType = KeyboardType.Password
             )
 
-            isPhoneType -> KeyboardOptions(
+            FormFieldType.PHONE -> KeyboardOptions(
                 imeAction = ImeAction.Done,
                 keyboardType = KeyboardType.Phone
             )
 
-            isSearchType -> KeyboardOptions(
+            FormFieldType.SEARCH -> KeyboardOptions(
                 imeAction = ImeAction.Search,
                 keyboardType = KeyboardType.Text
             )
@@ -111,7 +109,7 @@ fun FormField(
                 }
             }
 
-            isSearchType -> {
+            type == FormFieldType.SEARCH -> {
                 {
                     Icon(
                         contentDescription = stringResource(Icon.Search.description),
@@ -139,14 +137,14 @@ fun FormField(
                     )
                 }
 
-                isDateType -> {
+                type == FormFieldType.DATE -> {
                     Icon(
                         contentDescription = stringResource(Icon.Calendar.description),
                         painter = painterResource(Icon.Calendar.value)
                     )
                 }
 
-                isPasswordType -> {
+                type == FormFieldType.PASSWORD -> {
                     val icon = when {
                         (isPasswordHidden.value) -> Icon.EyeOpen
                         else -> Icon.EyeClosed
@@ -175,7 +173,7 @@ fun FormField(
                     }
                 }
 
-                isPhoneType -> {
+                type == FormFieldType.PHONE -> {
                     Icon(
                         contentDescription = stringResource(Icon.Phone.description),
                         painter = painterResource(Icon.Phone.value)
@@ -186,11 +184,11 @@ fun FormField(
         value = value,
         maxLines = maxLines,
         visualTransformation = when {
-            isPasswordType && isPasswordHidden.value -> {
+            type == FormFieldType.PASSWORD && isPasswordHidden.value -> {
                 PasswordVisualTransformation()
             }
 
-            isPhoneType -> {
+            type == FormFieldType.PHONE -> {
                 PhoneNumberVisualTransformation()
             }
 
@@ -202,6 +200,7 @@ fun FormField(
 enum class FormFieldType {
     DATE,
     DEFAULT,
+    NUMBER,
     PASSWORD,
     PHONE,
     SEARCH

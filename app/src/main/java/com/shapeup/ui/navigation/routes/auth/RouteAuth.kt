@@ -20,22 +20,10 @@ fun NavGraphBuilder.routeAuth(
         route = Route.Auth.value,
         startDestination = Screen.Welcome.value
     ) {
-        screenWelcome(navController)
-        screenSignIn(
-            navController,
-            sharedData
-        )
-        routeForgotPassword(
-            navController,
-            sharedData
-        )
-        screenSignUp(
-            navController,
-            sharedData
-        )
-        screenAccountVerification(
-            navController,
-            sharedData
-        )
+        screenWelcome(navController, sharedData)
+        screenSignIn(navController)
+        routeForgotPassword(navController)
+        screenSignUp(navController)
+        screenAccountVerification(navController)
     }
 }

@@ -46,6 +46,9 @@
     <string name="txt_errors_invalid">Inválido</string>
     <string name="txt_errors_invalid_format">Formato inválido</string>
     <string name="txt_errors_send_code">Erro ao enviar o código, tente novamente</string>
+    <string name="txt_errors_not_found_user">E-mail e/ou senham não existem</string>
+    <string name="txt_errors_conflict">E-mail, telefone ou nome de usuário já utilizados</string>
+    <string name="txt_errors_generic">Occurred some error</string>
 
     <!-- PAGES -->
     <!-- WELCOME -->

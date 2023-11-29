@@ -35,10 +35,7 @@ fun NavGraphBuilder.routeLogged(
         route = Route.Logged.value,
         startDestination = Screen.Feed.value
     ) {
-        screenFeed(
-            navController,
-            sharedData
-        )
+        screenFeed(navController, sharedData)
 
         screenNotification(navController)
 

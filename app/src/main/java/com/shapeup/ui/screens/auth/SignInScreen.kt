@@ -37,6 +37,8 @@ import com.shapeup.ui.components.FormField
 import com.shapeup.ui.components.FormFieldType
 import com.shapeup.ui.components.Header
 import com.shapeup.ui.components.Loading
+import com.shapeup.ui.components.SnackbarType
+import com.shapeup.ui.components.SnackbarHelper
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
@@ -76,7 +78,8 @@ fun SignInScreen(
                 (emailFormFieldError.isEmpty() &&
                         passwordFormFieldError.isEmpty() && !isLoading)
     )
-
+    var openSnackbar by remember { mutableStateOf(false) }
+    var snackbarMessage by remember { mutableStateOf("") }
 
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
@@ -117,14 +120,17 @@ fun SignInScreen(
         val response = handlers.signIn()
         isLoading = false
 
-        println(response)
-
         when (response.status) {
             HttpStatusCode.OK -> navigator.navigate(Screen.Feed)
 
+            HttpStatusCode.NotFound -> {
+                openSnackbar = true
+                snackbarMessage = context.getString(R.string.txt_errors_not_found_user)
+            }
+
             else -> {
-                emailFormFieldError = context.getString(R.string.txt_errors_invalid)
-                passwordFormFieldError = context.getString(R.string.txt_errors_invalid)
+                openSnackbar = true
+                snackbarMessage = context.getString(R.string.txt_errors_generic)
             }
         }
     }
@@ -257,4 +263,11 @@ fun SignInScreen(
             }
         }
     }
+
+    SnackbarHelper(
+        message = snackbarMessage,
+        open = openSnackbar,
+        openSnackbar = { openSnackbar = it },
+        type = SnackbarType.ERROR
+    )
 }

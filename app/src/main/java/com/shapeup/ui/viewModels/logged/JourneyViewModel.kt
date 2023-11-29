@@ -10,9 +10,12 @@ import com.shapeup.api.services.friends.getFriendsMessagesMock
 import com.shapeup.api.services.users.EUsersApi
 import com.shapeup.api.services.users.GetRankPayload
 import com.shapeup.api.services.users.GetRankStatement
+import com.shapeup.api.services.users.GetUserPayload
 import com.shapeup.api.services.users.RankType
-import com.shapeup.api.services.users.SearchUsersPayload
+import com.shapeup.api.services.users.SearchByFullNamePayload
+import com.shapeup.api.services.users.SearchByUsernamePayload
 import com.shapeup.api.services.users.SearchUsersStatement
+import com.shapeup.api.services.users.UserSearch
 import com.shapeup.api.services.users.getAllSearchUserDataMock
 import com.shapeup.api.services.users.getRankGlobalDataMock
 import com.shapeup.api.services.users.getUserDataMock
@@ -67,7 +70,7 @@ class JourneyViewModel : ViewModel() {
             Friend(
                 messages = getFriendsMessages(it.username),
                 online = getFriendStatus(it.username),
-                user = it
+                user = JourneyMappers.userToUserSearch(it)
             )
         }
 
@@ -80,16 +83,27 @@ class JourneyViewModel : ViewModel() {
         return Random.nextBoolean()
     }
 
-    private fun getUser(username: String): User {
+    private suspend fun getUser(username: String): UserSearch? {
         return when (getUserRelation(username)) {
-            EUserRelation.USER -> JourneyMappers.userDataToUser(userData.value)
+            EUserRelation.USER -> JourneyMappers.userDataToUserSearch(userData.value)
 
             EUserRelation.FRIEND -> friends.value.find {
                 it.user.username == username
             }!!.user
 
-            // TODO: implement userGet from service before returning null
-            else -> JourneyMappers.userDataToUser(userData.value)
+            else -> {
+                val usersApi = EUsersApi.create(sharedData)
+
+                val response = usersApi.getUser(
+                    GetUserPayload(
+                        username = username
+                    )
+                )
+
+                println(response)
+
+                return response.data
+            }
         }
     }
 
@@ -161,11 +175,19 @@ class JourneyViewModel : ViewModel() {
     private suspend fun searchUsers(searchedUser: String): SearchUsersStatement {
         val usersApi = EUsersApi.create(sharedData)
 
-        val response = usersApi.searchUsers(
-            SearchUsersPayload(
-                nameOrUsername = searchedUser
+        val response = when (searchedUser.startsWith("@")) {
+            true -> usersApi.searchUsersByUsername(
+                SearchByUsernamePayload(
+                    username = searchedUser.drop(1)
+                )
             )
-        )
+
+            else -> usersApi.searchUsersByFullName(
+                SearchByFullNamePayload(
+                    fullName = searchedUser
+                )
+            )
+        }
 
         println(response)
 
@@ -202,7 +224,7 @@ data class JourneyHandlers(
     val setupUser: () -> Unit,
     val getFriends: suspend () -> List<Friend>?,
     val getFriendStatus: (username: String) -> Boolean,
-    val getUser: (username: String) -> User,
+    val getUser: suspend (username: String) -> UserSearch?,
     val getUserRelation: (username: String) -> EUserRelation,
     val updateProfilePicture: (profilePicture: Uri) -> Unit,
     val updateUserData: (newUserData: UserDataUpdate) -> Unit,
@@ -218,7 +240,7 @@ val journeyHandlersMock = JourneyHandlers(
 
         friendsList.map {
             Friend(
-                user = it,
+                user = JourneyMappers.userToUserSearch(it),
                 messages = getFriendsMessagesMock.filter { message ->
                     message.receiverName == it.username || message.senderName == it.username
                 }.toMutableList()
@@ -226,7 +248,7 @@ val journeyHandlersMock = JourneyHandlers(
         }
     },
     getFriendStatus = { Random.nextBoolean() },
-    getUser = { JourneyMappers.userDataToUser(getUserDataMock) },
+    getUser = { JourneyMappers.userDataToUserSearch(getUserDataMock) },
     getUserRelation = { EUserRelation.USER },
     updateProfilePicture = {},
     updateUserData = {},
@@ -289,7 +311,7 @@ data class Message(
 data class Friend(
     val messages: MutableList<Message>,
     val online: Boolean = false,
-    val user: User
+    val user: UserSearch
 )
 
 @Serializable
@@ -309,6 +331,27 @@ object JourneyMappers {
             profilePicture = it.profilePicture,
             username = it.username,
             xp = it.xp
+        )
+    }
+
+    val userDataToUserSearch: (userData: UserData) -> UserSearch = {
+        UserSearch(
+            firstName = it.firstName,
+            lastName = it.lastName,
+            profilePicture = it.profilePicture,
+            username = it.username,
+            xp = it.xp
+        )
+    }
+
+    val userToUserSearch: (user: User) -> UserSearch = {
+        UserSearch(
+            firstName = it.firstName,
+            lastName = it.lastName,
+            profilePicture = it.profilePicture,
+            username = it.username,
+            xp = it.xp,
+            friendshipStatus = it.friendshipStatus
         )
     }
 }

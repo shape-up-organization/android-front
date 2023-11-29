@@ -15,6 +15,8 @@ import com.shapeup.ui.utils.helpers.navigator
 import com.shapeup.ui.utils.helpers.viewModel
 import com.shapeup.ui.viewModels.auth.AuthData
 import com.shapeup.ui.viewModels.auth.AuthViewModel
+import com.shapeup.ui.viewModels.logged.JourneyViewModel
+import com.shapeup.ui.viewModels.logged.PostsViewModel
 
 @Composable
 fun Navigation(
@@ -44,6 +46,13 @@ fun Navigation(
             authViewModel.navigator = navController.navigator
             authViewModel.sharedData = sharedData
 
+            val journeyViewModel = it.viewModel<JourneyViewModel>(navController)
+            journeyViewModel.sharedData = sharedData
+
+            val postsViewModel = it.viewModel<PostsViewModel>(navController)
+            postsViewModel.navigator = navController.navigator
+            postsViewModel.sharedData = sharedData
+
             SplashScreen(
                 data = AuthData(
                     birth = authViewModel.birth,
@@ -61,14 +70,8 @@ fun Navigation(
             )
         }
 
-        routeAuth(
-            navController,
-            sharedData
-        )
+        routeAuth(navController, sharedData)
 
-        routeLogged(
-            navController,
-            sharedData
-        )
+        routeLogged(navController, sharedData)
     }
 }

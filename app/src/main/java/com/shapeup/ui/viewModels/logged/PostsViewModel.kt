@@ -21,6 +21,7 @@ import com.shapeup.api.services.posts.SendCommentStatement
 import com.shapeup.api.services.posts.ToggleLikePayload
 import com.shapeup.api.services.posts.ToggleLikeStatement
 import com.shapeup.api.services.posts.getPostsMock
+import com.shapeup.api.services.users.UserSearch
 import com.shapeup.api.utils.helpers.SharedData
 import com.shapeup.ui.utils.helpers.Navigator
 import io.ktor.http.HttpStatusCode
@@ -30,7 +31,7 @@ class PostsViewModel : ViewModel() {
     lateinit var navigator: Navigator
     lateinit var sharedData: SharedData
 
-    val posts = mutableStateOf<List<Post>>(emptyList())
+    val posts = mutableStateOf<List<PostView>>(emptyList())
     val specificPosts = mutableStateOf<List<Post>>(emptyList())
 
     private suspend fun getCommentsByPostId(postId: String): GetCommentsByPostsIdPaginatedStatement {
@@ -58,11 +59,6 @@ class PostsViewModel : ViewModel() {
         val response = postsApi.getPostsPaginated(pagination)
 
         println(response)
-
-        when (response.status) {
-            HttpStatusCode.OK -> posts.value = response.data!!
-            HttpStatusCode.NoContent -> posts.value = emptyList()
-        }
 
         return response
     }
@@ -174,7 +170,7 @@ class PostsViewModel : ViewModel() {
 }
 
 data class PostsData(
-    val posts: MutableState<List<Post>>,
+    val posts: MutableState<List<PostView>>,
     val specificPosts: MutableState<List<Post>>
 )
 
@@ -185,7 +181,7 @@ val postsDataMock = PostsData(
 
 data class PostsHandlers(
     val getCommentsByPostId: suspend (postId: String) -> GetCommentsByPostsIdPaginatedStatement,
-    val getPosts: suspend () -> GetPostsPaginatedStatement,
+    val getPosts: suspend (pagination: GetPostsPaginatedPayload) -> GetPostsPaginatedStatement,
     val getPostById: suspend (postId: String) -> GetPostByIdStatement,
     val getUserPosts: (username: String) -> List<Post>?,
     val createPost: suspend (postData: PostCreation) -> CreatePostStatement,
@@ -234,6 +230,11 @@ val postsHandlersMock = PostsHandlers(
 data class PostCreation(
     val description: String? = null,
     val photoUrls: List<ByteArray?> = emptyList()
+)
+
+data class PostView(
+    val post: Post,
+    val user: UserSearch
 )
 
 @Serializable

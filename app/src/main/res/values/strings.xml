@@ -47,6 +47,9 @@
     <string name="txt_errors_invalid">Invalid</string>
     <string name="txt_errors_invalid_format">Invalid format</string>
     <string name="txt_errors_send_code">Error sending code, try again</string>
+    <string name="txt_errors_not_found_user">E-mail and/or password do not exist</string>
+    <string name="txt_errors_conflict">E-mail, phone or username already exists</string>
+    <string name="txt_errors_generic">Occurred some error</string>
 
     <!-- PAGES -->
     <!-- WELCOME -->

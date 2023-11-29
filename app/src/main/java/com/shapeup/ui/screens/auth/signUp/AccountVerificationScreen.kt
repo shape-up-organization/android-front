@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -34,15 +33,16 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.shapeup.R
 import com.shapeup.ui.components.FormField
+import com.shapeup.ui.components.FormFieldType
 import com.shapeup.ui.components.Header
 import com.shapeup.ui.components.Loading
+import com.shapeup.ui.components.SnackbarHelper
+import com.shapeup.ui.components.SnackbarType
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
@@ -72,8 +72,12 @@ fun AccountVerificationScreen(
     handlers: AuthHandlers,
     navigator: Navigator
 ) {
+    val CODE_MAX_CHARS = 4
+
     var isLoading by remember { mutableStateOf(false) }
     var codeError by remember { mutableStateOf("") }
+    var openSnackbar by remember { mutableStateOf(false) }
+    var snackbarMessage by remember { mutableStateOf("") }
 
     val coroutine = rememberCoroutineScope()
 
@@ -88,14 +92,17 @@ fun AccountVerificationScreen(
 
             println(response)
 
-            codeError = when (response.status) {
+            when (response.status) {
                 HttpStatusCode.OK -> {
                     handlers.clearFormData()
                     navigator.navigateClean(Screen.SignIn)
-                    ""
                 }
 
-                else -> context.getString(R.string.txt_errors_invalid)
+                else -> {
+                    openSnackbar = true
+                    snackbarMessage = context.getString(R.string.txt_errors_generic)
+                    codeError = context.getString(R.string.txt_errors_invalid)
+                }
             }
         }
     }
@@ -124,7 +131,7 @@ fun AccountVerificationScreen(
             code.value.isBlank() ->
                 context.getString(R.string.txt_errors_required)
 
-            code.value.length != 6 ->
+            code.value.length != CODE_MAX_CHARS ->
                 context.getString(R.string.txt_errors_invalid_format)
 
             else -> ""
@@ -193,17 +200,14 @@ fun AccountVerificationScreen(
                     enabled = !isLoading,
                     errorText = codeError,
                     focusManager = focusManager,
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Done,
-                        keyboardType = KeyboardType.Ascii
-                    ),
                     label = stringResource(R.string.txt_sign_up_screen_verification_code_label),
                     onValueChange = {
-                        if (it.length > 6) return@FormField
+                        if (it.length > CODE_MAX_CHARS) return@FormField
                         code.value = it
                         validateCode()
                     },
                     supportingText = "",
+                    type = FormFieldType.NUMBER,
                     value = code.value
                 )
 
@@ -239,4 +243,11 @@ fun AccountVerificationScreen(
             }
         }
     }
+
+    SnackbarHelper(
+        message = snackbarMessage,
+        open = openSnackbar,
+        openSnackbar = { openSnackbar = it },
+        type = SnackbarType.ERROR
+    )
 }

@@ -42,6 +42,7 @@ fun App(sharedPreferences: SharedPreferences?) {
                 Context.MODE_PRIVATE
             ))
     val navController = rememberNavController()
+
     Navigation(
         navController = navController,
         sharedData = sharedData

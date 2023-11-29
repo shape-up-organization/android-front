@@ -13,3 +13,9 @@ data class GetRankStatement(
     val content: String? = null,
     val status: HttpStatusCode
 )
+
+data class GetUserStatement(
+    val data: UserSearch? = null,
+    val content: String? = null,
+    val status: HttpStatusCode
+)

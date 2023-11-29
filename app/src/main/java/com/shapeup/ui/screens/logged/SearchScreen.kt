@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -46,6 +47,8 @@ import com.shapeup.ui.components.ExpandableContent
 import com.shapeup.ui.components.FormField
 import com.shapeup.ui.components.FormFieldType
 import com.shapeup.ui.components.Loading
+import com.shapeup.ui.components.SnackbarHelper
+import com.shapeup.ui.components.SnackbarType
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.constants.Screen
@@ -79,8 +82,11 @@ fun SearchScreen(
     var loadingUsers by remember { mutableStateOf(false) }
     var searchedName by remember { mutableStateOf("") }
     var usersSearched by remember { mutableStateOf<List<UserSearch>>(emptyList()) }
+    var openSnackbar by remember { mutableStateOf(false) }
+    var snackbarMessage by remember { mutableStateOf("") }
 
     val coroutine = rememberCoroutineScope()
+    val context = LocalContext.current
 
     val focusManager = LocalFocusManager.current
 
@@ -97,6 +103,11 @@ fun SearchScreen(
 
             when (response.status) {
                 HttpStatusCode.OK -> usersSearched = response.data ?: emptyList()
+
+                else -> {
+                    openSnackbar = true
+                    snackbarMessage = context.getString(R.string.txt_errors_generic)
+                }
             }
         }
     }
@@ -172,7 +183,10 @@ fun SearchScreen(
                             horizontalArrangement = Arrangement.Center,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(text = stringResource(R.string.txt_search_not_found))
+                            Text(
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                text = stringResource(R.string.txt_search_not_found)
+                            )
                         }
                     })
             }
@@ -263,4 +277,11 @@ fun SearchScreen(
             }
         }
     }
+
+    SnackbarHelper(
+        message = snackbarMessage,
+        open = openSnackbar,
+        openSnackbar = { openSnackbar = it },
+        type = SnackbarType.ERROR
+    )
 }

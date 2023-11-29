@@ -29,16 +29,20 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.shapeup.R
+import com.shapeup.api.services.posts.GetPostsPaginatedPayload
 import com.shapeup.ui.components.CardPost
 import com.shapeup.ui.components.EPageButtons
 import com.shapeup.ui.components.ExpandableContent
 import com.shapeup.ui.components.Loading
 import com.shapeup.ui.components.Navbar
+import com.shapeup.ui.components.SnackbarHelper
+import com.shapeup.ui.components.SnackbarType
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.constants.Screen
@@ -47,6 +51,7 @@ import com.shapeup.ui.viewModels.auth.AuthHandlers
 import com.shapeup.ui.viewModels.auth.authHandlersMock
 import com.shapeup.ui.viewModels.logged.JourneyData
 import com.shapeup.ui.viewModels.logged.JourneyHandlers
+import com.shapeup.ui.viewModels.logged.PostView
 import com.shapeup.ui.viewModels.logged.PostsData
 import com.shapeup.ui.viewModels.logged.PostsHandlers
 import com.shapeup.ui.viewModels.logged.journeyDataMock
@@ -83,8 +88,11 @@ fun FeedScreen(
     postsHandlers: PostsHandlers
 ) {
     var loadingPosts by remember { mutableStateOf(journeyData.initialLoad.value) }
+    var openSnackbar by remember { mutableStateOf(false) }
+    var snackbarMessage by remember { mutableStateOf("") }
 
     val coroutine = rememberCoroutineScope()
+    val context = LocalContext.current
 
     suspend fun getFriends() {
         val response = journeyHandlers.getFriends()
@@ -93,7 +101,40 @@ fun FeedScreen(
     suspend fun getPosts() {
         loadingPosts = true
 
-        postsHandlers.getPosts()
+        val response = postsHandlers.getPosts(
+            GetPostsPaginatedPayload(
+                page = 0,
+                size = 20
+            ),
+        )
+
+        when (response.status) {
+            HttpStatusCode.OK -> {
+                val postViews = mutableListOf<PostView>()
+
+                response.data!!.forEach {
+                    val user = journeyHandlers.getUser(it.username)
+
+                    if (user != null) {
+                        postViews.add(
+                            PostView(
+                                post = it,
+                                user = user
+                            )
+                        )
+                    }
+                }
+
+                postsData.posts.value = postViews
+            }
+
+            HttpStatusCode.NoContent -> postsData.posts.value = emptyList()
+
+            else -> {
+                openSnackbar = true
+                snackbarMessage = context.getString(R.string.txt_errors_generic)
+            }
+        }
 
         withContext(Dispatchers.IO) {
             Thread.sleep(500)
@@ -115,7 +156,7 @@ fun FeedScreen(
         }
     }
 
-    LaunchedEffect(key1 = journeyData.initialLoad.value) {
+    LaunchedEffect(key1 = true) {
         if (journeyData.initialLoad.value) {
             journeyHandlers.setupUser()
             getFriends()
@@ -126,8 +167,6 @@ fun FeedScreen(
 
 
     BackHandler {
-//        MainActivity().finish()
-//        exitProcess(0)
         journeyData.initialLoad.value = true
         authHandlers.signOut()
         navigator.navigateClean(Screen.Splash)
@@ -145,10 +184,10 @@ fun FeedScreen(
                 .background(color = MaterialTheme.colorScheme.background)
                 .fillMaxWidth()
                 .padding(
-                    bottom = 16.dp,
+                    bottom = 20.dp,
                     end = 16.dp,
                     start = 16.dp,
-                    top = 8.dp
+                    top = 20.dp
                 ),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -232,24 +271,24 @@ fun FeedScreen(
                         ) {
                             Loading()
                         }
-                })
+                    })
             }
             items(postsData.posts.value) {
                 CardPost(
                     deletePost = { postId -> deletePost(postId) },
                     navigator = navigator,
-                    postData = it,
+                    postData = it.post,
                     postsHandlers = postsHandlers,
-                    user = journeyHandlers.getUser(it.username),
-                    userRelation = journeyHandlers.getUserRelation(it.username)
+                    user = it.user,
+                    userRelation = journeyHandlers.getUserRelation(it.post.username)
                 )
 
                 Spacer(
                     modifier = with(Modifier) {
                         height(
                             when {
-                                it.description.isNullOrBlank() ||
-                                        it.photoUrls.isEmpty() -> 4.dp
+                                it.post.description.isNullOrBlank() ||
+                                        it.post.photoUrls.isEmpty() -> 4.dp
 
                                 else -> 32.dp
                             }
@@ -275,4 +314,11 @@ fun FeedScreen(
             navigator = navigator
         )
     }
+
+    SnackbarHelper(
+        message = snackbarMessage,
+        open = openSnackbar,
+        openSnackbar = { openSnackbar = it },
+        type = SnackbarType.ERROR
+    )
 }

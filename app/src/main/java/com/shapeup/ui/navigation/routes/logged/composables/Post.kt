@@ -20,26 +20,20 @@ fun NavGraphBuilder.screenPost(navController: NavHostController) {
         exitTransition = { ExitTransition.None },
         popExitTransition = { ExitTransition.None }
     ) {
-        val journeyViewModel = it.viewModel<JourneyViewModel>(navController)
-
         val userName = it.arguments?.getString("userName")
-        val user = userName?.let { itUserName -> journeyViewModel.handlers.getUser(itUserName) }
+        val postId = it.arguments?.getString("postId")
 
-        if (user != null) {
+        if (userName != null && postId != null) {
+            val journeyViewModel = it.viewModel<JourneyViewModel>(navController)
             val postsViewModel = it.viewModel<PostsViewModel>(navController)
-            postsViewModel.navigator = navController.navigator
 
-            val postId = it.arguments?.getString("postId")
-
-            if (postId != null) {
-                PostScreen(
-                    navigator = navController.navigator,
-                    postId = postId,
-                    postsHandlers = postsViewModel.handlers,
-                    user = user,
-                    userRelation = journeyViewModel.handlers.getUserRelation(user.username)
-                )
-            }
+            PostScreen(
+                navigator = navController.navigator,
+                postId = postId,
+                postsHandlers = postsViewModel.handlers,
+                journeyHandlers = journeyViewModel.handlers,
+                username = userName,
+            )
         }
     }
 }
