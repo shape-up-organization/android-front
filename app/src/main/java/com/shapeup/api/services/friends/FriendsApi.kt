@@ -1,4 +1,4 @@
-package com.shapeup.api.services.users
+package com.shapeup.api.services.friends
 
 import com.shapeup.api.utils.constants.BASE_URL
 import com.shapeup.api.utils.constants.SharedDataValues
@@ -8,9 +8,7 @@ import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.header
-import io.ktor.client.request.parameter
-import io.ktor.client.request.put
-import io.ktor.client.request.setBody
+import io.ktor.client.request.post
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
@@ -18,15 +16,17 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 
-class UsersApi(
+class FriendsApi(
     private val client: HttpClient,
     private val sharedData: SharedData,
-) : EUsersApi {
-    override suspend fun deleteByEmail(): DeleteByEmailStatement {
+) : EFriendsApi {
+    override suspend fun sendFriendshipRequest(
+        payload: RequestFriendshipPayload
+    ): RequestFriendshipStatement {
         var response: HttpResponse? = null
 
         try {
-            response = client.delete("$BASE_URL/users") {
+            response = client.post("$BASE_URL/friends/sent-friendship-request/${payload.newFriendUsername}") {
                 contentType(ContentType.Application.Json)
                 header(
                     HttpHeaders.Authorization,
@@ -39,13 +39,14 @@ class UsersApi(
 
         return when (response?.status) {
             HttpStatusCode.OK -> {
-                return DeleteByEmailStatement(
+                return RequestFriendshipStatement(
+                    data = response.body<RequestFriendship>(),
                     status = response.status
                 )
             }
 
             else -> {
-                DeleteByEmailStatement(
+                RequestFriendshipStatement(
                     content = response?.bodyAsText(),
                     status = response?.status ?: HttpStatusCode.ServiceUnavailable
                 )
@@ -53,19 +54,18 @@ class UsersApi(
         }
     }
 
-    override suspend fun updateUserField(
-        payload: UserFieldPayload
-    ): UserFieldStatement {
+    override suspend fun acceptFriendshipRequest(
+        payload: AcceptFriendshipPayload
+    ): AcceptFriendshipStatement {
         var response: HttpResponse? = null
 
         try {
-            response = client.put("$BASE_URL/users") {
+            response = client.post("$BASE_URL/friends/accept-friendship-request/${payload.friendUsername}") {
                 contentType(ContentType.Application.Json)
                 header(
                     HttpHeaders.Authorization,
                     "Bearer ${sharedData.get(SharedDataValues.JwtToken.value)}"
                 )
-                setBody(payload)
             }
         } catch (_: Exception) {
             println("ERROR: Timeout or Service Unavailable")
@@ -73,14 +73,14 @@ class UsersApi(
 
         return when (response?.status) {
             HttpStatusCode.OK -> {
-                return UserFieldStatement(
-                    data = response.body<List<UserFieldUpdate>>(),
+                return AcceptFriendshipStatement(
+                    data = response.body<AcceptFriendship>(),
                     status = response.status
                 )
             }
 
             else -> {
-                UserFieldStatement(
+                AcceptFriendshipStatement(
                     content = response?.bodyAsText(),
                     status = response?.status ?: HttpStatusCode.ServiceUnavailable
                 )
@@ -88,13 +88,12 @@ class UsersApi(
         }
     }
 
-    override suspend fun searchUsersByUsername(
-        payload: SearchByUsernamePayload
-    ): SearchUsersStatement {
+    override suspend fun getAllFriendship(
+    ): GetAllFriendshipStatement {
         var response: HttpResponse? = null
 
         try {
-            response = client.get("$BASE_URL/users/search-username/${payload.username}") {
+            response = client.get("$BASE_URL/friends/get-all-friendship") {
                 contentType(ContentType.Application.Json)
                 header(
                     HttpHeaders.Authorization,
@@ -107,14 +106,14 @@ class UsersApi(
 
         return when (response?.status) {
             HttpStatusCode.OK -> {
-                return SearchUsersStatement(
-                    data = response.body<List<UserSearch>>(),
+                return GetAllFriendshipStatement(
+                    data = response.body<List<Friendship>>(),
                     status = response.status
                 )
             }
 
             else -> {
-                SearchUsersStatement(
+                GetAllFriendshipStatement(
                     content = response?.bodyAsText(),
                     status = response?.status ?: HttpStatusCode.ServiceUnavailable
                 )
@@ -122,19 +121,18 @@ class UsersApi(
         }
     }
 
-    override suspend fun searchUsersByFullName(
-        payload: SearchByFullNamePayload
-    ): SearchUsersStatement {
+    override suspend fun deleteFriendshipRequest(
+        payload: DeleteFriendshipPayload
+    ): DeleteFriendshipStatement {
         var response: HttpResponse? = null
 
         try {
-            response = client.get("$BASE_URL/users/search-fullname") {
+            response = client.delete("$BASE_URL/friends/delete-friendship-request/${payload.friendUsername}") {
                 contentType(ContentType.Application.Json)
                 header(
                     HttpHeaders.Authorization,
                     "Bearer ${sharedData.get(SharedDataValues.JwtToken.value)}"
                 )
-                parameter("fullName", payload.fullName)
             }
         } catch (_: Exception) {
             println("ERROR: Timeout or Service Unavailable")
@@ -142,14 +140,13 @@ class UsersApi(
 
         return when (response?.status) {
             HttpStatusCode.OK -> {
-                return SearchUsersStatement(
-                    data = response.body<List<UserSearch>>(),
+                return DeleteFriendshipStatement(
                     status = response.status
                 )
             }
 
             else -> {
-                SearchUsersStatement(
+                DeleteFriendshipStatement(
                     content = response?.bodyAsText(),
                     status = response?.status ?: HttpStatusCode.ServiceUnavailable
                 )
@@ -157,48 +154,13 @@ class UsersApi(
         }
     }
 
-    override suspend fun getRank(payload: GetRankPayload): GetRankStatement {
+    override suspend fun deleteFriend(
+        payload: DeleteFriendPayload
+    ): DeleteFriendStatement {
         var response: HttpResponse? = null
 
         try {
-            response = client.get("$BASE_URL/rank/${payload.type.value}") {
-                contentType(ContentType.Application.Json)
-                header(
-                    HttpHeaders.Authorization,
-                    "Bearer ${sharedData.get(SharedDataValues.JwtToken.value)}"
-                )
-                parameter("page", payload.page)
-                parameter("size", payload.size)
-            }
-        } catch (_: Exception) {
-            println("ERROR: Timeout or Service Unavailable")
-        }
-
-        return when (response?.status) {
-            HttpStatusCode.OK -> {
-                return GetRankStatement(
-                    data = response.body<List<UserRank>>(),
-                    status = response.status
-                )
-            }
-
-            else -> {
-                GetRankStatement(
-                    content = response?.bodyAsText(),
-                    status = response?.status ?: HttpStatusCode.ServiceUnavailable
-                )
-            }
-        }
-    }
-
-    override suspend fun getUser(payload: GetUserPayload): GetUserStatement {
-    override suspend fun searchByUsername(
-        payload: SearchByUsernamePayload
-    ): SearchByUsernameStatement {
-        var response: HttpResponse? = null
-
-        try {
-            response = client.get("$BASE_URL/users/find-username/${payload.username}") {
+            response = client.delete("$BASE_URL/delete-friend/${payload.friendUsername}") {
                 contentType(ContentType.Application.Json)
                 header(
                     HttpHeaders.Authorization,
@@ -211,50 +173,13 @@ class UsersApi(
 
         return when (response?.status) {
             HttpStatusCode.OK -> {
-                return GetUserStatement(
-                    data = response.body<UserSearch>(),
-                return SearchByUsernameStatement(
-                    data = response.body<SearchByUsername>(),
+                return DeleteFriendStatement(
                     status = response.status
                 )
             }
 
             else -> {
-                GetUserStatement(
-                SearchByUsernameStatement(
-                    content = response?.bodyAsText(),
-                    status = response?.status ?: HttpStatusCode.ServiceUnavailable
-                )
-            }
-        }
-    }
-
-    override suspend fun getUserXp(
-    ): GetUserXpStatement {
-        var response: HttpResponse? = null
-
-        try {
-            response = client.get("$BASE_URL/users/user-xp") {
-                contentType(ContentType.Application.Json)
-                header(
-                    HttpHeaders.Authorization,
-                    "Bearer ${sharedData.get(SharedDataValues.JwtToken.value)}"
-                )
-            }
-        } catch (_: Exception) {
-            println("ERROR: Timeout or Service Unavailable")
-        }
-
-        return when (response?.status) {
-            HttpStatusCode.OK -> {
-                return GetUserXpStatement(
-                    data = response.body<Long>(),
-                    status = response.status
-                )
-            }
-
-            else -> {
-                GetUserXpStatement(
+                DeleteFriendStatement(
                     content = response?.bodyAsText(),
                     status = response?.status ?: HttpStatusCode.ServiceUnavailable
                 )

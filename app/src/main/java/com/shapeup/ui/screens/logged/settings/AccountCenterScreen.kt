@@ -1,4 +1,4 @@
-package com.shapeup.ui.screens.logged
+package com.shapeup.ui.screens.logged.settings
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
@@ -18,8 +18,10 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.shapeup.R
 import com.shapeup.ui.components.Header
 import com.shapeup.ui.components.RowSettings
 import com.shapeup.ui.theme.ShapeUpTheme
@@ -61,7 +63,7 @@ fun AccountCenterScreen(
     ) {
         Header(
             navigateTo = { navigator.navigateBack() },
-            text = "Account Center"
+            text = stringResource(R.string.txt_account_center_title)
         )
 
         Column(
@@ -71,7 +73,7 @@ fun AccountCenterScreen(
         ) {
 
             RowSettings(
-                text = "Change Address",
+                text = stringResource(R.string.txt_account_center_change_address),
                 screen = { navigator.navigate(Screen.ChangeAddress) }
             )
 
@@ -82,7 +84,7 @@ fun AccountCenterScreen(
                 thickness = 1.dp
             )
             RowSettings(
-                text = "Change e-mail",
+                text = stringResource(R.string.txt_account_center_change_email),
                 screen = { navigator.navigate(Screen.ChangeEmail) }
             )
 
@@ -93,7 +95,7 @@ fun AccountCenterScreen(
                 thickness = 1.dp
             )
             RowSettings(
-                text = "Change mobile number",
+                text = stringResource(R.string.txt_account_center_change_mobile_number),
                 screen = { navigator.navigate(Screen.ChangeNumber) }
             )
 
@@ -104,7 +106,7 @@ fun AccountCenterScreen(
                 thickness = 1.dp
             )
             RowSettings(
-                text = "Change birthday",
+                text = stringResource(R.string.txt_account_center_change_birthday),
                 screen = { navigator.navigate(Screen.ChangeBirthday) }
             )
 
@@ -115,7 +117,7 @@ fun AccountCenterScreen(
                 thickness = 1.dp
             )
             RowSettings(
-                text = "Change password",
+                text = stringResource(R.string.txt_account_center_change_password),
                 screen = { navigator.navigate(Screen.ChangePasswordSettings) }
             )
 
@@ -141,7 +143,7 @@ fun AccountCenterScreen(
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
                 ) {
                     Text(
-                        text = "Sign Out",
+                        text = stringResource(R.string.txt_account_center_sign_out),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier
@@ -159,7 +161,7 @@ fun AccountCenterScreen(
 
                 ) {
                     Text(
-                        text = "Delete Account",
+                        text = stringResource(R.string.txt_account_center_delete_account),
                         color = MaterialTheme.colorScheme.background,
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier

@@ -191,4 +191,46 @@
     <string name="txt_settings_account_center">Conta</string>
     <string name="txt_settings_help">Ajuda</string>
     <string name="txt_settings_about">Sobre</string>
+    <!-- ACCOUNTCENTER -->
+    <string name="txt_account_center_title">Centro da conta</string>
+    <string name="txt_account_center_change_address">Mudar endereço</string>
+    <string name="txt_account_center_change_email">Mudar e-mail</string>
+    <string name="txt_account_center_change_mobile_number">Mudar número de telefone</string>
+    <string name="txt_account_center_change_birthday">Mudar data de nascimento</string>
+    <string name="txt_account_center_change_password">Mudar senha</string>
+    <string name="txt_account_center_sign_out">Deslogar</string>
+    <string name="txt_account_center_delete_account">Deletar conta</string>
+    <!-- CHANGE ADDRESS -->
+    <string name="txt_change_address_title">Mudar endereço</string>
+    <string name="txt_change_address_zip_code">CEP</string>
+    <string name="txt_change_address_street_name">Nome da rua</string>
+    <string name="txt_change_address_city">Cidade</string>
+    <string name="txt_change_address_state">Estado</string>
+    <string name="txt_change_address_country">País</string>
+    <string name="txt_change_address_number">Número</string>
+    <string name="txt_change_address_complement">Complemento</string>
+    <string name="txt_change_address_save_changes">Salvar mudanças</string>
+    <!-- CHANGE BIRTHDAY -->
+    <string name="txt_change_birthday_title">Mudar data de nascimento</string>
+    <string name="txt_change_birthday_new_birthday">Nova data de nascimento</string>
+    <string name="txt_change_birthday_save_changes">Salvar mudanças</string>
+    <!-- CHANGE EMAIL -->
+    <string name="txt_change_email_title">Mudar e-mail</string>
+    <string name="txt_change_email_check_email">Verifique o código no seu e-mail</string>
+    <string name="txt_change_email_new_email">Novo e-mail</string>
+    <string name="txt_change_email_save_changes">Salvar mudanças</string>
+    <!-- CHANGE NUMBER -->
+    <string name="txt_change_number_title">Mudar número</string>
+    <string name="txt_change_number_check_number">Checar o código no seu número</string>
+    <string name="txt_change_number_old">Número antigo</string>
+    <string name="txt_change_number_new">Número novo</string>
+    <string name="txt_change_number_save_changes">Salvar mudanças</string>
+    <!-- CHANGE PASSWORD -->
+    <string name="txt_change_password_title">Mudar senha</string>
+    <string name="txt_change_password_check_email">Cheque o código no seu e-mail</string>
+    <string name="txt_change_password_old_password">Antiga senha</string>
+    <string name="txt_change_password_new_password">Nova senha</string>
+    <string name="txt_change_password_confirm_your_password">Confirme a sua senha</string>
+    <string name="txt_change_password_forgot_password">Esqueceu sua antiga senha?</string>
+    <string name="txt_change_password_save_changes">Salvar mudanças</string>
 </resources>
