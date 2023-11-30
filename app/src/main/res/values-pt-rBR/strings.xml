@@ -48,7 +48,8 @@
     <string name="txt_errors_send_code">Erro ao enviar o código, tente novamente</string>
     <string name="txt_errors_not_found_user">E-mail e/ou senham não existem</string>
     <string name="txt_errors_conflict">E-mail, telefone ou nome de usuário já utilizados</string>
-    <string name="txt_errors_generic">Occurred some error</string>
+    <string name="txt_errors_generic">Ocorreu algum erro</string>
+    <string name="txt_errors_user_not_found">Usuário não encontrado</string>
 
     <!-- PAGES -->
     <!-- WELCOME -->
@@ -124,6 +125,7 @@
     <string name="txt_profile_see_profile">Ver perfil</string>
     <string name="txt_profile_add_friend">Adicionar</string>
     <string name="txt_profile_remove_friend">Remover</string>
+    <string name="txt_profile_accept_friend">Aceitar</string>
     <string name="txt_profile_refuse_friend">Recusar</string>
     <string name="txt_profile_cancel_friend">Cancelar</string>
     <string name="txt_profile_tab_photos">Fotos</string>

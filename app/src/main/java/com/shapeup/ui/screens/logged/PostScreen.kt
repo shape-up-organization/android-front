@@ -14,10 +14,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import com.shapeup.R
 import com.shapeup.api.services.users.getUserDataMock
 import com.shapeup.ui.components.CardPost
 import com.shapeup.ui.components.Loading
+import com.shapeup.ui.components.SnackbarHelper
+import com.shapeup.ui.components.SnackbarType
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.helpers.Navigator
 import com.shapeup.ui.viewModels.logged.JourneyHandlers
@@ -53,6 +57,10 @@ fun PostScreen(
 ) {
     var loadingUserPosts by remember { mutableStateOf(true) }
     var postData by remember { mutableStateOf<PostView?>(null) }
+    var openSnackbar by remember { mutableStateOf(false) }
+    var snackbarMessage by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
         loadingUserPosts = true
@@ -60,13 +68,27 @@ fun PostScreen(
 
         when (response.status) {
             HttpStatusCode.OK -> {
-                val user = journeyHandlers.getUser(username)
+                val userResponse = journeyHandlers.getUser(username)
 
-                if (response.data != null && user != null) {
-                    postData = PostView(
-                        post = response.data,
-                        user = user
-                    )
+                when (userResponse.status) {
+                    HttpStatusCode.OK -> {
+                        if (response.data != null && userResponse.data != null) {
+                            postData = PostView(
+                                post = response.data,
+                                user = userResponse.data
+                            )
+                        }
+                    }
+
+                    HttpStatusCode.NotFound -> {
+                        openSnackbar = true
+                        snackbarMessage = context.getString(R.string.txt_errors_user_not_found)
+                    }
+
+                    else -> {
+                        openSnackbar = true
+                        snackbarMessage = context.getString(R.string.txt_errors_generic)
+                    }
                 }
             }
 
@@ -98,7 +120,14 @@ fun PostScreen(
             postData = postData!!.post,
             postsHandlers = postsHandlers,
             user = postData!!.user,
-            userRelation = journeyHandlers.getUserRelation(username)
+            userRelation = journeyHandlers.getUserRelationByUsername(username)
         )
     }
+
+    SnackbarHelper(
+        message = snackbarMessage,
+        open = openSnackbar,
+        openSnackbar = { openSnackbar = it },
+        type = SnackbarType.ERROR
+    )
 }

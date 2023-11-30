@@ -54,9 +54,7 @@ import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
 import com.shapeup.ui.utils.helpers.XPUtils
-import com.shapeup.ui.viewModels.logged.JourneyData
 import com.shapeup.ui.viewModels.logged.JourneyHandlers
-import com.shapeup.ui.viewModels.logged.journeyDataMock
 import com.shapeup.ui.viewModels.logged.journeyHandlersMock
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.launch
@@ -66,7 +64,6 @@ import kotlinx.coroutines.launch
 fun SearchPreview() {
     ShapeUpTheme {
         SearchScreen(
-            journeyData = journeyDataMock,
             journeyHandlers = journeyHandlersMock,
             navigator = Navigator()
         )
@@ -75,7 +72,6 @@ fun SearchPreview() {
 
 @Composable
 fun SearchScreen(
-    journeyData: JourneyData,
     journeyHandlers: JourneyHandlers,
     navigator: Navigator
 ) {
@@ -184,7 +180,7 @@ fun SearchScreen(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                color = MaterialTheme.colorScheme.onPrimary,
+                                color = MaterialTheme.colorScheme.onBackground,
                                 text = stringResource(R.string.txt_search_not_found)
                             )
                         }

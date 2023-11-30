@@ -78,7 +78,7 @@ fun EditProfileScreen(
     var updatedUsername by remember { mutableStateOf(journeyData.userData.value.username) }
     var updatedBio by remember { mutableStateOf(journeyData.userData.value.biography ?: "") }
     var updatedProfilePicture by remember {
-        mutableStateOf<Uri?>(Uri.parse(journeyData.userData.value.profilePicture))
+        mutableStateOf<Uri?>(Uri.parse(journeyData.userData.value.profilePicture ?: ""))
     }
 
     var openProfileImageDialog by remember { mutableStateOf(false) }

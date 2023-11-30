@@ -34,12 +34,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -48,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import coil.compose.rememberAsyncImagePainter
 import com.shapeup.R
+import com.shapeup.api.services.friends.GenericFriendshipStatement
 import com.shapeup.api.services.users.UserSearch
 import com.shapeup.api.services.users.getUserDataMock
 import com.shapeup.ui.components.CardPost
@@ -55,6 +58,8 @@ import com.shapeup.ui.components.EPageButtons
 import com.shapeup.ui.components.ExpandableContent
 import com.shapeup.ui.components.Loading
 import com.shapeup.ui.components.Navbar
+import com.shapeup.ui.components.SnackbarHelper
+import com.shapeup.ui.components.SnackbarType
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.constants.Screen
@@ -69,7 +74,9 @@ import com.shapeup.ui.viewModels.logged.journeyDataMock
 import com.shapeup.ui.viewModels.logged.journeyHandlersMock
 import com.shapeup.ui.viewModels.logged.postsDataMock
 import com.shapeup.ui.viewModels.logged.postsHandlersMock
+import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Preview
@@ -96,13 +103,19 @@ fun ProfileScreen(
     postsHandlers: PostsHandlers,
     username: String
 ) {
-    val userRelation = journeyHandlers.getUserRelation(username)
+    var userRelation by remember { mutableStateOf(EUserRelation.USER) }
 
     var loadingUser by remember { mutableStateOf(true) }
+    var loadingUserRelation by remember { mutableStateOf(false) }
     var user by remember { mutableStateOf<UserSearch?>(null) }
     var tabSelected by remember { mutableIntStateOf(0) }
     var openProfileImageDialog by remember { mutableStateOf(false) }
+    var openSnackbar by remember { mutableStateOf(false) }
+    var snackbarMessage by remember { mutableStateOf("") }
 
+    val coroutine = rememberCoroutineScope()
+
+    val context = LocalContext.current
     val imageSize = LocalConfiguration.current.screenWidthDp.dp / 3
     val expandedProfilePictureSize = LocalConfiguration.current.screenWidthDp * 0.8
     val titles = listOf(
@@ -110,14 +123,135 @@ fun ProfileScreen(
         stringResource(R.string.txt_profile_tab_posts)
     )
 
+    fun getUser() {
+        coroutine.launch {
+            val response = journeyHandlers.getUser(username)
+
+            when (response.status) {
+                HttpStatusCode.OK -> {
+                    if (response.data != null) {
+                        user = response.data
+                        userRelation = journeyHandlers.getUserRelationByUser(response.data)
+                    } else {
+                        navigator.navigateBack()
+                    }
+                }
+
+                HttpStatusCode.NotFound -> {
+                    openSnackbar = true
+                    snackbarMessage = context.getString(R.string.txt_errors_user_not_found)
+                }
+
+                else -> {
+                    openSnackbar = true
+                    snackbarMessage = context.getString(R.string.txt_errors_generic)
+                }
+            }
+
+            loadingUserRelation = false
+        }
+    }
+
+    suspend fun getFriends() {
+        val response = journeyHandlers.getAllFriendship()
+
+        when (response.status) {
+            HttpStatusCode.OK -> {
+                journeyHandlers.setupFriends(response.data)
+            }
+
+            else -> {
+                openSnackbar = true
+                snackbarMessage = context.getString(R.string.txt_errors_generic)
+            }
+        }
+    }
+
+    fun executeUserRelationAction(userRelation: EUserRelation) {
+        if (user == null || userRelation == EUserRelation.USER) return
+
+        coroutine.launch {
+            loadingUserRelation = true
+            val response = when (userRelation) {
+                EUserRelation.FRIEND -> journeyHandlers.deleteFriend(user!!.username).status
+
+                EUserRelation.NON_FRIEND -> journeyHandlers.requestFriendship(user!!.username).status
+
+                EUserRelation.NON_FRIEND_RECEIVED -> journeyHandlers.acceptFriendshipRequest(user!!.username).status
+
+                EUserRelation.NON_FRIEND_REQUESTED -> journeyHandlers.deleteFriendshipRequest(user!!.username).status
+
+                else -> {
+                    GenericFriendshipStatement(
+                        status = HttpStatusCode.UnprocessableEntity
+                    ).status
+                }
+            }
+
+            when (response) {
+                HttpStatusCode.UnprocessableEntity -> {}
+
+                HttpStatusCode.Created -> {
+                    getUser()
+                    when (userRelation) {
+                        EUserRelation.FRIEND -> {
+                            getFriends()
+                        }
+
+                        EUserRelation.NON_FRIEND_RECEIVED -> {
+                            getFriends()
+                        }
+
+                        else -> {}
+                    }
+                }
+
+                HttpStatusCode.NoContent -> {
+                    getUser()
+                    when (userRelation) {
+                        EUserRelation.FRIEND -> {
+                            getFriends()
+                        }
+
+                        EUserRelation.NON_FRIEND_RECEIVED -> {
+                            getFriends()
+                        }
+
+                        else -> {}
+                    }
+                }
+
+                else -> {
+                    openSnackbar = true
+                    snackbarMessage = context.getString(R.string.txt_errors_generic)
+                    loadingUserRelation = false
+                }
+            }
+        }
+    }
+
+    fun refuseFriendshipRequest() {
+        coroutine.launch {
+            loadingUserRelation = true
+            val response = journeyHandlers.deleteFriendshipRequest(user!!.username)
+
+            when (response.status) {
+                HttpStatusCode.NoContent -> {
+                    getUser()
+                }
+
+                else -> {
+                    openSnackbar = true
+                    snackbarMessage = context.getString(R.string.txt_errors_generic)
+                }
+            }
+        }
+    }
+
     LaunchedEffect(key1 = true) {
         loadingUser = true
 
-        user = journeyHandlers.getUser(username)
-
-        if (user == null) {
-            navigator.navigateBack()
-        }
+        getUser()
 
         withContext(Dispatchers.IO) {
             Thread.sleep(500)
@@ -135,7 +269,7 @@ fun ProfileScreen(
             .fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        if (loadingUser && user == null) {
+        if (loadingUser || user == null) {
             ExpandableContent(
                 visible = true,
                 content = {
@@ -357,70 +491,107 @@ fun ProfileScreen(
                                 }
                             }
 
-                            AssistChip(
-                                border = AssistChipDefaults.assistChipBorder(
-                                    borderWidth = 0.dp
-                                ),
-                                colors = AssistChipDefaults.assistChipColors(
-                                    containerColor = when (userRelation) {
-                                        EUserRelation.NON_FRIEND -> MaterialTheme.colorScheme.primary
-                                        else -> MaterialTheme.colorScheme.error
+                            Column {
+                                AssistChip(
+                                    border = AssistChipDefaults.assistChipBorder(
+                                        borderWidth = 0.dp
+                                    ),
+                                    colors = AssistChipDefaults.assistChipColors(
+                                        containerColor = when (userRelation) {
+                                            EUserRelation.NON_FRIEND -> MaterialTheme.colorScheme.primary
+                                            EUserRelation.NON_FRIEND_RECEIVED -> MaterialTheme.colorScheme.primary
+                                            else -> MaterialTheme.colorScheme.error
+                                        },
+                                        labelColor = MaterialTheme.colorScheme.onPrimary
+                                    ),
+                                    enabled = !loadingUserRelation,
+                                    label = {
+                                        Text(
+                                            color = MaterialTheme.colorScheme.onPrimary,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            text = run {
+                                                when (userRelation) {
+                                                    EUserRelation.FRIEND -> stringResource(
+                                                        R.string.txt_profile_remove_friend
+                                                    )
+
+                                                    EUserRelation.NON_FRIEND -> stringResource(
+                                                        R.string.txt_profile_add_friend
+                                                    )
+
+                                                    EUserRelation.NON_FRIEND_RECEIVED -> stringResource(
+                                                        R.string.txt_profile_accept_friend
+                                                    )
+
+                                                    EUserRelation.NON_FRIEND_REQUESTED -> stringResource(
+                                                        R.string.txt_profile_cancel_friend
+                                                    )
+
+                                                    else -> stringResource(
+                                                        R.string.txt_profile_add_friend
+                                                    )
+                                                }
+                                            }
+                                        )
                                     },
-                                    labelColor = MaterialTheme.colorScheme.onPrimary
-                                ),
-                                label = {
-                                    Text(
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        text = run {
-                                            when (userRelation) {
-                                                EUserRelation.FRIEND -> stringResource(
-                                                    R.string.txt_profile_remove_friend
-                                                )
+                                    trailingIcon = {
+                                        Icon(
+                                            contentDescription = stringResource(
+                                                when (userRelation) {
+                                                    EUserRelation.NON_FRIEND -> Icon.Add.description
+                                                    EUserRelation.NON_FRIEND_RECEIVED -> Icon.Add.description
+                                                    else -> Icon.Decline.description
+                                                }
+                                            ),
+                                            modifier = Modifier
+                                                .height(16.dp)
+                                                .width(16.dp),
+                                            painter = if (userRelation == EUserRelation.NON_FRIEND
+                                                || userRelation == EUserRelation.NON_FRIEND_RECEIVED
+                                            )
+                                                painterResource(Icon.Add.value)
+                                            else painterResource(Icon.Decline.value),
+                                            tint = MaterialTheme.colorScheme.onPrimary
+                                        )
+                                    },
+                                    onClick = { executeUserRelationAction(userRelation) },
+                                    shape = RoundedCornerShape(24.dp)
+                                )
 
-                                                EUserRelation.NON_FRIEND -> stringResource(
-                                                    R.string.txt_profile_add_friend
-                                                )
-
-                                                EUserRelation.NON_FRIEND_RECEIVED -> stringResource(
+                                if (userRelation == EUserRelation.NON_FRIEND_RECEIVED) {
+                                    AssistChip(
+                                        border = AssistChipDefaults.assistChipBorder(
+                                            borderWidth = 0.dp
+                                        ),
+                                        colors = AssistChipDefaults.assistChipColors(
+                                            containerColor = MaterialTheme.colorScheme.error,
+                                            labelColor = MaterialTheme.colorScheme.onPrimary
+                                        ),
+                                        enabled = !loadingUserRelation,
+                                        label = {
+                                            Text(
+                                                color = MaterialTheme.colorScheme.onPrimary,
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                text = stringResource(
                                                     R.string.txt_profile_refuse_friend
                                                 )
-
-                                                EUserRelation.NON_FRIEND_REQUESTED -> stringResource(
-                                                    R.string.txt_profile_cancel_friend
-                                                )
-
-                                                else -> stringResource(
-                                                    R.string.txt_profile_add_friend
-                                                )
-                                            }
-                                        }
+                                            )
+                                        },
+                                        trailingIcon = {
+                                            Icon(
+                                                contentDescription = stringResource(Icon.Decline.description),
+                                                modifier = Modifier
+                                                    .height(16.dp)
+                                                    .width(16.dp),
+                                                painter = painterResource(Icon.Decline.value),
+                                                tint = MaterialTheme.colorScheme.onPrimary
+                                            )
+                                        },
+                                        onClick = { refuseFriendshipRequest() },
+                                        shape = RoundedCornerShape(24.dp)
                                     )
-
-                                    Spacer(modifier = Modifier.width(8.dp))
-
-                                    Icon(
-                                        contentDescription = stringResource(
-                                            when (userRelation) {
-                                                EUserRelation.NON_FRIEND -> Icon.Add.description
-                                                else -> Icon.Decline.description
-                                            }
-                                        ),
-                                        modifier = Modifier
-                                            .height(16.dp)
-                                            .width(16.dp),
-                                        painter = painterResource(
-                                            when (userRelation) {
-                                                EUserRelation.NON_FRIEND -> Icon.Add.value
-                                                else -> Icon.Decline.value
-                                            }
-                                        ),
-                                        tint = MaterialTheme.colorScheme.onPrimary
-                                    )
-                                },
-                                onClick = { /*TODO*/ },
-                                shape = RoundedCornerShape(24.dp)
-                            )
+                                }
+                            }
                         }
                     }
 
@@ -437,7 +608,7 @@ fun ProfileScreen(
                             text = user!!.biography!!
                         )
                     }
-                    
+
                     Spacer(modifier = Modifier.height(24.dp))
 
                     TabRow(
@@ -555,4 +726,11 @@ fun ProfileScreen(
             )
         }
     }
+
+    SnackbarHelper(
+        message = snackbarMessage,
+        open = openSnackbar,
+        openSnackbar = { openSnackbar = it },
+        type = SnackbarType.ERROR
+    )
 }

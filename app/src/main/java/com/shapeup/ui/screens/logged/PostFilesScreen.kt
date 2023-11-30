@@ -39,6 +39,8 @@ import com.shapeup.R
 import com.shapeup.ui.components.Carousel
 import com.shapeup.ui.components.FormField
 import com.shapeup.ui.components.Header
+import com.shapeup.ui.components.SnackbarHelper
+import com.shapeup.ui.components.SnackbarType
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
@@ -67,6 +69,8 @@ fun PostFilesScreen(
     var description by remember { mutableStateOf("") }
     var photoUrls by remember { mutableStateOf<List<Uri>>(emptyList()) }
     var loading by remember { mutableStateOf(false) }
+    var openSnackbar by remember { mutableStateOf(false) }
+    var snackbarMessage by remember { mutableStateOf("") }
 
     val coroutine = rememberCoroutineScope()
     val launcher = rememberLauncherForActivityResult(
@@ -106,7 +110,12 @@ fun PostFilesScreen(
                     navigator.navigateClean(Screen.Feed)
                 }
 
-                else -> loading = false
+                else -> {
+                    loading = false
+
+                    openSnackbar = true
+                    snackbarMessage = context.getString(R.string.txt_errors_generic)
+                }
             }
         }
     }
@@ -189,4 +198,11 @@ fun PostFilesScreen(
             )
         }
     }
+
+    SnackbarHelper(
+        message = snackbarMessage,
+        open = openSnackbar,
+        openSnackbar = { openSnackbar = it },
+        type = SnackbarType.ERROR
+    )
 }

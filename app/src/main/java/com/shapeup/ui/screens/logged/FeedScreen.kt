@@ -95,7 +95,18 @@ fun FeedScreen(
     val context = LocalContext.current
 
     suspend fun getFriends() {
-        val response = journeyHandlers.getFriends()
+        val response = journeyHandlers.getAllFriendship()
+
+        when (response.status) {
+            HttpStatusCode.OK -> {
+                journeyHandlers.setupFriends(response.data)
+            }
+
+            else -> {
+                openSnackbar = true
+                snackbarMessage = context.getString(R.string.txt_errors_generic)
+            }
+        }
     }
 
     suspend fun getPosts() {
@@ -113,15 +124,29 @@ fun FeedScreen(
                 val postViews = mutableListOf<PostView>()
 
                 response.data!!.forEach {
-                    val user = journeyHandlers.getUser(it.username)
+                    val userResponse = journeyHandlers.getUser(it.username)
 
-                    if (user != null) {
-                        postViews.add(
-                            PostView(
-                                post = it,
-                                user = user
-                            )
-                        )
+                    when (userResponse.status) {
+                        HttpStatusCode.OK -> {
+                            if (userResponse.data != null) {
+                                postViews.add(
+                                    PostView(
+                                        post = it,
+                                        user = userResponse.data
+                                    )
+                                )
+                            }
+                        }
+
+                        HttpStatusCode.NotFound -> {
+                            openSnackbar = true
+                            snackbarMessage = context.getString(R.string.txt_errors_user_not_found)
+                        }
+
+                        else -> {
+                            openSnackbar = true
+                            snackbarMessage = context.getString(R.string.txt_errors_generic)
+                        }
                     }
                 }
 
@@ -280,7 +305,7 @@ fun FeedScreen(
                     postData = it.post,
                     postsHandlers = postsHandlers,
                     user = it.user,
-                    userRelation = journeyHandlers.getUserRelation(it.post.username)
+                    userRelation = journeyHandlers.getUserRelationByUsername(it.post.username)
                 )
 
                 Spacer(

@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,6 +45,8 @@ import com.shapeup.ui.components.EPageButtons
 import com.shapeup.ui.components.ExpandableContent
 import com.shapeup.ui.components.Loading
 import com.shapeup.ui.components.Navbar
+import com.shapeup.ui.components.SnackbarHelper
+import com.shapeup.ui.components.SnackbarType
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
@@ -78,8 +81,12 @@ fun RankScreen(
     var loadingRank by remember { mutableStateOf(true) }
     var tabSelected by remember { mutableIntStateOf(0) }
     var ranks by remember { mutableStateOf<List<UserRank>>(emptyList()) }
+    var openSnackbar by remember { mutableStateOf(false) }
+    var snackbarMessage by remember { mutableStateOf("") }
 
     val coroutine = rememberCoroutineScope()
+
+    val context = LocalContext.current
 
     fun getRank(type: RankType) {
         coroutine.launch {
@@ -89,6 +96,11 @@ fun RankScreen(
 
             when (response.status) {
                 HttpStatusCode.OK -> ranks = response.data ?: emptyList()
+
+                else -> {
+                    openSnackbar = true
+                    snackbarMessage = context.getString(R.string.txt_errors_generic)
+                }
             }
         }
     }
@@ -245,4 +257,11 @@ fun RankScreen(
             navigator = navigator
         )
     }
+
+    SnackbarHelper(
+        message = snackbarMessage,
+        open = openSnackbar,
+        openSnackbar = { openSnackbar = it },
+        type = SnackbarType.ERROR
+    )
 }

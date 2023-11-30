@@ -3,6 +3,20 @@ package com.shapeup.api.services.users
 import com.shapeup.ui.viewModels.logged.FriendshipStatus
 import com.shapeup.ui.viewModels.logged.UserData
 
+val getUserDataEmpty = UserData(
+    biography = "",
+    birth = "10/10/2010",
+    cellPhone = "",
+    email = "",
+    firstName = "",
+    id = "",
+    lastName = "",
+    password = "",
+    profilePicture = null,
+    username = "",
+    xp = 1
+)
+
 val getUserDataMock = UserData(
     biography = "Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet",
     birth = "2003/09/09",

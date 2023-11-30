@@ -21,6 +21,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -30,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import com.shapeup.R
 import com.shapeup.ui.components.FormField
 import com.shapeup.ui.components.Header
+import com.shapeup.ui.components.SnackbarHelper
+import com.shapeup.ui.components.SnackbarType
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
@@ -57,8 +60,12 @@ fun PostTextScreen(
 ) {
     var description by remember { mutableStateOf("") }
     var loading by remember { mutableStateOf(false) }
+    var openSnackbar by remember { mutableStateOf(false) }
+    var snackbarMessage by remember { mutableStateOf("") }
 
     val coroutine = rememberCoroutineScope()
+
+    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val fieldHeight = (LocalConfiguration.current.screenHeightDp * 0.6).dp
 
@@ -77,7 +84,12 @@ fun PostTextScreen(
                     navigator.navigateClean(Screen.Feed)
                 }
 
-                else -> loading = false
+                else -> {
+                    loading = false
+
+                    openSnackbar = true
+                    snackbarMessage = context.getString(R.string.txt_errors_generic)
+                }
             }
         }
     }
@@ -132,4 +144,11 @@ fun PostTextScreen(
             )
         }
     }
+
+    SnackbarHelper(
+        message = snackbarMessage,
+        open = openSnackbar,
+        openSnackbar = { openSnackbar = it },
+        type = SnackbarType.ERROR
+    )
 }
