@@ -4,20 +4,20 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RequestFriendshipPayload(
-    val newFriendUsername: String
+    val username: String
 )
 
 @Serializable
-data class AcceptFriendshipPayload(
-    val friendUsername: String
+data class AcceptFriendshipRequestPayload(
+    val username: String
 )
 
 @Serializable
-data class DeleteFriendshipPayload(
-    val friendUsername: String
+data class DeleteFriendshipRequestPayload(
+    val username: String
 )
 
 @Serializable
 data class DeleteFriendPayload(
-    val friendUsername: String
+    val username: String
 )

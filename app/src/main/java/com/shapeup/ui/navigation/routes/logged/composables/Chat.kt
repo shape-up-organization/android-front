@@ -20,11 +20,10 @@ fun NavGraphBuilder.screenChat(navController: NavHostController) {
         exitTransition = { ExitTransition.None },
         popExitTransition = { ExitTransition.None }
     ) {
-        val journeyViewModel = it.viewModel<JourneyViewModel>(navController)
-
         val username = it.arguments?.getString("username")
 
         if (username != null) {
+            val journeyViewModel = it.viewModel<JourneyViewModel>(navController)
             val userData = journeyViewModel.friends.value.find { friend ->
                 friend.user.username == username
             }

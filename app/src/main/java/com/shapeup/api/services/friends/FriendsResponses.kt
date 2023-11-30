@@ -19,12 +19,12 @@ data class AcceptFriendship(
 )
 
 @Serializable
-data class Friendship(
+data class FriendBase(
     val id: String,
     val firstName: String,
     val lastName: String,
     val fullName: String,
     val username: String,
-    val xp: Long,
-    val profilePicture: String,
+    val xp: Int,
+    val profilePicture: String? = null,
 )

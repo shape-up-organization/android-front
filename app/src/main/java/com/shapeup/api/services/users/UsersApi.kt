@@ -21,9 +21,8 @@ import io.ktor.http.contentType
 class UsersApi(
     private val client: HttpClient,
     private val sharedData: SharedData,
-): EUsersApi {
-    override suspend fun deleteByEmail(
-    ): DeleteByEmailStatement {
+) : EUsersApi {
+    override suspend fun deleteByEmail(): DeleteByEmailStatement {
         var response: HttpResponse? = null
 
         try {
@@ -54,19 +53,16 @@ class UsersApi(
         }
     }
 
-    override suspend fun updateUserField(
-        payload: UserFieldPayload
-    ): UserFieldStatement {
+    override suspend fun findByUsername(payload: GetUserPayload): GetUserStatement {
         var response: HttpResponse? = null
 
         try {
-            response = client.put("$BASE_URL/users") {
+            response = client.get("$BASE_URL/users/find-username/${payload.username}") {
                 contentType(ContentType.Application.Json)
                 header(
                     HttpHeaders.Authorization,
                     "Bearer ${sharedData.get(SharedDataValues.JwtToken.value)}"
                 )
-                setBody(payload)
             }
         } catch (_: Exception) {
             println("ERROR: Timeout or Service Unavailable")
@@ -74,14 +70,80 @@ class UsersApi(
 
         return when (response?.status) {
             HttpStatusCode.OK -> {
-                return UserFieldStatement(
-                    data = response.body<List<UserFieldUpdate>>(),
+                return GetUserStatement(
+                    data = response.body<UserSearch>(),
                     status = response.status
                 )
             }
 
             else -> {
-                UserFieldStatement(
+                GetUserStatement(
+                    content = response?.bodyAsText(),
+                    status = response?.status ?: HttpStatusCode.ServiceUnavailable
+                )
+            }
+        }
+    }
+
+    override suspend fun getRank(payload: GetRankPayload): GetRankStatement {
+        var response: HttpResponse? = null
+
+        try {
+            response = client.get("$BASE_URL/rank/${payload.type.value}") {
+                contentType(ContentType.Application.Json)
+                header(
+                    HttpHeaders.Authorization,
+                    "Bearer ${sharedData.get(SharedDataValues.JwtToken.value)}"
+                )
+                parameter("page", payload.page)
+                parameter("size", payload.size)
+            }
+        } catch (_: Exception) {
+            println("ERROR: Timeout or Service Unavailable")
+        }
+
+        return when (response?.status) {
+            HttpStatusCode.OK -> {
+                return GetRankStatement(
+                    data = response.body<List<UserRank>>(),
+                    status = response.status
+                )
+            }
+
+            else -> {
+                GetRankStatement(
+                    content = response?.bodyAsText(),
+                    status = response?.status ?: HttpStatusCode.ServiceUnavailable
+                )
+            }
+        }
+    }
+
+    override suspend fun getUserXp(): GetUserXpStatement {
+        var response: HttpResponse? = null
+
+        try {
+            response = client.get("$BASE_URL/users/user-xp") {
+                contentType(ContentType.Application.Json)
+                header(
+                    HttpHeaders.Authorization,
+                    "Bearer ${sharedData.get(SharedDataValues.JwtToken.value)}"
+                )
+            }
+        } catch (_: Exception) {
+            println("ERROR: Timeout or Service Unavailable")
+        }
+
+        return when (response?.status) {
+            HttpStatusCode.OK -> {
+                return GetUserXpStatement(
+                    data = response.body<Long>(),
+                    status = response.status
+                )
+            }
+
+            else -> {
+                GetUserXpStatement(
                     content = response?.bodyAsText(),
                     status = response?.status ?: HttpStatusCode.ServiceUnavailable
                 )
@@ -109,7 +171,7 @@ class UsersApi(
         return when (response?.status) {
             HttpStatusCode.OK -> {
                 return SearchUsersStatement(
-                    data = response.body<List<SearchByUsername>>(),
+                    data = response.body<List<UserSearch>>(),
                     status = response.status
                 )
             }
@@ -144,7 +206,7 @@ class UsersApi(
         return when (response?.status) {
             HttpStatusCode.OK -> {
                 return SearchUsersStatement(
-                    data = response.body<List<SearchByUsername>>(),
+                    data = response.body<List<UserSearch>>(),
                     status = response.status
                 )
             }
@@ -158,18 +220,17 @@ class UsersApi(
         }
     }
 
-    override suspend fun searchByUsername(
-        payload: SearchByUsernamePayload
-    ): SearchByUsernameStatement {
+    override suspend fun updateUserField(payload: UserFieldPayload): UserFieldStatement {
         var response: HttpResponse? = null
 
         try {
-            response = client.get("$BASE_URL/users/find-username/${payload.username}") {
+            response = client.put("$BASE_URL/users") {
                 contentType(ContentType.Application.Json)
                 header(
                     HttpHeaders.Authorization,
                     "Bearer ${sharedData.get(SharedDataValues.JwtToken.value)}"
                 )
+                setBody(payload)
             }
         } catch (_: Exception) {
             println("ERROR: Timeout or Service Unavailable")
@@ -177,14 +238,14 @@ class UsersApi(
 
         return when (response?.status) {
             HttpStatusCode.OK -> {
-                return SearchByUsernameStatement(
-                    data = response.body<SearchByUsername>(),
+                return UserFieldStatement(
+                    data = response.body<List<UserFieldUpdate>>(),
                     status = response.status
                 )
             }
 
             else -> {
-                SearchByUsernameStatement(
+                UserFieldStatement(
                     content = response?.bodyAsText(),
                     status = response?.status ?: HttpStatusCode.ServiceUnavailable
                 )
@@ -192,36 +253,4 @@ class UsersApi(
         }
     }
 
-    override suspend fun getUserXp(
-    ): GetUserXpStatement {
-        var response: HttpResponse? = null
-
-        try {
-            response = client.get("$BASE_URL/users/user-xp") {
-                contentType(ContentType.Application.Json)
-                header(
-                    HttpHeaders.Authorization,
-                    "Bearer ${sharedData.get(SharedDataValues.JwtToken.value)}"
-                )
-            }
-        } catch (_: Exception) {
-            println("ERROR: Timeout or Service Unavailable")
-        }
-
-        return when (response?.status) {
-            HttpStatusCode.OK -> {
-                return GetUserXpStatement(
-                    data = response.body<Long>(),
-                    status = response.status
-                )
-            }
-
-            else -> {
-                GetUserXpStatement(
-                    content = response?.bodyAsText(),
-                    status = response?.status ?: HttpStatusCode.ServiceUnavailable
-                )
-            }
-        }
-    }
 }

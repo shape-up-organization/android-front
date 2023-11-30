@@ -7,26 +7,32 @@ data class DeleteByEmailStatement(
     val status: HttpStatusCode
 )
 
-data class UserFieldStatement(
-    val data: List<UserFieldUpdate>? = null,
+data class GetRankStatement(
+    val data: List<UserRank>? = null,
     val content: String? = null,
     val status: HttpStatusCode
 )
 
-data class SearchUsersStatement(
-    val data: List<SearchByUsername>? = null,
-    val content: String? = null,
-    val status: HttpStatusCode
-)
-
-data class SearchByUsernameStatement(
-    val data: SearchByUsername? = null,
+data class GetUserStatement(
+    val data: UserSearch? = null,
     val content: String? = null,
     val status: HttpStatusCode
 )
 
 data class GetUserXpStatement(
     val data: Long? = null,
+    val content: String? = null,
+    val status: HttpStatusCode
+)
+
+data class SearchUsersStatement(
+    val data: List<UserSearch>? = null,
+    val content: String? = null,
+    val status: HttpStatusCode
+)
+
+data class UserFieldStatement(
+    val data: List<UserFieldUpdate>? = null,
     val content: String? = null,
     val status: HttpStatusCode
 )

@@ -5,11 +5,16 @@ import androidx.compose.animation.core.tween
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import com.shapeup.api.utils.helpers.SharedData
 import com.shapeup.ui.screens.auth.WelcomeScreen
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.navigator
+import com.shapeup.ui.utils.helpers.viewModel
+import com.shapeup.ui.viewModels.auth.AuthViewModel
+import com.shapeup.ui.viewModels.logged.JourneyViewModel
+import com.shapeup.ui.viewModels.logged.PostsViewModel
 
-fun NavGraphBuilder.screenWelcome(navController: NavHostController) {
+fun NavGraphBuilder.screenWelcome(navController: NavHostController, sharedData: SharedData) {
     composable(
         route = Screen.Welcome.value,
         enterTransition = {
@@ -37,6 +42,17 @@ fun NavGraphBuilder.screenWelcome(navController: NavHostController) {
             )
         }
     ) {
+        val authViewModel = it.viewModel<AuthViewModel>(navController)
+        authViewModel.navigator = navController.navigator
+        authViewModel.sharedData = sharedData
+
+        val journeyViewModel = it.viewModel<JourneyViewModel>(navController)
+        journeyViewModel.sharedData = sharedData
+
+        val postsViewModel = it.viewModel<PostsViewModel>(navController)
+        postsViewModel.navigator = navController.navigator
+        postsViewModel.sharedData = sharedData
+
         WelcomeScreen(navController.navigator)
     }
 }

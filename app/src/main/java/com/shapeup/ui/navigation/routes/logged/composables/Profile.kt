@@ -10,7 +10,6 @@ import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.navigator
 import com.shapeup.ui.utils.helpers.viewModel
 import com.shapeup.ui.viewModels.logged.JourneyData
-import com.shapeup.ui.viewModels.logged.JourneyMappers
 import com.shapeup.ui.viewModels.logged.JourneyViewModel
 import com.shapeup.ui.viewModels.logged.PostsData
 import com.shapeup.ui.viewModels.logged.PostsViewModel
@@ -25,13 +24,10 @@ fun NavGraphBuilder.screenProfile(navController: NavHostController) {
     ) {
         val journeyViewModel = it.viewModel<JourneyViewModel>(navController)
 
-        val userName = it.arguments?.getString("userName")
-        val user = userName?.let { itUserName -> journeyViewModel.handlers.getUser(itUserName) }
+        val username = it.arguments?.getString("userName")
 
-        if (user != null) {
+        if (username != null) {
             val postsViewModel = it.viewModel<PostsViewModel>(navController)
-            postsViewModel.navigator = navController.navigator
-            postsViewModel.handlers.getUserPosts(user.username)
 
             ProfileScreen(
                 journeyData = JourneyData(
@@ -46,7 +42,7 @@ fun NavGraphBuilder.screenProfile(navController: NavHostController) {
                 ),
                 postsHandlers = postsViewModel.handlers,
                 navigator = navController.navigator,
-                user = user
+                username = username
             )
         }
     }
@@ -59,10 +55,7 @@ fun NavGraphBuilder.screenProfile(navController: NavHostController) {
         popExitTransition = { ExitTransition.None }
     ) {
         val journeyViewModel = it.viewModel<JourneyViewModel>(navController)
-
         val postsViewModel = it.viewModel<PostsViewModel>(navController)
-        postsViewModel.navigator = navController.navigator
-        postsViewModel.handlers.getUserPosts(journeyViewModel.userData.value.username)
 
         ProfileScreen(
             journeyData = JourneyData(
@@ -77,7 +70,7 @@ fun NavGraphBuilder.screenProfile(navController: NavHostController) {
             ),
             postsHandlers = postsViewModel.handlers,
             navigator = navController.navigator,
-            user = JourneyMappers.userDataToUser(journeyViewModel.userData.value)
+            username = journeyViewModel.userData.value.username
         )
     }
 }

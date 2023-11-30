@@ -26,7 +26,7 @@ class FriendsApi(
         var response: HttpResponse? = null
 
         try {
-            response = client.post("$BASE_URL/friends/sent-friendship-request/${payload.newFriendUsername}") {
+            response = client.post("$BASE_URL/friends/sent-friendship-request/${payload.username}") {
                 contentType(ContentType.Application.Json)
                 header(
                     HttpHeaders.Authorization,
@@ -55,12 +55,12 @@ class FriendsApi(
     }
 
     override suspend fun acceptFriendshipRequest(
-        payload: AcceptFriendshipPayload
-    ): AcceptFriendshipStatement {
+        payload: AcceptFriendshipRequestPayload
+    ): AcceptFriendshipRequestStatement {
         var response: HttpResponse? = null
 
         try {
-            response = client.post("$BASE_URL/friends/accept-friendship-request/${payload.friendUsername}") {
+            response = client.post("$BASE_URL/friends/accept-friendship-request/${payload.username}") {
                 contentType(ContentType.Application.Json)
                 header(
                     HttpHeaders.Authorization,
@@ -73,14 +73,14 @@ class FriendsApi(
 
         return when (response?.status) {
             HttpStatusCode.OK -> {
-                return AcceptFriendshipStatement(
+                return AcceptFriendshipRequestStatement(
                     data = response.body<AcceptFriendship>(),
                     status = response.status
                 )
             }
 
             else -> {
-                AcceptFriendshipStatement(
+                AcceptFriendshipRequestStatement(
                     content = response?.bodyAsText(),
                     status = response?.status ?: HttpStatusCode.ServiceUnavailable
                 )
@@ -107,7 +107,7 @@ class FriendsApi(
         return when (response?.status) {
             HttpStatusCode.OK -> {
                 return GetAllFriendshipStatement(
-                    data = response.body<List<Friendship>>(),
+                    data = response.body<List<FriendBase>>(),
                     status = response.status
                 )
             }
@@ -122,12 +122,12 @@ class FriendsApi(
     }
 
     override suspend fun deleteFriendshipRequest(
-        payload: DeleteFriendshipPayload
-    ): DeleteFriendshipStatement {
+        payload: DeleteFriendshipRequestPayload
+    ): DeleteFriendshipRequestStatement {
         var response: HttpResponse? = null
 
         try {
-            response = client.delete("$BASE_URL/friends/delete-friendship-request/${payload.friendUsername}") {
+            response = client.delete("$BASE_URL/friends/delete-friendship-request/${payload.username}") {
                 contentType(ContentType.Application.Json)
                 header(
                     HttpHeaders.Authorization,
@@ -140,13 +140,13 @@ class FriendsApi(
 
         return when (response?.status) {
             HttpStatusCode.OK -> {
-                return DeleteFriendshipStatement(
+                return DeleteFriendshipRequestStatement(
                     status = response.status
                 )
             }
 
             else -> {
-                DeleteFriendshipStatement(
+                DeleteFriendshipRequestStatement(
                     content = response?.bodyAsText(),
                     status = response?.status ?: HttpStatusCode.ServiceUnavailable
                 )
@@ -160,7 +160,7 @@ class FriendsApi(
         var response: HttpResponse? = null
 
         try {
-            response = client.delete("$BASE_URL/delete-friend/${payload.friendUsername}") {
+            response = client.delete("$BASE_URL/delete-friend/${payload.username}") {
                 contentType(ContentType.Application.Json)
                 header(
                     HttpHeaders.Authorization,

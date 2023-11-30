@@ -10,7 +10,11 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun Loading() {
+fun Loading(compact: Boolean = false) {
+    val circleSize = when (compact) {
+        true -> 4
+        false -> 2
+    }
     val strokeWidth = 4.dp
 
     val foregroundColor = MaterialTheme.colorScheme.primary
@@ -21,7 +25,7 @@ fun Loading() {
         modifier = Modifier.drawBehind {
             drawCircle(
                 color = foregroundColor,
-                radius = size.width / 2 - strokeWidth.toPx() / 2,
+                radius = size.width / circleSize - strokeWidth.toPx() / circleSize,
                 style = Stroke(strokeWidth.toPx())
             )
         }.padding(vertical = 3.dp),

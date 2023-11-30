@@ -2,6 +2,7 @@ package com.shapeup.ui.screens
 
 import android.content.Context
 import android.view.animation.OvershootInterpolator
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -19,6 +20,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.shapeup.MainActivity
 import com.shapeup.R
 import com.shapeup.api.utils.helpers.SharedData
 import com.shapeup.ui.theme.GradientDark
@@ -32,6 +34,7 @@ import com.shapeup.ui.viewModels.auth.authDataMock
 import com.shapeup.ui.viewModels.auth.authHandlersMock
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.delay
+import kotlin.system.exitProcess
 
 @Preview
 @Composable
@@ -85,8 +88,6 @@ fun SplashScreen(
 
                 val response = handlers.signIn()
 
-                println(response)
-
                 when (response.status) {
                     HttpStatusCode.OK -> navigator.navigate(Screen.Feed)
 
@@ -96,6 +97,11 @@ fun SplashScreen(
 
             else -> navigator.navigate(Screen.Welcome)
         }
+    }
+
+    BackHandler {
+        MainActivity().finish()
+        exitProcess(0)
     }
 
     Box(

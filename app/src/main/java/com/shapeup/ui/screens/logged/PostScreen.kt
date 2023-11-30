@@ -14,19 +14,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import com.shapeup.api.services.posts.Post
+import com.shapeup.R
 import com.shapeup.api.services.users.getUserDataMock
 import com.shapeup.ui.components.CardPost
 import com.shapeup.ui.components.Loading
+import com.shapeup.ui.components.SnackbarHelper
+import com.shapeup.ui.components.SnackbarType
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.helpers.Navigator
-import com.shapeup.ui.viewModels.logged.EUserRelation
-import com.shapeup.ui.viewModels.logged.JourneyMappers
+import com.shapeup.ui.viewModels.logged.JourneyHandlers
+import com.shapeup.ui.viewModels.logged.PostView
 import com.shapeup.ui.viewModels.logged.PostsHandlers
-import com.shapeup.ui.viewModels.logged.User
+import com.shapeup.ui.viewModels.logged.journeyHandlersMock
 import com.shapeup.ui.viewModels.logged.postsHandlersMock
 import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Preview
 @Composable
@@ -36,8 +41,8 @@ fun PostScreenPreview() {
             navigator = Navigator(),
             postId = "1",
             postsHandlers = postsHandlersMock,
-            user = JourneyMappers.userDataToUser(getUserDataMock),
-            userRelation = EUserRelation.USER
+            journeyHandlers = journeyHandlersMock,
+            username = getUserDataMock.username
         )
     }
 }
@@ -47,19 +52,54 @@ fun PostScreen(
     navigator: Navigator,
     postId: String,
     postsHandlers: PostsHandlers,
-    user: User,
-    userRelation: EUserRelation
+    journeyHandlers: JourneyHandlers,
+    username: String
 ) {
-    var postData by remember { mutableStateOf<Post?>(null) }
+    var loadingUserPosts by remember { mutableStateOf(true) }
+    var postData by remember { mutableStateOf<PostView?>(null) }
+    var openSnackbar by remember { mutableStateOf(false) }
+    var snackbarMessage by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
+        loadingUserPosts = true
         val response = postsHandlers.getPostById(postId)
 
         when (response.status) {
-            HttpStatusCode.OK -> postData = response.data
+            HttpStatusCode.OK -> {
+                val userResponse = journeyHandlers.getUser(username)
+
+                when (userResponse.status) {
+                    HttpStatusCode.OK -> {
+                        if (response.data != null && userResponse.data != null) {
+                            postData = PostView(
+                                post = response.data,
+                                user = userResponse.data
+                            )
+                        }
+                    }
+
+                    HttpStatusCode.NotFound -> {
+                        openSnackbar = true
+                        snackbarMessage = context.getString(R.string.txt_errors_user_not_found)
+                    }
+
+                    else -> {
+                        openSnackbar = true
+                        snackbarMessage = context.getString(R.string.txt_errors_generic)
+                    }
+                }
+            }
 
             else -> navigator.navigateBack()
         }
+
+        withContext(Dispatchers.IO) {
+            Thread.sleep(500)
+            loadingUserPosts = false
+        }
+
     }
 
     if (postData == null) {
@@ -77,10 +117,17 @@ fun PostScreen(
         CardPost(
             fullScreen = true,
             navigator = navigator,
-            postData = postData!!,
+            postData = postData!!.post,
             postsHandlers = postsHandlers,
-            user = user,
-            userRelation = userRelation
+            user = postData!!.user,
+            userRelation = journeyHandlers.getUserRelationByUsername(username)
         )
     }
+
+    SnackbarHelper(
+        message = snackbarMessage,
+        open = openSnackbar,
+        openSnackbar = { openSnackbar = it },
+        type = SnackbarType.ERROR
+    )
 }

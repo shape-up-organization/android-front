@@ -3,10 +3,10 @@ import androidx.compose.animation.ExitTransition
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import com.shapeup.ui.screens.logged.SearchScreen
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.navigator
 import com.shapeup.ui.utils.helpers.viewModel
-import com.shapeup.ui.viewModels.logged.JourneyData
 import com.shapeup.ui.viewModels.logged.JourneyViewModel
 
 fun NavGraphBuilder.screenSearch(navController: NavHostController) {
@@ -20,11 +20,6 @@ fun NavGraphBuilder.screenSearch(navController: NavHostController) {
         val journeyViewModel = it.viewModel<JourneyViewModel>(navController)
 
         SearchScreen(
-            journeyData = JourneyData(
-                initialLoad = journeyViewModel.initialLoad,
-                friends = journeyViewModel.friends,
-                userData = journeyViewModel.userData
-            ),
             journeyHandlers = journeyViewModel.handlers,
             navigator = navController.navigator
         )

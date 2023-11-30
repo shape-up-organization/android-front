@@ -54,6 +54,7 @@ import androidx.compose.ui.window.Dialog
 import coil.compose.rememberAsyncImagePainter
 import com.shapeup.R
 import com.shapeup.api.services.posts.Post
+import com.shapeup.api.services.users.UserSearch
 import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
@@ -61,7 +62,6 @@ import com.shapeup.ui.utils.helpers.XPUtils
 import com.shapeup.ui.viewModels.logged.Comment
 import com.shapeup.ui.viewModels.logged.EUserRelation
 import com.shapeup.ui.viewModels.logged.PostsHandlers
-import com.shapeup.ui.viewModels.logged.User
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -75,7 +75,7 @@ fun CardPost(
     navigator: Navigator,
     postData: Post,
     postsHandlers: PostsHandlers,
-    user: User,
+    user: UserSearch,
     userRelation: EUserRelation
 ) {
     var comments by remember { mutableStateOf<List<Comment>?>(null) }

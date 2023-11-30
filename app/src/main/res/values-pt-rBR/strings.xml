@@ -46,6 +46,10 @@
     <string name="txt_errors_invalid">Inválido</string>
     <string name="txt_errors_invalid_format">Formato inválido</string>
     <string name="txt_errors_send_code">Erro ao enviar o código, tente novamente</string>
+    <string name="txt_errors_not_found_user">E-mail e/ou senham não existem</string>
+    <string name="txt_errors_conflict">E-mail, telefone ou nome de usuário já utilizados</string>
+    <string name="txt_errors_generic">Ocorreu algum erro</string>
+    <string name="txt_errors_user_not_found">Usuário não encontrado</string>
 
     <!-- PAGES -->
     <!-- WELCOME -->
@@ -121,6 +125,7 @@
     <string name="txt_profile_see_profile">Ver perfil</string>
     <string name="txt_profile_add_friend">Adicionar</string>
     <string name="txt_profile_remove_friend">Remover</string>
+    <string name="txt_profile_accept_friend">Aceitar</string>
     <string name="txt_profile_refuse_friend">Recusar</string>
     <string name="txt_profile_cancel_friend">Cancelar</string>
     <string name="txt_profile_tab_photos">Fotos</string>
@@ -145,6 +150,7 @@
     <string name="txt_rank_header_title">Rank</string>
     <string name="txt_rank_tab_global_title">Global</string>
     <string name="txt_rank_tab_friend_title">Amigos</string>
+    <string name="txt_rank_error">Ocorreu algum erro ao obter as classificaçôes</string>
     <!-- TRAININGS -->
     <string name="txt_trainings_title">Treinos</string>
     <string name="txt_trainings_your_xp">seu xp:</string>
@@ -181,6 +187,7 @@
     <!-- SEARCH -->
     <string name="txt_search_input">Procurar usuários</string>
     <string name="txt_is_friend">Amigo</string>
+    <string name="txt_search_not_found">Não foram encontrados usuários</string>
     <!-- SETTINGS -->
     <string name="txt_settings_title">Configurações</string>
     <string name="txt_settings_account_center">Conta</string>

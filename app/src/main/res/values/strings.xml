@@ -47,6 +47,10 @@
     <string name="txt_errors_invalid">Invalid</string>
     <string name="txt_errors_invalid_format">Invalid format</string>
     <string name="txt_errors_send_code">Error sending code, try again</string>
+    <string name="txt_errors_not_found_user">E-mail and/or password do not exist</string>
+    <string name="txt_errors_conflict">E-mail, phone or username already exists</string>
+    <string name="txt_errors_generic">Occurred some error</string>
+    <string name="txt_errors_user_not_found">User not found</string>
 
     <!-- PAGES -->
     <!-- WELCOME -->
@@ -122,7 +126,8 @@
     <string name="txt_profile_see_profile">See profile</string>
     <string name="txt_profile_add_friend">Request</string>
     <string name="txt_profile_remove_friend">Remove</string>
-    <string name="txt_profile_refuse_friend">Refuse request</string>
+    <string name="txt_profile_accept_friend">Accept</string>
+    <string name="txt_profile_refuse_friend">Refuse</string>
     <string name="txt_profile_cancel_friend">Cancel request</string>
     <string name="txt_profile_tab_photos">Photos</string>
     <string name="txt_profile_tab_posts">Posts</string>
@@ -146,6 +151,7 @@
     <string name="txt_rank_header_title">Rank</string>
     <string name="txt_rank_tab_global_title">Global</string>
     <string name="txt_rank_tab_friend_title">Friends</string>
+    <string name="txt_rank_error">Some error occurred while getting the rank</string>
     <!-- TRAININGS -->
     <string name="txt_trainings_title">Trainings</string>
     <string name="txt_trainings_your_xp">your xp:</string>
@@ -182,6 +188,7 @@
     <!-- SEARCH -->
     <string name="txt_search_input">Search users</string>
     <string name="txt_is_friend">Friend</string>
+    <string name="txt_search_not_found">No users found</string>
     <!-- SETTINGS -->
     <string name="txt_settings_title">Settings</string>
     <string name="txt_settings_account_center">Account center</string>

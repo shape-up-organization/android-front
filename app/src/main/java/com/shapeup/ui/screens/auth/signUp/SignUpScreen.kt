@@ -24,20 +24,26 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.shapeup.R
+import com.shapeup.ui.components.Loading
+import com.shapeup.ui.components.SnackbarType
+import com.shapeup.ui.components.SnackbarHelper
 import com.shapeup.ui.screens.auth.signUp.steps.EmailStep
 import com.shapeup.ui.screens.auth.signUp.steps.EmailStepFormData
 import com.shapeup.ui.screens.auth.signUp.steps.PasswordStep
@@ -81,7 +87,10 @@ fun SignUpScreen(
     handlers: AuthHandlers,
     navigator: Navigator
 ) {
+    var isLoading by remember { mutableStateOf(false) }
     val hasError = remember { mutableStateOf(false) }
+    var openSnackbar by remember { mutableStateOf(false) }
+    var snackbarMessage by remember { mutableStateOf("") }
 
     val animatedProgress by animateFloatAsState(
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
@@ -89,18 +98,33 @@ fun SignUpScreen(
         targetValue = Step.getStepProgress(activeStep = activeStep.value)
     )
     val coroutine = rememberCoroutineScope()
+    val context = LocalContext.current
 
     suspend fun signUp() {
+        isLoading = true
         hasError.value = true
         val response = handlers.signUp()
-
-        println(response)
+        isLoading = false
 
         when (response.status) {
             HttpStatusCode.Created -> navigator.navigate(Screen.AccountVerification)
 
-            else -> hasError.value = false
+            HttpStatusCode.Conflict -> {
+                openSnackbar = true
+                snackbarMessage = context.getString(R.string.txt_errors_conflict)
+                hasError.value = false
+            }
+
+            else -> {
+                openSnackbar = true
+                snackbarMessage = context.getString(R.string.txt_errors_generic)
+                hasError.value = false
+            }
         }
+    }
+
+    LaunchedEffect(key1 = true) {
+        handlers.clearFormData()
     }
 
     BackHandler {
@@ -127,12 +151,12 @@ fun SignUpScreen(
             IconButton(
                 enabled = !(hasError.value && Step.isAtLastStep(activeStep.value)),
                 onClick = {
-                Step.returnStep(
-                    activeStep = activeStep,
-                    clearData = handlers.clearFormData,
-                    navigator = navigator
-                )
-            }) {
+                    Step.returnStep(
+                        activeStep = activeStep,
+                        clearData = handlers.clearFormData,
+                        navigator = navigator
+                    )
+                }) {
                 Icon(
                     contentDescription = stringResource(
                         when (activeStep.value) {
@@ -191,19 +215,30 @@ fun SignUpScreen(
                 }
             }
         ) {
-            Text(
-                modifier = Modifier
-                    .padding(vertical = 12.dp),
-                style = MaterialTheme.typography.bodyLarge,
-                text = stringResource(
-                    when (activeStep.value < Step.getMaxSteps()) {
-                        true -> R.string.txt_sign_up_screen_continue_button
-                        else -> R.string.txt_sign_up_screen_finish_button
-                    }
+            if (isLoading) {
+                Loading()
+            } else {
+                Text(
+                    modifier = Modifier
+                        .padding(vertical = 12.dp),
+                    style = MaterialTheme.typography.bodyLarge,
+                    text = stringResource(
+                        when (activeStep.value < Step.getMaxSteps()) {
+                            true -> R.string.txt_sign_up_screen_continue_button
+                            else -> R.string.txt_sign_up_screen_finish_button
+                        }
+                    )
                 )
-            )
+            }
         }
     }
+
+    SnackbarHelper(
+        message = snackbarMessage,
+        open = openSnackbar,
+        openSnackbar = { openSnackbar = it },
+        type = SnackbarType.ERROR
+    )
 }
 
 enum class Step(

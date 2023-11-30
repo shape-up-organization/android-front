@@ -61,7 +61,11 @@ class AuthViewModel : ViewModel() {
             password = password.value
         )
 
-        return authApi.signIn(payload)
+        val response = authApi.signIn(payload)
+
+        println(response)
+
+        return response
     }
 
     private suspend fun signUp(): SignUpStatement {
@@ -80,7 +84,11 @@ class AuthViewModel : ViewModel() {
             username = username.value
         )
 
-        return authApi.signUp(payload)
+        val response = authApi.signUp(payload)
+
+        println(response)
+
+        return response
     }
 
     private suspend fun sendEmailCode(): SendEmailCodeStatement {

@@ -1,3 +1,5 @@
+package com.shapeup.ui.screens.logged
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,11 +27,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -38,24 +42,28 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.shapeup.R
+import com.shapeup.api.services.users.UserSearch
+import com.shapeup.ui.components.ExpandableContent
 import com.shapeup.ui.components.FormField
 import com.shapeup.ui.components.FormFieldType
+import com.shapeup.ui.components.Loading
+import com.shapeup.ui.components.SnackbarHelper
+import com.shapeup.ui.components.SnackbarType
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
 import com.shapeup.ui.utils.helpers.XPUtils
-import com.shapeup.ui.viewModels.logged.JourneyData
 import com.shapeup.ui.viewModels.logged.JourneyHandlers
-import com.shapeup.ui.viewModels.logged.journeyDataMock
 import com.shapeup.ui.viewModels.logged.journeyHandlersMock
+import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.launch
 
 @Preview
 @Composable
 fun SearchPreview() {
     ShapeUpTheme {
         SearchScreen(
-            journeyData = journeyDataMock,
             journeyHandlers = journeyHandlersMock,
             navigator = Navigator()
         )
@@ -64,22 +72,47 @@ fun SearchPreview() {
 
 @Composable
 fun SearchScreen(
-    journeyData: JourneyData,
     journeyHandlers: JourneyHandlers,
     navigator: Navigator
 ) {
+    var loadingUsers by remember { mutableStateOf(false) }
+    var searchedName by remember { mutableStateOf("") }
+    var usersSearched by remember { mutableStateOf<List<UserSearch>>(emptyList()) }
+    var openSnackbar by remember { mutableStateOf(false) }
+    var snackbarMessage by remember { mutableStateOf("") }
+
+    val coroutine = rememberCoroutineScope()
+    val context = LocalContext.current
+
     val focusManager = LocalFocusManager.current
 
-    var searchedName by remember { mutableStateOf("") }
-    var usersFiltered by remember {
-        mutableStateOf(journeyHandlers.getSearchUsers())
+    fun searchUser() {
+        if (searchedName.isBlank() || searchedName == "@") {
+            usersSearched = emptyList()
+            return
+        }
+
+        coroutine.launch {
+            loadingUsers = true
+            val response = journeyHandlers.searchUsers(searchedName)
+            loadingUsers = false
+
+            when (response.status) {
+                HttpStatusCode.OK -> usersSearched = response.data ?: emptyList()
+
+                else -> {
+                    openSnackbar = true
+                    snackbarMessage = context.getString(R.string.txt_errors_generic)
+                }
+            }
+        }
     }
 
     BackHandler {
         navigator.navigateBack()
     }
 
-    Column (
+    Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background),
         verticalArrangement = Arrangement.SpaceBetween
@@ -112,22 +145,48 @@ fun SearchScreen(
                 type = FormFieldType.SEARCH,
                 onValueChange = {
                     searchedName = it
-                    usersFiltered = usersFiltered.filter { user ->
-                        ("${user.firstName} ${user.lastName}").contains(
-                            it,
-                            ignoreCase = true
-                        )
-                    }
+                    searchUser()
                 },
                 value = searchedName
             )
         }
+
         LazyColumn(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.background)
                 .fillMaxSize()
         ) {
-            itemsIndexed(usersFiltered) { index, it ->
+            item {
+                ExpandableContent(
+                    visible = loadingUsers,
+                    content = {
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Loading()
+                        }
+                    })
+            }
+            item {
+                ExpandableContent(
+                    visible = !loadingUsers &&
+                            usersSearched.isEmpty() &&
+                            searchedName != "@" &&
+                            searchedName.isNotBlank(),
+                    content = {
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                color = MaterialTheme.colorScheme.onBackground,
+                                text = stringResource(R.string.txt_search_not_found)
+                            )
+                        }
+                    })
+            }
+            itemsIndexed(usersSearched) { index, it ->
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier
@@ -181,15 +240,15 @@ fun SearchScreen(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             style = MaterialTheme.typography.labelSmall,
-                            text = "${it.username}"
+                            text = it.username
                         )
                     }
 
                     Box(
                         modifier = Modifier
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary)
-                        .size(40.dp),
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primary)
+                            .size(40.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -202,7 +261,7 @@ fun SearchScreen(
                     }
                 }
 
-                if (index != usersFiltered.size - 1) {
+                if (index != usersSearched.size - 1) {
                     Divider(
                         color = MaterialTheme.colorScheme.tertiaryContainer,
                         modifier = Modifier
@@ -214,4 +273,11 @@ fun SearchScreen(
             }
         }
     }
+
+    SnackbarHelper(
+        message = snackbarMessage,
+        open = openSnackbar,
+        openSnackbar = { openSnackbar = it },
+        type = SnackbarType.ERROR
+    )
 }
