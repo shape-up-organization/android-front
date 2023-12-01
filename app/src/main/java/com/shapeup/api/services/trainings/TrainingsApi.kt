@@ -92,8 +92,7 @@ class TrainingsApi (
         }
     }
 
-    override suspend fun searchTrainingByUserId(
-    ): SearchTrainingsByUserIdStatement {
+    override suspend fun searchTrainingByUserId(): SearchTrainingsByUserIdStatement {
         var response: HttpResponse? = null
 
         try {
@@ -125,9 +124,7 @@ class TrainingsApi (
         }
     }
 
-    override suspend fun addTraining(
-        payload: AddTrainingsPayload
-    ): AddTrainingsStatement {
+    override suspend fun addTraining(payload: AddTrainingsPayload): AddTrainingsStatement {
         var response: HttpResponse? = null
 
         try {
@@ -160,9 +157,7 @@ class TrainingsApi (
         }
     }
 
-    override suspend fun deleteTraining(
-        payload: DeleteTrainingPayload
-    ): DeleteTrainingStatement {
+    override suspend fun deleteTraining(payload: DeleteTrainingPayload): DeleteTrainingStatement {
         var response: HttpResponse? = null
 
         try {
@@ -184,9 +179,7 @@ class TrainingsApi (
         )
     }
 
-    override suspend fun finishTraining(
-        payload: FinishTrainingPayload
-    ): FinishTrainingStatement {
+    override suspend fun finishTraining(payload: FinishTrainingPayload): FinishTrainingStatement {
         var response: HttpResponse? = null
 
         try {
@@ -219,8 +212,7 @@ class TrainingsApi (
         }
     }
 
-    override suspend fun getTrainings(
-    ): GetTrainingsStatement {
+    override suspend fun getTrainings(): GetTrainingsStatement {
         var response: HttpResponse? = null
 
         try {
@@ -252,9 +244,7 @@ class TrainingsApi (
         }
     }
 
-    override suspend fun updateTraining(
-        payload: UpdateTrainingPayload
-    ): UpdateTrainingStatement {
+    override suspend fun updateTraining(payload: UpdateTrainingPayload): UpdateTrainingStatement {
         var response: HttpResponse? = null
 
         try {

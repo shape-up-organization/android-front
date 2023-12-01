@@ -55,7 +55,7 @@ fun NavGraphBuilder.routeLogged(
 
         screenEditProfile(navController)
 
-        screenTrainings(navController)
+        screenTrainings(navController, sharedData)
 
         screenRank(navController)
 

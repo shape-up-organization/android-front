@@ -160,7 +160,7 @@ class FriendsApi(
         var response: HttpResponse? = null
 
         try {
-            response = client.delete("$BASE_URL/delete-friend/${payload.username}") {
+            response = client.delete("$BASE_URL/friends/delete-friend/${payload.username}") {
                 contentType(ContentType.Application.Json)
                 header(
                     HttpHeaders.Authorization,

@@ -6,13 +6,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.shapeup.R
+import com.shapeup.api.services.trainings.ETrainingsApi
 import com.shapeup.api.services.trainings.getTrainingsMock
 import com.shapeup.api.services.trainings.getUserTrainingsMock
+import com.shapeup.api.utils.helpers.SharedData
 import com.shapeup.ui.utils.helpers.Navigator
 import java.time.DayOfWeek
 
 class TrainingsViewModel : ViewModel() {
     lateinit var navigator: Navigator
+    lateinit var sharedData: SharedData
 
     val userTrainings = mutableStateOf<List<UserTrainingDay>>(emptyList())
 
@@ -22,7 +25,13 @@ class TrainingsViewModel : ViewModel() {
         return userTrainings.value
     }
 
-    private fun getTrainingsPacks(): List<Training> {
+    private suspend fun getTrainingsPacks(): List<Training> {
+        val trainingsApi = ETrainingsApi.create(sharedData)
+
+        val response = trainingsApi.getTrainings()
+
+        println(response)
+
         // TODO: implement getTrainings from service
         return getTrainingsMock
     }
@@ -54,7 +63,7 @@ val trainingsDataMock = TrainingsData(
 )
 
 data class TrainingsHandlers(
-    val getTrainingsPacks: () -> List<Training>,
+    val getTrainingsPacks: suspend () -> List<Training>,
     val getUserTrainings: () -> List<UserTrainingDay>,
     val updateTraining: (
         dayOfWeek: DayOfWeek,

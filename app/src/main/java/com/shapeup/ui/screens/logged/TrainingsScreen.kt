@@ -21,6 +21,7 @@ import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -43,11 +45,14 @@ import com.shapeup.ui.components.ETrainingCardType
 import com.shapeup.ui.components.FormField
 import com.shapeup.ui.components.FormFieldType
 import com.shapeup.ui.components.Navbar
+import com.shapeup.ui.components.SnackbarHelper
+import com.shapeup.ui.components.SnackbarType
 import com.shapeup.ui.components.TrainingCard
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.helpers.Navigator
 import com.shapeup.ui.viewModels.logged.ETrainingPeriod
 import com.shapeup.ui.viewModels.logged.JourneyData
+import com.shapeup.ui.viewModels.logged.Training
 import com.shapeup.ui.viewModels.logged.TrainingsHandlers
 import com.shapeup.ui.viewModels.logged.journeyDataMock
 import com.shapeup.ui.viewModels.logged.trainingsHandlersMock
@@ -74,6 +79,10 @@ fun TrainingsScreen(
     var daySelected by remember { mutableStateOf(DayOfWeek.MONDAY) }
     var chosenPeriod by remember { mutableStateOf(ETrainingPeriod.MORNING) }
     val openTrainingsListBottomSheet = remember { mutableStateOf(false) }
+    var openSnackbar by remember { mutableStateOf(false) }
+    var snackbarMessage by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
 
     val trainings = trainingsHandlers
         .getUserTrainings()
@@ -231,6 +240,13 @@ fun TrainingsScreen(
         dayOfWeek = daySelected,
         period = chosenPeriod
     )
+
+    SnackbarHelper(
+        message = snackbarMessage,
+        open = openSnackbar,
+        openSnackbar = { openSnackbar = it },
+        type = SnackbarType.ERROR
+    )
 }
 
 @Composable
@@ -240,15 +256,37 @@ fun TrainingsListBottomSheet(
     dayOfWeek: DayOfWeek,
     period: ETrainingPeriod
 ) {
-    val trainingsPack by remember { mutableStateOf(trainingsHandlers.getTrainingsPacks()) }
+    val trainingsPack by remember { mutableStateOf(emptyList<Training>()) }
     var searchedTraining by remember { mutableStateOf("") }
+    var openSnackbar by remember { mutableStateOf(false) }
+    var snackbarMessage by remember { mutableStateOf("") }
 
     val filteredTrainings = trainingsPack.filter {
         it.name.contains(searchedTraining, ignoreCase = true) ||
                 stringResource(it.category.value).contains(searchedTraining, ignoreCase = true)
     }
 
+    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
+
+    suspend fun getTrainings() {
+        val response = trainingsHandlers.getTrainingsPacks()
+
+//        when (response.status) {
+//            HttpStatusCode.OK -> {
+//
+//            }
+//
+//            else -> {
+//                openSnackbar = true
+//                snackbarMessage = context.getString(R.string.txt_errors_generic)
+//            }
+//        }
+    }
+
+    LaunchedEffect(key1 = true) {
+        getTrainings()
+    }
 
     BottomSheet(
         containerColor = MaterialTheme.colorScheme.background,
@@ -301,6 +339,13 @@ fun TrainingsListBottomSheet(
                         Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
+
+                SnackbarHelper(
+                    message = snackbarMessage,
+                    open = openSnackbar,
+                    openSnackbar = { openSnackbar = it },
+                    type = SnackbarType.ERROR
+                )
             }
         }
     )

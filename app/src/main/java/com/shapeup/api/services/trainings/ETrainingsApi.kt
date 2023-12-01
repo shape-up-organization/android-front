@@ -4,15 +4,13 @@ import com.shapeup.api.utils.helpers.AppClient
 import com.shapeup.api.utils.helpers.SharedData
 
 interface ETrainingsApi {
-    suspend fun searchTrainings(payload: SearchTrainingsPayload
-    ): SearchTrainingsStatement
+    suspend fun searchTrainings(payload: SearchTrainingsPayload): SearchTrainingsStatement
 
     suspend fun searchTrainingsByCategory(
         payload: SearchTrainingsByCategoryPayload
     ): SearchTrainingsByCategoryStatement
 
-    suspend fun searchTrainingByUserId(
-    ): SearchTrainingsByUserIdStatement
+    suspend fun searchTrainingByUserId(): SearchTrainingsByUserIdStatement
 
     suspend fun addTraining(
         payload: AddTrainingsPayload
@@ -26,8 +24,7 @@ interface ETrainingsApi {
         payload: FinishTrainingPayload
     ): FinishTrainingStatement
 
-    suspend fun getTrainings(
-    ): GetTrainingsStatement
+    suspend fun getTrainings(): GetTrainingsStatement
 
     suspend fun updateTraining(
         payload: UpdateTrainingPayload

@@ -10,8 +10,8 @@ data class Training(
     val description: String,
     val duration: Int,
     val classification: String,
-    val xp: Long,
-    val unlockXp: Long,
+    val xp: Int,
+    val unlockXp: Int,
     val exercises: List<String>,
 )
 
@@ -35,8 +35,8 @@ data class TrainingOfUser(
     val description: String,
     val duration: Int,
     val classification: String,
-    val xp: Long,
-    val unlockXp: Long,
+    val xp: Int,
+    val unlockXp: Int,
     val exercises: List<String>,
     val status: String
 )
@@ -46,7 +46,7 @@ data class AddTraining(
     val id: String,
     val category: String,
     val trainingDay : TrainingDay,
-    val xp: Long,
+    val xp: Int,
     val exercises: List<String>,
     val status: String
 )
@@ -62,7 +62,7 @@ data class FinishTraining(
     val id: String,
     val category: String,
     val trainingDay : TrainingDay,
-    val xp: Long,
+    val xp: Int,
     val exercises: List<String>,
     val status: String
 )
@@ -72,7 +72,7 @@ data class UpdateTraining(
     val id: String,
     val category: String,
     val trainingDay : TrainingDay,
-    val xp: Long,
+    val xp: Int,
     val exercises: List<String>,
     val status: String
 )
