@@ -8,6 +8,12 @@ data class GetPostsPaginatedPayload(
     val size: Int? = 6
 )
 
+data class GetPostsByUsernamePayload(
+    val username: String,
+    val page: Int? = null,
+    val size: Int? = null
+)
+
 data class GetPostByIdPayload(
     val postId: String
 )

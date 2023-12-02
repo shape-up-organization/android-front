@@ -27,6 +27,10 @@ import com.shapeup.api.services.users.RankType
 import com.shapeup.api.services.users.SearchByFullNamePayload
 import com.shapeup.api.services.users.SearchByUsernamePayload
 import com.shapeup.api.services.users.SearchUsersStatement
+import com.shapeup.api.services.users.UpdateProfilePicturePayload
+import com.shapeup.api.services.users.UpdateProfilePictureStatement
+import com.shapeup.api.services.users.UpdateProfileStatement
+import com.shapeup.api.services.users.UserFieldPayload
 import com.shapeup.api.services.users.UserSearch
 import com.shapeup.api.services.users.getAllSearchUserDataMock
 import com.shapeup.api.services.users.getRankGlobalDataMock
@@ -46,24 +50,26 @@ class JourneyViewModel : ViewModel() {
     val friends = mutableStateOf<List<Friend>>(emptyList())
     val userData = mutableStateOf(getUserDataEmpty)
 
-    private fun setupUser() {
+    private fun setupUser(partialData: UserDataPartial? = null) {
         val sharedJwtToken = sharedData.get(SharedDataValues.JwtToken.value)
 
         if (!sharedJwtToken.isNullOrBlank()) {
             val jwt = JWT(sharedJwtToken)
 
             userData.value = UserData(
-                biography = jwt.getClaim("biography").asString() ?: "",
-                birth = jwt.getClaim("birth").asString() ?: "",
-                cellPhone = jwt.getClaim("cellPhone").asString() ?: "",
-                email = sharedData.get(SharedDataValues.Email.value) ?: "",
-                firstName = jwt.getClaim("name").asString() ?: "",
-                id = jwt.getClaim("id").asString() ?: "",
-                lastName = jwt.getClaim("lastName").asString() ?: "",
-                password = sharedData.get(SharedDataValues.Password.value) ?: "",
-                profilePicture = jwt.getClaim("profilePicture").asString(),
-                username = jwt.getClaim("username").asString() ?: "",
-                xp = jwt.getClaim("xp").asInt() ?: 0
+                biography = partialData?.biography ?: jwt.getClaim("biography").asString() ?: "",
+                birth = partialData?.birth ?: jwt.getClaim("birth").asString() ?: "",
+                cellPhone = partialData?.cellPhone ?: jwt.getClaim("cellPhone").asString() ?: "",
+                email = partialData?.email ?: sharedData.get(SharedDataValues.Email.value) ?: "",
+                firstName = partialData?.firstName ?: jwt.getClaim("name").asString() ?: "",
+                id = partialData?.id ?: jwt.getClaim("id").asString() ?: "",
+                lastName = partialData?.lastName ?: jwt.getClaim("lastName").asString() ?: "",
+                password = partialData?.password ?: sharedData.get(SharedDataValues.Password.value)
+                ?: "",
+                profilePicture = partialData?.profilePicture ?: jwt.getClaim("profilePicture")
+                    .asString(),
+                username = partialData?.username ?: jwt.getClaim("username").asString() ?: "",
+                xp = partialData?.xp ?: jwt.getClaim("xp").asInt() ?: 0
             )
         }
     }
@@ -158,23 +164,66 @@ class JourneyViewModel : ViewModel() {
         return EUserRelation.NON_FRIEND
     }
 
-    private fun updateProfilePicture(profilePicture: Uri) {
-        println("profilePicture $profilePicture")
+    private suspend fun updateProfilePicture(
+        profilePicture: ProfilePicture
+    ): UpdateProfilePictureStatement {
+        val userPic =
+            if (userData.value.profilePicture.isNullOrBlank())
+                userData.value.profilePicture
+            else Uri.parse(
+                userData.value.profilePicture
+            )
 
-        if (Uri.parse(userData.value.profilePicture) != profilePicture) {
-            println("UPDATE PROFILE PICTURE!")
-        } else {
-            println("DO NOT UPDATE PROFILE PICTURE!")
+        if (profilePicture.uri != null && userPic != profilePicture.uri) {
+            val usersApi = EUsersApi.create(sharedData)
+
+            val response = usersApi.updateProfilePicture(
+                UpdateProfilePicturePayload(
+                    file = listOf(profilePicture.byteArray),
+                )
+            )
+
+            println(response)
+
+            return response
+
         }
+
+        return UpdateProfilePictureStatement(
+            status = HttpStatusCode.NotModified
+        )
     }
 
-    private fun updateUserData(newUserData: UserDataUpdate) {
-        updateProfilePicture(newUserData.profilePicture)
+    private suspend fun updateUserData(newUserData: UserDataUpdate): UpdateProfileStatement {
+        val picResponse = updateProfilePicture(newUserData.profilePicture)
 
-        println("firstName ${newUserData.firstName}")
-        println("lastName ${newUserData.lastName}")
-        println("username ${newUserData.username}")
-        println("bio ${newUserData.bio}")
+        val usersApi = EUsersApi.create(sharedData)
+
+        val response = usersApi.updateUserField(
+            UserFieldPayload(
+                biography = newUserData.bio,
+                name = newUserData.firstName,
+                lastName = newUserData.lastName,
+                username = newUserData.username,
+            )
+        )
+
+        println(response)
+
+        if (response.status == HttpStatusCode.OK && response.data?.token != null) {
+            sharedData.save(SharedDataValues.JwtToken.value, response.data.token)
+            setupUser(
+                UserDataPartial(
+                    profilePicture = picResponse.data?.pictureProfile
+                )
+            )
+        }
+
+
+        return UpdateProfileStatement(
+            pictureStatus = picResponse.status,
+            userDataStatus = response.status
+        )
     }
 
     private fun sendMessage(messageText: String, friendUsername: String) {
@@ -329,8 +378,8 @@ data class JourneyHandlers(
     val getUser: suspend (username: String) -> GetUserStatement,
     val getUserRelationByUsername: (username: String) -> EUserRelation,
     val getUserRelationByUser: (user: UserSearch) -> EUserRelation,
-    val updateProfilePicture: (profilePicture: Uri) -> Unit,
-    val updateUserData: (newUserData: UserDataUpdate) -> Unit,
+    val updateProfilePicture: suspend (profilePicture: ProfilePicture) -> UpdateProfilePictureStatement,
+    val updateUserData: suspend (newUserData: UserDataUpdate) -> UpdateProfileStatement,
     val sendMessage: (messageText: String, friendUsername: String) -> Unit,
     val getRank: suspend (type: RankType) -> GetRankStatement,
     val searchUsers: suspend (searchedUser: String) -> SearchUsersStatement,
@@ -368,8 +417,17 @@ val journeyHandlersMock = JourneyHandlers(
     },
     getUserRelationByUsername = { EUserRelation.USER },
     getUserRelationByUser = { EUserRelation.USER },
-    updateProfilePicture = {},
-    updateUserData = {},
+    updateProfilePicture = {
+        UpdateProfilePictureStatement(
+            status = HttpStatusCode.OK
+        )
+    },
+    updateUserData = {
+        UpdateProfileStatement(
+            pictureStatus = HttpStatusCode.NotModified,
+            userDataStatus = HttpStatusCode.OK
+        )
+    },
     sendMessage = { _, _ -> },
     getRank = {
         GetRankStatement(
@@ -431,11 +489,30 @@ data class UserData(
     val xp: Int
 )
 
+data class UserDataPartial(
+    val biography: String? = null,
+    val birth: String? = null,
+    val cellPhone: String? = null,
+    val email: String? = null,
+    val firstName: String? = null,
+    val id: String? = null,
+    val lastName: String? = null,
+    val password: String? = null,
+    val profilePicture: String? = null,
+    val username: String? = null,
+    val xp: Int? = null
+)
+
+data class ProfilePicture(
+    val uri: Uri? = null,
+    val byteArray: ByteArray?
+)
+
 data class UserDataUpdate(
-    val bio: String? = "",
+    val bio: String? = null,
     val firstName: String,
     val lastName: String,
-    val profilePicture: Uri,
+    val profilePicture: ProfilePicture,
     val username: String
 )
 
@@ -474,6 +551,7 @@ object JourneyMappers {
 
     val userDataToUserSearch: (userData: UserData) -> UserSearch = {
         UserSearch(
+            biography = it.biography,
             firstName = it.firstName,
             lastName = it.lastName,
             profilePicture = it.profilePicture,

@@ -62,6 +62,42 @@ class PostsApi(
         }
     }
 
+    override suspend fun getPostsByUsername(
+        payload: GetPostsByUsernamePayload
+    ): GetPostsPaginatedStatement {
+        var response: HttpResponse? = null
+
+        try {
+            response = client.get("$BASE_URL/posts/username/${payload.username}") {
+                contentType(ContentType.Application.Json)
+                header(
+                    HttpHeaders.Authorization,
+                    "Bearer ${sharedData.get(SharedDataValues.JwtToken.value)}"
+                )
+                parameter("page", payload.page ?: 0)
+                parameter("size", payload.size ?: 6)
+            }
+        } catch (_: Exception) {
+            println("ERROR: Timeout or Service Unavailable")
+        }
+
+        return when (response?.status) {
+            HttpStatusCode.OK -> {
+                return GetPostsPaginatedStatement(
+                    data = response.body<List<Post>>(),
+                    status = response.status
+                )
+            }
+
+            else -> {
+                GetPostsPaginatedStatement(
+                    content = response?.bodyAsText(),
+                    status = response?.status ?: HttpStatusCode.ServiceUnavailable
+                )
+            }
+        }
+    }
+
     override suspend fun getPostById(
         payload: GetPostByIdPayload
     ): GetPostByIdStatement {

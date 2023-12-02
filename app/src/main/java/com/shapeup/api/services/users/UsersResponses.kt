@@ -46,3 +46,9 @@ data class FriendshipSearchStatus(
     val isFriend: Boolean,
     val userSenderFriendshipRequest: String
 )
+
+@Serializable
+data class UpdateProfilePictureResponse(
+    val jwt: String,
+    val pictureProfile: String
+)

@@ -6,14 +6,18 @@ import com.shapeup.api.utils.helpers.SharedData
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
+import io.ktor.client.request.forms.MultiPartFormDataContent
+import io.ktor.client.request.forms.formData
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
+import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
+import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
@@ -239,13 +243,62 @@ class UsersApi(
         return when (response?.status) {
             HttpStatusCode.OK -> {
                 return UserFieldStatement(
-                    data = response.body<List<UserFieldUpdate>>(),
+                    data = response.body<UserFieldUpdate>(),
                     status = response.status
                 )
             }
 
             else -> {
                 UserFieldStatement(
+                    content = response?.bodyAsText(),
+                    status = response?.status ?: HttpStatusCode.ServiceUnavailable
+                )
+            }
+        }
+    }
+
+    override suspend fun updateProfilePicture(
+        payload: UpdateProfilePicturePayload
+    ): UpdateProfilePictureStatement {
+        var response: HttpResponse? = null
+
+        try {
+            response = client.post("$BASE_URL/profiles/picture") {
+                contentType(ContentType.Application.Json)
+                header(
+                    HttpHeaders.Authorization,
+                    "Bearer ${sharedData.get(SharedDataValues.JwtToken.value)}"
+                )
+                setBody(MultiPartFormDataContent(
+                    formData {
+                        payload.file.map { file ->
+                            if (file != null) {
+                                append(
+                                    "file",
+                                    file,
+                                    Headers.build {
+                                        append(HttpHeaders.ContentType, "image/*")
+                                        append(HttpHeaders.ContentDisposition, "filename=\"$file.png\"")
+                                    })
+                            }
+                        }
+                    }
+                ))
+            }
+        } catch (_: Exception) {
+            println("ERROR: Timeout or Service Unavailable")
+        }
+
+        return when (response?.status) {
+            HttpStatusCode.OK -> {
+                UpdateProfilePictureStatement(
+                    data = response.body<UpdateProfilePictureResponse>(),
+                    status = response?.status ?: HttpStatusCode.ServiceUnavailable
+                )
+            }
+
+            else -> {
+                UpdateProfilePictureStatement(
                     content = response?.bodyAsText(),
                     status = response?.status ?: HttpStatusCode.ServiceUnavailable
                 )

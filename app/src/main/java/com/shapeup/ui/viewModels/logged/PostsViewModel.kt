@@ -13,6 +13,7 @@ import com.shapeup.api.services.posts.GetCommentsByPostsIdPaginatedPayload
 import com.shapeup.api.services.posts.GetCommentsByPostsIdPaginatedStatement
 import com.shapeup.api.services.posts.GetPostByIdPayload
 import com.shapeup.api.services.posts.GetPostByIdStatement
+import com.shapeup.api.services.posts.GetPostsByUsernamePayload
 import com.shapeup.api.services.posts.GetPostsPaginatedPayload
 import com.shapeup.api.services.posts.GetPostsPaginatedStatement
 import com.shapeup.api.services.posts.Post
@@ -77,10 +78,17 @@ class PostsViewModel : ViewModel() {
         return response
     }
 
-    private fun getUserPosts(username: String): List<Post> {
-        // TODO: implement getPostsByUsername from service
-        specificPosts.value = getPostsMock.filter { post -> post.username == username }
-        return specificPosts.value
+    private suspend fun getUserPosts(
+        payload: GetPostsByUsernamePayload
+    ): GetPostsPaginatedStatement {
+        val postsApi = EPostsApi.create(sharedData)
+
+        val response = postsApi.getPostsByUsername(payload)
+
+        println(response)
+
+        specificPosts.value = response.data ?: emptyList()
+        return response
     }
 
     private suspend fun createPost(postData: PostCreation): CreatePostStatement {
@@ -183,7 +191,7 @@ data class PostsHandlers(
     val getCommentsByPostId: suspend (postId: String) -> GetCommentsByPostsIdPaginatedStatement,
     val getPosts: suspend (pagination: GetPostsPaginatedPayload) -> GetPostsPaginatedStatement,
     val getPostById: suspend (postId: String) -> GetPostByIdStatement,
-    val getUserPosts: (username: String) -> List<Post>?,
+    val getUserPosts: suspend (payload: GetPostsByUsernamePayload) -> GetPostsPaginatedStatement,
     val createPost: suspend (postData: PostCreation) -> CreatePostStatement,
     val toggleLike: suspend (postId: String) -> ToggleLikeStatement,
     val sendComment: suspend (postId: String, commentMessage: String) -> SendCommentStatement,
@@ -208,7 +216,11 @@ val postsHandlersMock = PostsHandlers(
             status = HttpStatusCode.OK
         )
     },
-    getUserPosts = { getPostsMock },
+    getUserPosts = {
+        GetPostsPaginatedStatement(
+            status = HttpStatusCode.OK
+        )
+    },
     createPost = { CreatePostStatement(status = HttpStatusCode.Created) },
     toggleLike = {
         ToggleLikeStatement(

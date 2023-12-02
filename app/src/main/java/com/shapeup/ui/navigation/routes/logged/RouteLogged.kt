@@ -53,7 +53,7 @@ fun NavGraphBuilder.routeLogged(
 
         screenProfile(navController)
 
-        screenEditProfile(navController)
+        screenEditProfile(navController, sharedData)
 
         screenTrainings(navController, sharedData)
 

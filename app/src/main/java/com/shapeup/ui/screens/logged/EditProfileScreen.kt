@@ -28,12 +28,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -45,15 +47,22 @@ import androidx.compose.ui.window.Dialog
 import coil.compose.rememberAsyncImagePainter
 import com.shapeup.R
 import com.shapeup.ui.components.FormField
+import com.shapeup.ui.components.Loading
+import com.shapeup.ui.components.SnackbarHelper
+import com.shapeup.ui.components.SnackbarType
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon
+import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
 import com.shapeup.ui.utils.helpers.XPUtils
 import com.shapeup.ui.viewModels.logged.JourneyData
 import com.shapeup.ui.viewModels.logged.JourneyHandlers
+import com.shapeup.ui.viewModels.logged.ProfilePicture
 import com.shapeup.ui.viewModels.logged.UserDataUpdate
 import com.shapeup.ui.viewModels.logged.journeyDataMock
 import com.shapeup.ui.viewModels.logged.journeyHandlersMock
+import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -76,20 +85,87 @@ fun EditProfileScreen(
     var updatedFirstName by remember { mutableStateOf(journeyData.userData.value.firstName) }
     var updatedLastName by remember { mutableStateOf(journeyData.userData.value.lastName) }
     var updatedUsername by remember { mutableStateOf(journeyData.userData.value.username) }
-    var updatedBio by remember { mutableStateOf(journeyData.userData.value.biography ?: "") }
+    var updatedBio by remember { mutableStateOf(journeyData.userData.value.biography) }
     var updatedProfilePicture by remember {
-        mutableStateOf<Uri?>(Uri.parse(journeyData.userData.value.profilePicture ?: ""))
+        mutableStateOf(
+            if (journeyData.userData.value.profilePicture != null) Uri.parse(
+                journeyData.userData.value.profilePicture ?: ""
+            ) else null
+        )
     }
-
     var openProfileImageDialog by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
+    var openSnackbar by remember { mutableStateOf(false) }
+    var snackbarMessage by remember { mutableStateOf("") }
+
+    val coroutine = rememberCoroutineScope()
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         if (uri != null) updatedProfilePicture = uri
     }
 
+    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val expandedProfilePictureSize = LocalConfiguration.current.screenWidthDp * 0.8
+
+    fun updateUserData() {
+        coroutine.launch {
+            isLoading = true
+            var profilePicture = ProfilePicture(
+                uri = null,
+                byteArray = null
+            )
+
+            if (updatedProfilePicture != null && updatedProfilePicture != Uri.parse(
+                    journeyData.userData.value.profilePicture ?: ""
+                )
+            ) {
+                profilePicture = ProfilePicture(
+                    uri = updatedProfilePicture
+                        ?: Uri.parse(journeyData.userData.value.profilePicture),
+                    byteArray = context.contentResolver.openInputStream(
+                        updatedProfilePicture
+                            ?: Uri.parse(journeyData.userData.value.profilePicture)
+                    )?.use { new -> new.buffered().readBytes() }
+                )
+            }
+
+            if (updatedBio == "") updatedBio = null
+
+            val response = journeyHandlers.updateUserData(
+                UserDataUpdate(
+                    bio = updatedBio,
+                    firstName = updatedFirstName,
+                    lastName = updatedLastName,
+                    profilePicture = profilePicture,
+                    username = updatedUsername
+                )
+            )
+            isLoading = false
+
+            when (response.pictureStatus) {
+                HttpStatusCode.OK -> {}
+                HttpStatusCode.NotModified -> {}
+
+                else -> {
+                    openSnackbar = true
+                    snackbarMessage = context.getString(R.string.txt_errors_generic)
+                }
+            }
+
+            when (response.userDataStatus) {
+                HttpStatusCode.OK -> {
+                    navigator.navigateClean(Screen.Profile)
+                }
+
+                else -> {
+                    openSnackbar = true
+                    snackbarMessage = context.getString(R.string.txt_errors_generic)
+                }
+            }
+        }
+    }
 
     BackHandler {
         navigator.navigateBack()
@@ -198,32 +274,26 @@ fun EditProfileScreen(
                     maxLines = 4,
                     onValueChange = { updatedBio = it },
                     supportingText = null,
-                    value = updatedBio
+                    value = updatedBio ?: ""
                 )
             }
         }
 
         Button(
+            enabled = !isLoading,
             modifier = Modifier.fillMaxWidth(),
-            onClick = {
-                journeyHandlers.updateUserData(
-                    UserDataUpdate(
-                        bio = updatedBio,
-                        firstName = updatedFirstName,
-                        lastName = updatedLastName,
-                        profilePicture = updatedProfilePicture
-                            ?: Uri.parse(journeyData.userData.value.profilePicture),
-                        username = updatedUsername
-                    )
+            onClick = { updateUserData() }
+        ) {
+            if (isLoading) {
+                Loading()
+            } else {
+                Text(
+                    modifier = Modifier
+                        .padding(vertical = 12.dp),
+                    style = MaterialTheme.typography.bodyLarge,
+                    text = "Update"
                 )
             }
-        ) {
-            Text(
-                modifier = Modifier
-                    .padding(vertical = 12.dp),
-                style = MaterialTheme.typography.bodyLarge,
-                text = "Update"
-            )
         }
     }
 
@@ -247,4 +317,11 @@ fun EditProfileScreen(
             )
         }
     }
+
+    SnackbarHelper(
+        message = snackbarMessage,
+        open = openSnackbar,
+        openSnackbar = { openSnackbar = it },
+        type = SnackbarType.ERROR
+    )
 }

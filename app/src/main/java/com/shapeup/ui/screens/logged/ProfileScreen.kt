@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -51,6 +52,7 @@ import androidx.compose.ui.window.Dialog
 import coil.compose.rememberAsyncImagePainter
 import com.shapeup.R
 import com.shapeup.api.services.friends.GenericFriendshipStatement
+import com.shapeup.api.services.posts.GetPostsByUsernamePayload
 import com.shapeup.api.services.users.UserSearch
 import com.shapeup.api.services.users.getUserDataMock
 import com.shapeup.ui.components.CardPost
@@ -75,9 +77,7 @@ import com.shapeup.ui.viewModels.logged.journeyHandlersMock
 import com.shapeup.ui.viewModels.logged.postsDataMock
 import com.shapeup.ui.viewModels.logged.postsHandlersMock
 import io.ktor.http.HttpStatusCode
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @Preview
 @Composable
@@ -107,6 +107,7 @@ fun ProfileScreen(
 
     var loadingUser by remember { mutableStateOf(true) }
     var loadingUserRelation by remember { mutableStateOf(false) }
+    var loadingPosts by remember { mutableStateOf(false) }
     var user by remember { mutableStateOf<UserSearch?>(null) }
     var tabSelected by remember { mutableIntStateOf(0) }
     var openProfileImageDialog by remember { mutableStateOf(false) }
@@ -123,6 +124,34 @@ fun ProfileScreen(
         stringResource(R.string.txt_profile_tab_posts)
     )
 
+    suspend fun getPosts() {
+        loadingPosts = true
+
+        val response = postsHandlers.getUserPosts(
+            GetPostsByUsernamePayload(
+                username = username,
+                page = 0,
+                size = 20
+            ),
+        )
+
+        loadingPosts = false
+
+        when (response.status) {
+            HttpStatusCode.OK -> {
+            }
+
+            HttpStatusCode.NoContent -> postsData.specificPosts.value = emptyList()
+
+            else -> {
+                openSnackbar = true
+                snackbarMessage = context.getString(R.string.txt_errors_generic)
+            }
+        }
+
+        loadingPosts = false
+    }
+
     fun getUser() {
         coroutine.launch {
             val response = journeyHandlers.getUser(username)
@@ -131,6 +160,7 @@ fun ProfileScreen(
                 HttpStatusCode.OK -> {
                     if (response.data != null) {
                         user = response.data
+                        getPosts()
                         userRelation = journeyHandlers.getUserRelationByUser(response.data)
                     } else {
                         navigator.navigateBack()
@@ -148,6 +178,7 @@ fun ProfileScreen(
                 }
             }
 
+            loadingUser = false
             loadingUserRelation = false
         }
     }
@@ -252,11 +283,6 @@ fun ProfileScreen(
         loadingUser = true
 
         getUser()
-
-        withContext(Dispatchers.IO) {
-            Thread.sleep(500)
-            loadingUser = false
-        }
     }
 
     BackHandler {
@@ -277,7 +303,9 @@ fun ProfileScreen(
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 16.dp)
+                            .fillMaxHeight()
+                            .padding(top = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Loading()
                     }
@@ -595,7 +623,7 @@ fun ProfileScreen(
                         }
                     }
 
-                    if (user?.biography != null) {
+                    if (user?.biography != null && user?.biography != "") {
                         Text(
                             color = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier
