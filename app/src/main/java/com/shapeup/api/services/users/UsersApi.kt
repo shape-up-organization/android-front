@@ -306,4 +306,33 @@ class UsersApi(
         }
     }
 
+    override suspend fun getAddressByZipCode(
+        payload: GetAddressByZipCodePayload
+    ): GetAddressByZipCodeStatement {
+        var response: HttpResponse? = null
+
+        try {
+            response = client.get("https://viacep.com.br/ws/${payload.zipCode}/json") {
+                contentType(ContentType.Application.Json)
+            }
+        } catch (_: Exception) {
+            println("ERROR: Timeout or Service Unavailable")
+        }
+
+        return when (response?.status) {
+            HttpStatusCode.OK -> {
+                return GetAddressByZipCodeStatement(
+                    data = response.body<GetAddressByZipCodeResponse>(),
+                    status = response.status
+                )
+            }
+
+            else -> {
+                GetAddressByZipCodeStatement(
+                    content = response?.bodyAsText(),
+                    status = response?.status ?: HttpStatusCode.ServiceUnavailable
+                )
+            }
+        }
+    }
 }

@@ -38,6 +38,10 @@ data class UpdateProfilePicturePayload(
     val file: List<ByteArray?>
 )
 
+data class GetAddressByZipCodePayload(
+    val zipCode: String
+)
+
 enum class RankType(val value: String) {
     GLOBAL(value = "global"),
     FRIENDS(value = "friends")

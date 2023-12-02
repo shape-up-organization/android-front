@@ -18,7 +18,10 @@ import com.shapeup.api.services.friends.RequestFriendshipPayload
 import com.shapeup.api.services.friends.RequestFriendshipStatement
 import com.shapeup.api.services.friends.getAllFriendshipMock
 import com.shapeup.api.services.friends.getFriendsMessagesMock
+import com.shapeup.api.services.users.DeleteByEmailStatement
 import com.shapeup.api.services.users.EUsersApi
+import com.shapeup.api.services.users.GetAddressByZipCodePayload
+import com.shapeup.api.services.users.GetAddressByZipCodeStatement
 import com.shapeup.api.services.users.GetRankPayload
 import com.shapeup.api.services.users.GetRankStatement
 import com.shapeup.api.services.users.GetUserPayload
@@ -31,6 +34,7 @@ import com.shapeup.api.services.users.UpdateProfilePicturePayload
 import com.shapeup.api.services.users.UpdateProfilePictureStatement
 import com.shapeup.api.services.users.UpdateProfileStatement
 import com.shapeup.api.services.users.UserFieldPayload
+import com.shapeup.api.services.users.UserFieldStatement
 import com.shapeup.api.services.users.UserSearch
 import com.shapeup.api.services.users.getAllSearchUserDataMock
 import com.shapeup.api.services.users.getRankGlobalDataMock
@@ -226,6 +230,28 @@ class JourneyViewModel : ViewModel() {
         )
     }
 
+    private suspend fun updateSettings(data: UserFieldPayload): UserFieldStatement {
+        val usersApi = EUsersApi.create(sharedData)
+
+        val response = usersApi.updateUserField(data)
+
+        println(response)
+
+        if (response.status == HttpStatusCode.OK && response.data?.token != null) {
+            sharedData.save(SharedDataValues.JwtToken.value, response.data.token)
+            setupUser()
+
+            if (!data.email.isNullOrBlank()) {
+                sharedData.save(SharedDataValues.Email.value, data.email)
+            }
+            if (!data.password.isNullOrBlank()) {
+                sharedData.save(SharedDataValues.Password.value, data.password)
+            }
+        }
+
+        return response
+    }
+
     private fun sendMessage(messageText: String, friendUsername: String) {
         println("message: $messageText")
 
@@ -338,6 +364,50 @@ class JourneyViewModel : ViewModel() {
         return response
     }
 
+    private suspend fun deleteAccount(): DeleteByEmailStatement {
+        val usersApi = EUsersApi.create(sharedData)
+
+        val response = usersApi.deleteByEmail()
+
+        println(response)
+
+        return response
+    }
+
+    private suspend fun getAddressByZipCode(zipCode: String): GetAddressByZipCodeStatement {
+        val usersApi = EUsersApi.create(sharedData)
+
+        val response = usersApi.getAddressByZipCode(
+            GetAddressByZipCodePayload(
+                zipCode = zipCode
+            )
+        )
+
+        println(response)
+
+        return response
+    }
+
+    private suspend fun getAddress(): DeleteByEmailStatement {
+        val usersApi = EUsersApi.create(sharedData)
+
+        val response = usersApi.deleteByEmail()
+
+        println(response)
+
+        return response
+    }
+
+    private suspend fun updateAddress(zipCode: String): DeleteByEmailStatement {
+        val usersApi = EUsersApi.create(sharedData)
+
+        val response = usersApi.deleteByEmail()
+
+        println(response)
+
+        return response
+    }
+
     val handlers = JourneyHandlers(
         setupUser = ::setupUser,
         getAllFriendship = ::getAllFriendship,
@@ -348,6 +418,7 @@ class JourneyViewModel : ViewModel() {
         getUserRelationByUser = ::getUserRelationByUser,
         updateProfilePicture = ::updateProfilePicture,
         updateUserData = ::updateUserData,
+        updateSettings = ::updateSettings,
         sendMessage = ::sendMessage,
         getRank = ::getRank,
         searchUsers = ::searchUsers,
@@ -355,6 +426,8 @@ class JourneyViewModel : ViewModel() {
         acceptFriendshipRequest = ::acceptFriendshipRequest,
         deleteFriendshipRequest = ::deleteFriendshipRequest,
         deleteFriend = ::deleteFriend,
+        deleteAccount = ::deleteAccount,
+        getAddressByZipCode = ::getAddressByZipCode,
     )
 }
 
@@ -380,13 +453,16 @@ data class JourneyHandlers(
     val getUserRelationByUser: (user: UserSearch) -> EUserRelation,
     val updateProfilePicture: suspend (profilePicture: ProfilePicture) -> UpdateProfilePictureStatement,
     val updateUserData: suspend (newUserData: UserDataUpdate) -> UpdateProfileStatement,
+    val updateSettings: suspend (data: UserFieldPayload) -> UserFieldStatement,
     val sendMessage: (messageText: String, friendUsername: String) -> Unit,
     val getRank: suspend (type: RankType) -> GetRankStatement,
     val searchUsers: suspend (searchedUser: String) -> SearchUsersStatement,
     val requestFriendship: suspend (username: String) -> RequestFriendshipStatement,
     val acceptFriendshipRequest: suspend (username: String) -> AcceptFriendshipRequestStatement,
     val deleteFriendshipRequest: suspend (username: String) -> DeleteFriendshipRequestStatement,
-    val deleteFriend: suspend (username: String) -> DeleteFriendStatement
+    val deleteFriend: suspend (username: String) -> DeleteFriendStatement,
+    val deleteAccount: suspend () -> DeleteByEmailStatement,
+    val getAddressByZipCode: suspend (zipCode: String) -> GetAddressByZipCodeStatement
 )
 
 val journeyHandlersMock = JourneyHandlers(
@@ -428,6 +504,11 @@ val journeyHandlersMock = JourneyHandlers(
             userDataStatus = HttpStatusCode.OK
         )
     },
+    updateSettings = {
+        UserFieldStatement(
+            status = HttpStatusCode.OK
+        )
+    },
     sendMessage = { _, _ -> },
     getRank = {
         GetRankStatement(
@@ -458,6 +539,16 @@ val journeyHandlersMock = JourneyHandlers(
     },
     deleteFriend = {
         DeleteFriendStatement(
+            status = HttpStatusCode.OK
+        )
+    },
+    deleteAccount = {
+        DeleteByEmailStatement(
+            status = HttpStatusCode.OK
+        )
+    },
+    getAddressByZipCode = {
+        GetAddressByZipCodeStatement(
             status = HttpStatusCode.OK
         )
     }

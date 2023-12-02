@@ -16,8 +16,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -26,8 +32,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.shapeup.R
+import com.shapeup.api.services.users.UserFieldPayload
 import com.shapeup.ui.components.FormField
 import com.shapeup.ui.components.Header
+import com.shapeup.ui.components.Loading
+import com.shapeup.ui.components.SnackbarHelper
+import com.shapeup.ui.components.SnackbarType
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Icon
 import com.shapeup.ui.utils.helpers.Navigator
@@ -35,6 +45,8 @@ import com.shapeup.ui.viewModels.logged.JourneyData
 import com.shapeup.ui.viewModels.logged.JourneyHandlers
 import com.shapeup.ui.viewModels.logged.journeyDataMock
 import com.shapeup.ui.viewModels.logged.journeyHandlersMock
+import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnrememberedMutableState")
 @Preview
@@ -55,14 +67,55 @@ fun ChangeEmailScreen(
     journeyHandlers: JourneyHandlers,
     navigator: Navigator
 ) {
+    var isLoading by remember { mutableStateOf(false) }
+    var openSnackbar by remember { mutableStateOf(false) }
+    var snackbarMessage by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf(journeyData.userData.value.email) }
+    var emailError by remember { mutableStateOf("") }
+
+    val coroutine = rememberCoroutineScope()
+
+    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
+
+    fun updateEmail() {
+        coroutine.launch {
+            isLoading = true
+            val response = journeyHandlers.updateSettings(
+                UserFieldPayload(
+                    email = email
+                )
+            )
+            isLoading = false
+
+            when (response.status) {
+                HttpStatusCode.OK -> {
+                    navigator.navigateBack()
+                }
+
+                else -> {
+                    openSnackbar = true
+                    snackbarMessage = context.getString(R.string.txt_errors_generic)
+                }
+            }
+        }
+    }
+
+    fun validateEmail(): String {
+        emailError = when {
+            email.isBlank() -> context.getString(R.string.txt_errors_required)
+            !email.contains("@") -> context.getString(R.string.txt_errors_invalid_format)
+
+            else -> ""
+        }
+        return emailError
+    }
 
     BackHandler {
         navigator.navigateBack()
     }
 
     Column(
-
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
@@ -97,41 +150,45 @@ fun ChangeEmailScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 FormField(
+                    errorText = emailError,
                     focusManager = focusManager,
                     keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next,
-                        keyboardType = KeyboardType.Text
+                        imeAction = ImeAction.Done,
+                        keyboardType = KeyboardType.Email
                     ),
-                    label = (""),
+                    label = stringResource(R.string.txt_change_email_new_email),
+                    onValueChange = {
+                        email = it
+                        validateEmail()
+                    },
                     supportingText = null,
-                    value = stringResource(R.string.txt_change_email_check_email)
-                )
-
-                FormField(
-                    focusManager = focusManager,
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next,
-                        keyboardType = KeyboardType.Text
-                    ),
-                    label = (""),
-                    supportingText = null,
-                    value =  (stringResource(R.string.txt_change_email_new_email))
+                    value = email
                 )
             }
         }
 
         Button(
+            enabled = !isLoading && emailError.isBlank(),
             modifier = Modifier.fillMaxWidth(),
-            onClick = {
-                // * TO DO *\\
-            }
+            onClick = { updateEmail() }
         ) {
-            Text(
-                modifier = Modifier
-                    .padding(vertical = 12.dp),
-                style = MaterialTheme.typography.bodyLarge,
-                text = stringResource(R.string.txt_change_email_save_changes)
-            )
+            if (isLoading) {
+                Loading()
+            } else {
+                Text(
+                    modifier = Modifier
+                        .padding(vertical = 12.dp),
+                    style = MaterialTheme.typography.bodyLarge,
+                    text = stringResource(R.string.txt_change_email_save_changes)
+                )
+            }
         }
     }
+
+    SnackbarHelper(
+        message = snackbarMessage,
+        open = openSnackbar,
+        openSnackbar = { openSnackbar = it },
+        type = SnackbarType.ERROR
+    )
 }

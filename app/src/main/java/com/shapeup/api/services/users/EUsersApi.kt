@@ -14,6 +14,8 @@ interface EUsersApi {
     suspend fun updateProfilePicture(
         payload: UpdateProfilePicturePayload
     ): UpdateProfilePictureStatement
+    suspend fun getAddressByZipCode(payload: GetAddressByZipCodePayload): GetAddressByZipCodeStatement
+
 
     companion object {
         fun create(sharedData: SharedData): EUsersApi {

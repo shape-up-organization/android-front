@@ -1,6 +1,7 @@
 package com.shapeup.api.services.users
 
 import com.shapeup.ui.viewModels.logged.FriendshipStatus
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -51,4 +52,16 @@ data class FriendshipSearchStatus(
 data class UpdateProfilePictureResponse(
     val jwt: String,
     val pictureProfile: String
+)
+
+@Serializable
+data class GetAddressByZipCodeResponse(
+    @SerialName("logradouro")
+    val street: String,
+    @SerialName("bairro")
+    val district: String,
+    @SerialName("localidade")
+    val city: String,
+    @SerialName("uf")
+    val state: String,
 )

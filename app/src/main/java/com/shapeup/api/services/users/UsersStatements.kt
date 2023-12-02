@@ -42,8 +42,19 @@ data class UpdateProfileStatement(
     val userDataStatus: HttpStatusCode
 )
 
+data class UpdateSettingsStatement(
+    val content: String? = null,
+    val status: HttpStatusCode
+)
+
 data class UpdateProfilePictureStatement(
     val data: UpdateProfilePictureResponse? = null,
+    val content: String? = null,
+    val status: HttpStatusCode
+)
+
+data class GetAddressByZipCodeStatement(
+    val data: GetAddressByZipCodeResponse? = null,
     val content: String? = null,
     val status: HttpStatusCode
 )
