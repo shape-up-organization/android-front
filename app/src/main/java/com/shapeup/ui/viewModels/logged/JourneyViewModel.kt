@@ -26,6 +26,7 @@ import com.shapeup.api.services.users.GetRankPayload
 import com.shapeup.api.services.users.GetRankStatement
 import com.shapeup.api.services.users.GetUserPayload
 import com.shapeup.api.services.users.GetUserStatement
+import com.shapeup.api.services.users.GetUserXpStatement
 import com.shapeup.api.services.users.RankType
 import com.shapeup.api.services.users.SearchByFullNamePayload
 import com.shapeup.api.services.users.SearchByUsernamePayload
@@ -52,7 +53,7 @@ class JourneyViewModel : ViewModel() {
 
     val initialLoad = mutableStateOf(true)
     val friends = mutableStateOf<List<Friend>>(emptyList())
-    val userData = mutableStateOf(getUserDataEmpty)
+    var userData = mutableStateOf(getUserDataEmpty)
 
     private fun setupUser(partialData: UserDataPartial? = null) {
         val sharedJwtToken = sharedData.get(SharedDataValues.JwtToken.value)
@@ -76,6 +77,20 @@ class JourneyViewModel : ViewModel() {
                 xp = partialData?.xp ?: jwt.getClaim("xp").asInt() ?: 0
             )
         }
+    }
+
+    private suspend fun updateXp(): GetUserXpStatement {
+        val usersApi = EUsersApi.create(sharedData)
+
+        val response = usersApi.getUserXp()
+
+        println(response)
+
+        if (response.status == HttpStatusCode.OK && response.data != null) {
+            userData.value.xp = response.data
+        }
+
+        return response
     }
 
     private suspend fun getAllFriendship(): GetAllFriendshipStatement {
@@ -221,6 +236,7 @@ class JourneyViewModel : ViewModel() {
                     profilePicture = picResponse.data?.pictureProfile
                 )
             )
+            updateXp()
         }
 
 
@@ -240,6 +256,7 @@ class JourneyViewModel : ViewModel() {
         if (response.status == HttpStatusCode.OK && response.data?.token != null) {
             sharedData.save(SharedDataValues.JwtToken.value, response.data.token)
             setupUser()
+            updateXp()
 
             if (!data.email.isNullOrBlank()) {
                 sharedData.save(SharedDataValues.Email.value, data.email)
@@ -388,28 +405,9 @@ class JourneyViewModel : ViewModel() {
         return response
     }
 
-    private suspend fun getAddress(): DeleteByEmailStatement {
-        val usersApi = EUsersApi.create(sharedData)
-
-        val response = usersApi.deleteByEmail()
-
-        println(response)
-
-        return response
-    }
-
-    private suspend fun updateAddress(zipCode: String): DeleteByEmailStatement {
-        val usersApi = EUsersApi.create(sharedData)
-
-        val response = usersApi.deleteByEmail()
-
-        println(response)
-
-        return response
-    }
-
     val handlers = JourneyHandlers(
         setupUser = ::setupUser,
+        updateXp = ::updateXp,
         getAllFriendship = ::getAllFriendship,
         setupFriends = ::setupFriends,
         getFriendStatus = ::getFriendStatus,
@@ -445,6 +443,7 @@ val journeyDataMock = JourneyData(
 
 data class JourneyHandlers(
     val setupUser: () -> Unit,
+    val updateXp: suspend () -> GetUserXpStatement,
     val getAllFriendship: suspend () -> GetAllFriendshipStatement,
     val setupFriends: suspend (friendsList: List<FriendBase>?) -> List<Friend>,
     val getFriendStatus: (username: String) -> Boolean,
@@ -467,6 +466,11 @@ data class JourneyHandlers(
 
 val journeyHandlersMock = JourneyHandlers(
     setupUser = {},
+    updateXp = {
+        GetUserXpStatement(
+            status = HttpStatusCode.OK
+        )
+    },
     getAllFriendship = {
         GetAllFriendshipStatement(
             status = HttpStatusCode.OK
@@ -577,7 +581,7 @@ data class UserData(
     val password: String,
     val profilePicture: String? = null,
     val username: String,
-    val xp: Int
+    var xp: Int
 )
 
 data class UserDataPartial(

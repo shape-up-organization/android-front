@@ -119,6 +119,7 @@ fun PostScreen(
             navigator = navigator,
             postData = postData!!.post,
             postsHandlers = postsHandlers,
+            journeyHandlers = journeyHandlers,
             user = postData!!.user,
             userRelation = journeyHandlers.getUserRelationByUsername(username)
         )

@@ -235,6 +235,7 @@ fun ProfileScreen(
 
                         else -> {}
                     }
+                    journeyHandlers.updateXp()
                 }
 
                 HttpStatusCode.NoContent -> {
@@ -250,6 +251,7 @@ fun ProfileScreen(
 
                         else -> {}
                     }
+                    journeyHandlers.updateXp()
                 }
 
                 else -> {
@@ -275,6 +277,21 @@ fun ProfileScreen(
                     openSnackbar = true
                     snackbarMessage = context.getString(R.string.txt_errors_generic)
                 }
+            }
+        }
+    }
+
+    fun deletePost(postId: String) {
+        coroutine.launch {
+            loadingPosts = true
+
+            val response = postsHandlers.deletePost(postId)
+
+            if (response.status == HttpStatusCode.OK) {
+                getPosts()
+                journeyHandlers.updateXp()
+            } else {
+                loadingPosts = false
             }
         }
     }
@@ -692,9 +709,11 @@ fun ProfileScreen(
                         ) {
                             CardPost(
                                 compactPost = true,
+                                deletePost = { postId -> deletePost(postId) },
                                 navigator = navigator,
                                 postData = it,
                                 postsHandlers = postsHandlers,
+                                journeyHandlers = journeyHandlers,
                                 user = user!!,
                                 userRelation = userRelation
                             )

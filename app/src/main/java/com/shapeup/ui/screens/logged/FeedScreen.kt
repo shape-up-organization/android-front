@@ -175,6 +175,7 @@ fun FeedScreen(
 
             if (response.status == HttpStatusCode.OK) {
                 getPosts()
+                journeyHandlers.updateXp()
             } else {
                 loadingPosts = false
             }
@@ -304,6 +305,7 @@ fun FeedScreen(
                     navigator = navigator,
                     postData = it.post,
                     postsHandlers = postsHandlers,
+                    journeyHandlers = journeyHandlers,
                     user = it.user,
                     userRelation = journeyHandlers.getUserRelationByUsername(it.post.username)
                 )

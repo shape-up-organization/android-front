@@ -20,7 +20,7 @@ data class GetUserStatement(
 )
 
 data class GetUserXpStatement(
-    val data: Long? = null,
+    val data: Int? = null,
     val content: String? = null,
     val status: HttpStatusCode
 )

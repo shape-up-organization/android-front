@@ -56,10 +56,12 @@ import com.shapeup.ui.utils.helpers.Navigator
 import com.shapeup.ui.viewModels.logged.ETrainingPeriod
 import com.shapeup.ui.viewModels.logged.EUpdateTrainingType
 import com.shapeup.ui.viewModels.logged.JourneyData
+import com.shapeup.ui.viewModels.logged.JourneyHandlers
 import com.shapeup.ui.viewModels.logged.Training
 import com.shapeup.ui.viewModels.logged.TrainingsData
 import com.shapeup.ui.viewModels.logged.TrainingsHandlers
 import com.shapeup.ui.viewModels.logged.journeyDataMock
+import com.shapeup.ui.viewModels.logged.journeyHandlersMock
 import com.shapeup.ui.viewModels.logged.trainingsDataMock
 import com.shapeup.ui.viewModels.logged.trainingsHandlersMock
 import io.ktor.http.HttpStatusCode
@@ -74,6 +76,7 @@ fun TrainingsScreenPreview() {
     ShapeUpTheme {
         TrainingsScreen(
             journeyData = journeyDataMock,
+            journeyHandlers = journeyHandlersMock,
             navigator = Navigator(),
             trainingsData = trainingsDataMock,
             trainingsHandlers = trainingsHandlersMock
@@ -84,6 +87,7 @@ fun TrainingsScreenPreview() {
 @Composable
 fun TrainingsScreen(
     journeyData: JourneyData,
+    journeyHandlers: JourneyHandlers,
     navigator: Navigator,
     trainingsData: TrainingsData,
     trainingsHandlers: TrainingsHandlers
@@ -147,8 +151,14 @@ fun TrainingsScreen(
             )
 
             when (response.status) {
-                HttpStatusCode.OK -> openTrainingsListBottomSheet.value = false
-                HttpStatusCode.NoContent -> openTrainingsListBottomSheet.value = false
+                HttpStatusCode.OK -> {
+                    openTrainingsListBottomSheet.value = false
+                    journeyHandlers.updateXp()
+                }
+                HttpStatusCode.NoContent -> {
+                    openTrainingsListBottomSheet.value = false
+                    journeyHandlers.updateXp()
+                }
 
                 else -> {
                     openSnackbar = true
@@ -360,7 +370,7 @@ fun TrainingsScreen(
 
     SnackbarHelper(
         message = snackbarMessage,
-        open = true,
+        open = openSnackbar,
         openSnackbar = { openSnackbar = it },
         type = SnackbarType.ERROR
     )

@@ -44,8 +44,10 @@ import com.shapeup.ui.components.SnackbarType
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
+import com.shapeup.ui.viewModels.logged.JourneyHandlers
 import com.shapeup.ui.viewModels.logged.PostCreation
 import com.shapeup.ui.viewModels.logged.PostsHandlers
+import com.shapeup.ui.viewModels.logged.journeyHandlersMock
 import com.shapeup.ui.viewModels.logged.postsHandlersMock
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.launch
@@ -56,6 +58,7 @@ fun PostFilesScreenPreview() {
     ShapeUpTheme {
         PostFilesScreen(
             navigator = Navigator(),
+            journeyHandlers = journeyHandlersMock,
             postsHandlers = postsHandlersMock
         )
     }
@@ -64,6 +67,7 @@ fun PostFilesScreenPreview() {
 @Composable
 fun PostFilesScreen(
     navigator: Navigator,
+    journeyHandlers: JourneyHandlers,
     postsHandlers: PostsHandlers
 ) {
     var description by remember { mutableStateOf("") }
@@ -104,10 +108,12 @@ fun PostFilesScreen(
             when (response.status) {
                 HttpStatusCode.Created -> {
                     navigator.navigateClean(Screen.Feed)
+                    journeyHandlers.updateXp()
                 }
 
                 HttpStatusCode.OK -> {
                     navigator.navigateClean(Screen.Feed)
+                    journeyHandlers.updateXp()
                 }
 
                 else -> {

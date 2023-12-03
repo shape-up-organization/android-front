@@ -141,7 +141,7 @@ class UsersApi(
         return when (response?.status) {
             HttpStatusCode.OK -> {
                 return GetUserXpStatement(
-                    data = response.body<Long>(),
+                    data = response.body<Int>(),
                     status = response.status
                 )
             }

@@ -61,6 +61,7 @@ import com.shapeup.ui.utils.helpers.Navigator
 import com.shapeup.ui.utils.helpers.XPUtils
 import com.shapeup.ui.viewModels.logged.Comment
 import com.shapeup.ui.viewModels.logged.EUserRelation
+import com.shapeup.ui.viewModels.logged.JourneyHandlers
 import com.shapeup.ui.viewModels.logged.PostsHandlers
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.Dispatchers
@@ -75,6 +76,7 @@ fun CardPost(
     navigator: Navigator,
     postData: Post,
     postsHandlers: PostsHandlers,
+    journeyHandlers: JourneyHandlers,
     user: UserSearch,
     userRelation: EUserRelation
 ) {
@@ -110,7 +112,10 @@ fun CardPost(
             )
 
             when (response.status) {
-                HttpStatusCode.Created -> getComments()
+                HttpStatusCode.Created -> {
+                    getComments()
+                    journeyHandlers.updateXp()
+                }
 
                 else -> withContext(Dispatchers.IO) {
                     Thread.sleep(500)
@@ -143,6 +148,7 @@ fun CardPost(
                     likesQuantity -= 1
                 }
             }
+            journeyHandlers.updateXp()
         }
     }
 
@@ -477,7 +483,7 @@ fun CardPost(
                         )
                     },
                     modifier = Modifier.padding(0.dp),
-                    onClick = { /*TODO*/ },
+                    onClick = { deletePostLocal() },
                     shape = RoundedCornerShape(24.dp)
                 )
             }

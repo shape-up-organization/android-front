@@ -38,6 +38,7 @@ fun NavGraphBuilder.screenTrainings(
                 friends = journeyViewModel.friends,
                 userData = journeyViewModel.userData
             ),
+            journeyHandlers = journeyViewModel.handlers,
             navigator = navController.navigator,
             trainingsData = TrainingsData(
                 userTrainings = trainingViewModel.userTrainings

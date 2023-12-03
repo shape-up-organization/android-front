@@ -47,9 +47,9 @@ fun NavGraphBuilder.routeLogged(
 
         screenPost(navController)
 
-        screenPostText(navController)
+        screenPostText(navController, sharedData)
 
-        screenPostFiles(navController)
+        screenPostFiles(navController, sharedData)
 
         screenProfile(navController)
 
