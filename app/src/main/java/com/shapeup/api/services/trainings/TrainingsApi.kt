@@ -3,6 +3,8 @@ package com.shapeup.api.services.trainings
 import com.shapeup.api.utils.constants.BASE_URL
 import com.shapeup.api.utils.constants.SharedDataValues
 import com.shapeup.api.utils.helpers.SharedData
+import com.shapeup.ui.viewModels.logged.Training
+import com.shapeup.ui.viewModels.logged.UserTrainingDay
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
@@ -19,7 +21,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 
-class TrainingsApi (
+class TrainingsApi(
     val client: HttpClient,
     private val sharedData: SharedData
 ) : ETrainingsApi {
@@ -44,7 +46,7 @@ class TrainingsApi (
         return when (response?.status) {
             HttpStatusCode.OK -> {
                 return SearchTrainingsStatement(
-                    data = response.body<List<Training>>(),
+                    data = response.body<List<TrainingResponse>>(),
                     status = response.status
                 )
             }
@@ -78,7 +80,7 @@ class TrainingsApi (
         return when (response?.status) {
             HttpStatusCode.OK -> {
                 return SearchTrainingsByCategoryStatement(
-                    data = response.body<List<Training>>(),
+                    data = response.body<List<TrainingResponse>>(),
                     status = response.status
                 )
             }
@@ -92,8 +94,7 @@ class TrainingsApi (
         }
     }
 
-    override suspend fun searchTrainingByUserId(
-    ): SearchTrainingsByUserIdStatement {
+    override suspend fun getUserTrainings(): GetUserTrainingsStatement {
         var response: HttpResponse? = null
 
         try {
@@ -110,14 +111,14 @@ class TrainingsApi (
 
         return when (response?.status) {
             HttpStatusCode.OK -> {
-                return SearchTrainingsByUserIdStatement(
-                    data = response.body<List<TrainingByUserId>>(),
+                return GetUserTrainingsStatement(
+                    data = response.body<List<UserTrainingDay>>(),
                     status = response.status
                 )
             }
 
             else -> {
-                SearchTrainingsByUserIdStatement(
+                GetUserTrainingsStatement(
                     content = response?.bodyAsText(),
                     status = response?.status ?: HttpStatusCode.ServiceUnavailable
                 )
@@ -125,9 +126,7 @@ class TrainingsApi (
         }
     }
 
-    override suspend fun addTraining(
-        payload: AddTrainingsPayload
-    ): AddTrainingsStatement {
+    override suspend fun addTraining(payload: AddTrainingsPayload): GenericTrainingUpdateStatement {
         var response: HttpResponse? = null
 
         try {
@@ -143,26 +142,13 @@ class TrainingsApi (
             println("ERROR: Timeout or Service Unavailable")
         }
 
-        return when (response?.status) {
-            HttpStatusCode.OK -> {
-                return AddTrainingsStatement(
-                    data = response.body<AddTraining>(),
-                    status = response.status
-                )
-            }
-
-            else -> {
-                AddTrainingsStatement(
-                    content = response?.bodyAsText(),
-                    status = response?.status ?: HttpStatusCode.ServiceUnavailable
-                )
-            }
-        }
+        return GenericTrainingUpdateStatement(
+            content = response?.bodyAsText(),
+            status = response?.status ?: HttpStatusCode.ServiceUnavailable
+        )
     }
 
-    override suspend fun deleteTraining(
-        payload: DeleteTrainingPayload
-    ): DeleteTrainingStatement {
+    override suspend fun deleteTraining(payload: DeleteTrainingPayload): GenericTrainingUpdateStatement {
         var response: HttpResponse? = null
 
         try {
@@ -178,15 +164,13 @@ class TrainingsApi (
             println("ERROR: Timeout or Service Unavailable")
         }
 
-        return DeleteTrainingStatement(
+        return GenericTrainingUpdateStatement(
             content = response?.bodyAsText(),
             status = response?.status ?: HttpStatusCode.ServiceUnavailable
         )
     }
 
-    override suspend fun finishTraining(
-        payload: FinishTrainingPayload
-    ): FinishTrainingStatement {
+    override suspend fun finishTraining(payload: FinishTrainingPayload): GenericTrainingUpdateStatement {
         var response: HttpResponse? = null
 
         try {
@@ -202,25 +186,13 @@ class TrainingsApi (
             println("ERROR: Timeout or Service Unavailable")
         }
 
-        return when (response?.status) {
-            HttpStatusCode.OK -> {
-                return FinishTrainingStatement(
-                    data = response.body<FinishTraining>(),
-                    status = response.status
-                )
-            }
-
-            else -> {
-                FinishTrainingStatement(
-                    content = response?.bodyAsText(),
-                    status = response?.status ?: HttpStatusCode.ServiceUnavailable
-                )
-            }
-        }
+        return GenericTrainingUpdateStatement(
+            content = response?.bodyAsText(),
+            status = response?.status ?: HttpStatusCode.ServiceUnavailable
+        )
     }
 
-    override suspend fun getTrainings(
-    ): GetTrainingsStatement {
+    override suspend fun getTrainings(): GetTrainingsStatement {
         var response: HttpResponse? = null
 
         try {
@@ -252,9 +224,7 @@ class TrainingsApi (
         }
     }
 
-    override suspend fun updateTraining(
-        payload: UpdateTrainingPayload
-    ): UpdateTrainingStatement {
+    override suspend fun updateTraining(payload: UpdateTrainingPayload): UpdateTrainingStatement {
         var response: HttpResponse? = null
 
         try {

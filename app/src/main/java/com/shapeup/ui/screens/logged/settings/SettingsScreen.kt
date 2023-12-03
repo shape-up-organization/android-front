@@ -10,6 +10,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -19,29 +20,22 @@ import com.shapeup.ui.components.RowSettings
 import com.shapeup.ui.theme.ShapeUpTheme
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.Navigator
-import com.shapeup.ui.viewModels.logged.JourneyData
-import com.shapeup.ui.viewModels.logged.JourneyHandlers
-import com.shapeup.ui.viewModels.logged.journeyDataMock
-import com.shapeup.ui.viewModels.logged.journeyHandlersMock
+import com.shapeup.ui.utils.helpers.openWebpage
 
 @Composable
 @Preview
 fun SettingsScreenPreview() {
     ShapeUpTheme {
         SettingsScreen(
-            journeyData = journeyDataMock,
-            journeyHandlers = journeyHandlersMock,
             navigator = Navigator()
         )
     }
 }
 
 @Composable
-fun SettingsScreen(
-    journeyData: JourneyData,
-    journeyHandlers: JourneyHandlers,
-    navigator: Navigator
-) {
+fun SettingsScreen(navigator: Navigator) {
+    val context = LocalContext.current
+
     BackHandler {
         navigator.navigateBack()
     }
@@ -75,19 +69,8 @@ fun SettingsScreen(
             )
 
             RowSettings(
-                text =  stringResource(R.string.txt_settings_help),
-                screen = { navigator.navigate(Screen.AccountCenter) }
-            )
-
-            Divider(
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .fillMaxWidth(),
-                thickness = 1.dp
-            )
-
-            RowSettings(text =  stringResource(R.string.txt_settings_about),
-                screen = { navigator.navigate(Screen.AccountCenter) }
+                text = stringResource(R.string.txt_settings_help),
+                screen = { openWebpage(context, "https://shape-app.vercel.app/help") }
             )
 
             Divider(

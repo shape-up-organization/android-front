@@ -9,7 +9,7 @@ import com.shapeup.ui.screens.logged.settings.AccountCenterScreen
 import com.shapeup.ui.utils.constants.Screen
 import com.shapeup.ui.utils.helpers.navigator
 import com.shapeup.ui.utils.helpers.viewModel
-import com.shapeup.ui.viewModels.logged.JourneyData
+import com.shapeup.ui.viewModels.auth.AuthViewModel
 import com.shapeup.ui.viewModels.logged.JourneyViewModel
 
 fun NavGraphBuilder.screenAccountCenter(navController: NavHostController) {
@@ -20,14 +20,11 @@ fun NavGraphBuilder.screenAccountCenter(navController: NavHostController) {
         exitTransition = { ExitTransition.None },
         popExitTransition = { ExitTransition.None }
     ) {
+        val authViewModel = it.viewModel<AuthViewModel>(navController)
         val journeyViewModel = it.viewModel<JourneyViewModel>(navController)
 
         AccountCenterScreen(
-            journeyData = JourneyData(
-                initialLoad = journeyViewModel.initialLoad,
-                friends = journeyViewModel.friends,
-                userData = journeyViewModel.userData
-            ),
+            authHandlers = authViewModel.handlers,
             journeyHandlers = journeyViewModel.handlers,
             navigator = navController.navigator
         )

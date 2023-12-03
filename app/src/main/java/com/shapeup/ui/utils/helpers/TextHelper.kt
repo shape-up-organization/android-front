@@ -11,3 +11,14 @@ data class TextHelper(
     val paddingTop: Int? = null,
     val paddingEnd: Int? = null
 )
+
+fun toZipCodeMask(input: String): String {
+    val maxDigits = 8
+    val digitsOnly = input.replace(Regex("\\D"), "")
+    val truncatedDigits = digitsOnly.take(maxDigits)
+
+    return when {
+        truncatedDigits.length <= 5 -> truncatedDigits
+        else -> "${truncatedDigits.substring(0, 5)}-${truncatedDigits.substring(5)}"
+    }
+}

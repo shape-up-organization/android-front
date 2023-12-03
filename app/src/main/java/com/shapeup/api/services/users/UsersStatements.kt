@@ -20,7 +20,7 @@ data class GetUserStatement(
 )
 
 data class GetUserXpStatement(
-    val data: Long? = null,
+    val data: Int? = null,
     val content: String? = null,
     val status: HttpStatusCode
 )
@@ -32,7 +32,29 @@ data class SearchUsersStatement(
 )
 
 data class UserFieldStatement(
-    val data: List<UserFieldUpdate>? = null,
+    val data: UserFieldUpdate? = null,
+    val content: String? = null,
+    val status: HttpStatusCode
+)
+
+data class UpdateProfileStatement(
+    val pictureStatus: HttpStatusCode,
+    val userDataStatus: HttpStatusCode
+)
+
+data class UpdateSettingsStatement(
+    val content: String? = null,
+    val status: HttpStatusCode
+)
+
+data class UpdateProfilePictureStatement(
+    val data: UpdateProfilePictureResponse? = null,
+    val content: String? = null,
+    val status: HttpStatusCode
+)
+
+data class GetAddressByZipCodeStatement(
+    val data: GetAddressByZipCodeResponse? = null,
     val content: String? = null,
     val status: HttpStatusCode
 )

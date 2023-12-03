@@ -18,7 +18,7 @@ import com.shapeup.R
 import com.shapeup.ui.utils.constants.Icon
 
 @Composable
-fun RowSettings(text: String, screen : () -> Unit) {
+fun RowSettings(text: String, screen: () -> Unit) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
@@ -26,9 +26,12 @@ fun RowSettings(text: String, screen : () -> Unit) {
             .height(88.dp)
             .padding(all = 32.dp)
     ) {
-        Text(text = text)
+        Text(
+            color = MaterialTheme.colorScheme.onBackground,
+            text = text
+        )
 
-        IconButton(onClick = screen ) {
+        IconButton(onClick = screen) {
             Icon(
                 contentDescription = stringResource(R.string.icon_arrow_forward),
                 painter = painterResource(id = Icon.ArrowForward.value),

@@ -24,14 +24,22 @@ data class SearchByFullNamePayload(
 
 @Serializable
 data class UserFieldPayload(
-    val email: String,
-    val name: String,
-    val lastName: String,
-    val cellPhone: String,
-    val birth: String,
-    val biography: String,
-    val username: String,
-    val password: String,
+    val email: String? = null,
+    val name: String? = null,
+    val lastName: String? = null,
+    val cellPhone: String? = null,
+    val birth: String? = null,
+    val biography: String? = null,
+    val username: String? = null,
+    val password: String? = null,
+)
+
+data class UpdateProfilePicturePayload(
+    val file: List<ByteArray?>
+)
+
+data class GetAddressByZipCodePayload(
+    val zipCode: String
 )
 
 enum class RankType(val value: String) {

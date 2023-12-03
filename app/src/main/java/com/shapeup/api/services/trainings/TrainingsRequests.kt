@@ -1,6 +1,8 @@
 package com.shapeup.api.services.trainings
 
+import com.shapeup.ui.viewModels.logged.ETrainingPeriod
 import kotlinx.serialization.Serializable
+import java.time.DayOfWeek
 
 @Serializable
 data class SearchTrainingsPayload(
@@ -14,22 +16,22 @@ data class SearchTrainingsByCategoryPayload(
 
 @Serializable
 data class AddTrainingsPayload(
-    val dayOfWeek: String,
-    val period: String,
+    val dayOfWeek: DayOfWeek,
+    val period: ETrainingPeriod,
     val trainingId: String
 )
 
 @Serializable
 data class DeleteTrainingPayload(
-    val dayOfWeek: String,
-    val period: String,
+    val dayOfWeek: DayOfWeek,
+    val period: ETrainingPeriod,
     val trainingId: String
 )
 
 @Serializable
 data class FinishTrainingPayload(
-    val dayOfWeek: String,
-    val period: String,
+    val dayOfWeek: DayOfWeek,
+    val period: ETrainingPeriod,
     val trainingId: String
 )
 

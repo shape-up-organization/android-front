@@ -5,6 +5,7 @@ import com.shapeup.api.utils.helpers.SharedData
 
 interface EPostsApi {
     suspend fun getPostsPaginated(payload: GetPostsPaginatedPayload): GetPostsPaginatedStatement
+    suspend fun getPostsByUsername(payload: GetPostsByUsernamePayload): GetPostsPaginatedStatement
 
     suspend fun getPostById(payload: GetPostByIdPayload): GetPostByIdStatement
     suspend fun getCommentsByPostId(

@@ -18,15 +18,24 @@ import com.shapeup.api.services.friends.RequestFriendshipPayload
 import com.shapeup.api.services.friends.RequestFriendshipStatement
 import com.shapeup.api.services.friends.getAllFriendshipMock
 import com.shapeup.api.services.friends.getFriendsMessagesMock
+import com.shapeup.api.services.users.DeleteByEmailStatement
 import com.shapeup.api.services.users.EUsersApi
+import com.shapeup.api.services.users.GetAddressByZipCodePayload
+import com.shapeup.api.services.users.GetAddressByZipCodeStatement
 import com.shapeup.api.services.users.GetRankPayload
 import com.shapeup.api.services.users.GetRankStatement
 import com.shapeup.api.services.users.GetUserPayload
 import com.shapeup.api.services.users.GetUserStatement
+import com.shapeup.api.services.users.GetUserXpStatement
 import com.shapeup.api.services.users.RankType
 import com.shapeup.api.services.users.SearchByFullNamePayload
 import com.shapeup.api.services.users.SearchByUsernamePayload
 import com.shapeup.api.services.users.SearchUsersStatement
+import com.shapeup.api.services.users.UpdateProfilePicturePayload
+import com.shapeup.api.services.users.UpdateProfilePictureStatement
+import com.shapeup.api.services.users.UpdateProfileStatement
+import com.shapeup.api.services.users.UserFieldPayload
+import com.shapeup.api.services.users.UserFieldStatement
 import com.shapeup.api.services.users.UserSearch
 import com.shapeup.api.services.users.getAllSearchUserDataMock
 import com.shapeup.api.services.users.getRankGlobalDataMock
@@ -44,28 +53,44 @@ class JourneyViewModel : ViewModel() {
 
     val initialLoad = mutableStateOf(true)
     val friends = mutableStateOf<List<Friend>>(emptyList())
-    val userData = mutableStateOf(getUserDataEmpty)
+    var userData = mutableStateOf(getUserDataEmpty)
 
-    private fun setupUser() {
+    private fun setupUser(partialData: UserDataPartial? = null) {
         val sharedJwtToken = sharedData.get(SharedDataValues.JwtToken.value)
 
         if (!sharedJwtToken.isNullOrBlank()) {
             val jwt = JWT(sharedJwtToken)
 
             userData.value = UserData(
-                biography = jwt.getClaim("biography").asString() ?: "",
-                birth = jwt.getClaim("birth").asString() ?: "",
-                cellPhone = jwt.getClaim("cellPhone").asString() ?: "",
-                email = sharedData.get(SharedDataValues.Email.value) ?: "",
-                firstName = jwt.getClaim("name").asString() ?: "",
-                id = jwt.getClaim("id").asString() ?: "",
-                lastName = jwt.getClaim("lastName").asString() ?: "",
-                password = sharedData.get(SharedDataValues.Password.value) ?: "",
-                profilePicture = jwt.getClaim("profilePicture").asString(),
-                username = jwt.getClaim("username").asString() ?: "",
-                xp = jwt.getClaim("xp").asInt() ?: 0
+                biography = partialData?.biography ?: jwt.getClaim("biography").asString() ?: "",
+                birth = partialData?.birth ?: jwt.getClaim("birth").asString() ?: "",
+                cellPhone = partialData?.cellPhone ?: jwt.getClaim("cellPhone").asString() ?: "",
+                email = partialData?.email ?: sharedData.get(SharedDataValues.Email.value) ?: "",
+                firstName = partialData?.firstName ?: jwt.getClaim("name").asString() ?: "",
+                id = partialData?.id ?: jwt.getClaim("id").asString() ?: "",
+                lastName = partialData?.lastName ?: jwt.getClaim("lastName").asString() ?: "",
+                password = partialData?.password ?: sharedData.get(SharedDataValues.Password.value)
+                ?: "",
+                profilePicture = partialData?.profilePicture ?: jwt.getClaim("profilePicture")
+                    .asString(),
+                username = partialData?.username ?: jwt.getClaim("username").asString() ?: "",
+                xp = partialData?.xp ?: jwt.getClaim("xp").asInt() ?: 0
             )
         }
+    }
+
+    private suspend fun updateXp(): GetUserXpStatement {
+        val usersApi = EUsersApi.create(sharedData)
+
+        val response = usersApi.getUserXp()
+
+        println(response)
+
+        if (response.status == HttpStatusCode.OK && response.data != null) {
+            userData.value.xp = response.data
+        }
+
+        return response
     }
 
     private suspend fun getAllFriendship(): GetAllFriendshipStatement {
@@ -158,23 +183,90 @@ class JourneyViewModel : ViewModel() {
         return EUserRelation.NON_FRIEND
     }
 
-    private fun updateProfilePicture(profilePicture: Uri) {
-        println("profilePicture $profilePicture")
+    private suspend fun updateProfilePicture(
+        profilePicture: ProfilePicture
+    ): UpdateProfilePictureStatement {
+        val userPic =
+            if (userData.value.profilePicture.isNullOrBlank())
+                userData.value.profilePicture
+            else Uri.parse(
+                userData.value.profilePicture
+            )
 
-        if (Uri.parse(userData.value.profilePicture) != profilePicture) {
-            println("UPDATE PROFILE PICTURE!")
-        } else {
-            println("DO NOT UPDATE PROFILE PICTURE!")
+        if (profilePicture.uri != null && userPic != profilePicture.uri) {
+            val usersApi = EUsersApi.create(sharedData)
+
+            val response = usersApi.updateProfilePicture(
+                UpdateProfilePicturePayload(
+                    file = listOf(profilePicture.byteArray),
+                )
+            )
+
+            println(response)
+
+            return response
+
         }
+
+        return UpdateProfilePictureStatement(
+            status = HttpStatusCode.NotModified
+        )
     }
 
-    private fun updateUserData(newUserData: UserDataUpdate) {
-        updateProfilePicture(newUserData.profilePicture)
+    private suspend fun updateUserData(newUserData: UserDataUpdate): UpdateProfileStatement {
+        val picResponse = updateProfilePicture(newUserData.profilePicture)
 
-        println("firstName ${newUserData.firstName}")
-        println("lastName ${newUserData.lastName}")
-        println("username ${newUserData.username}")
-        println("bio ${newUserData.bio}")
+        val usersApi = EUsersApi.create(sharedData)
+
+        val response = usersApi.updateUserField(
+            UserFieldPayload(
+                biography = newUserData.bio,
+                name = newUserData.firstName,
+                lastName = newUserData.lastName,
+                username = newUserData.username,
+            )
+        )
+
+        println(response)
+
+        if (response.status == HttpStatusCode.OK && response.data?.token != null) {
+            sharedData.save(SharedDataValues.JwtToken.value, response.data.token)
+            setupUser(
+                UserDataPartial(
+                    profilePicture = picResponse.data?.pictureProfile
+                )
+            )
+            updateXp()
+        }
+
+
+        return UpdateProfileStatement(
+            pictureStatus = picResponse.status,
+            userDataStatus = response.status
+        )
+    }
+
+    private suspend fun updateSettings(data: UserFieldPayload): UserFieldStatement {
+        val usersApi = EUsersApi.create(sharedData)
+
+        val response = usersApi.updateUserField(data)
+
+        println(response)
+
+        if (response.status == HttpStatusCode.OK && response.data?.token != null) {
+            sharedData.save(SharedDataValues.JwtToken.value, response.data.token)
+            setupUser()
+            updateXp()
+
+            if (!data.email.isNullOrBlank()) {
+                sharedData.save(SharedDataValues.Email.value, data.email)
+            }
+            if (!data.password.isNullOrBlank()) {
+                sharedData.save(SharedDataValues.Password.value, data.password)
+            }
+        }
+
+        return response
     }
 
     private fun sendMessage(messageText: String, friendUsername: String) {
@@ -289,8 +381,33 @@ class JourneyViewModel : ViewModel() {
         return response
     }
 
+    private suspend fun deleteAccount(): DeleteByEmailStatement {
+        val usersApi = EUsersApi.create(sharedData)
+
+        val response = usersApi.deleteByEmail()
+
+        println(response)
+
+        return response
+    }
+
+    private suspend fun getAddressByZipCode(zipCode: String): GetAddressByZipCodeStatement {
+        val usersApi = EUsersApi.create(sharedData)
+
+        val response = usersApi.getAddressByZipCode(
+            GetAddressByZipCodePayload(
+                zipCode = zipCode
+            )
+        )
+
+        println(response)
+
+        return response
+    }
+
     val handlers = JourneyHandlers(
         setupUser = ::setupUser,
+        updateXp = ::updateXp,
         getAllFriendship = ::getAllFriendship,
         setupFriends = ::setupFriends,
         getFriendStatus = ::getFriendStatus,
@@ -299,6 +416,7 @@ class JourneyViewModel : ViewModel() {
         getUserRelationByUser = ::getUserRelationByUser,
         updateProfilePicture = ::updateProfilePicture,
         updateUserData = ::updateUserData,
+        updateSettings = ::updateSettings,
         sendMessage = ::sendMessage,
         getRank = ::getRank,
         searchUsers = ::searchUsers,
@@ -306,6 +424,8 @@ class JourneyViewModel : ViewModel() {
         acceptFriendshipRequest = ::acceptFriendshipRequest,
         deleteFriendshipRequest = ::deleteFriendshipRequest,
         deleteFriend = ::deleteFriend,
+        deleteAccount = ::deleteAccount,
+        getAddressByZipCode = ::getAddressByZipCode,
     )
 }
 
@@ -323,25 +443,34 @@ val journeyDataMock = JourneyData(
 
 data class JourneyHandlers(
     val setupUser: () -> Unit,
+    val updateXp: suspend () -> GetUserXpStatement,
     val getAllFriendship: suspend () -> GetAllFriendshipStatement,
     val setupFriends: suspend (friendsList: List<FriendBase>?) -> List<Friend>,
     val getFriendStatus: (username: String) -> Boolean,
     val getUser: suspend (username: String) -> GetUserStatement,
     val getUserRelationByUsername: (username: String) -> EUserRelation,
     val getUserRelationByUser: (user: UserSearch) -> EUserRelation,
-    val updateProfilePicture: (profilePicture: Uri) -> Unit,
-    val updateUserData: (newUserData: UserDataUpdate) -> Unit,
+    val updateProfilePicture: suspend (profilePicture: ProfilePicture) -> UpdateProfilePictureStatement,
+    val updateUserData: suspend (newUserData: UserDataUpdate) -> UpdateProfileStatement,
+    val updateSettings: suspend (data: UserFieldPayload) -> UserFieldStatement,
     val sendMessage: (messageText: String, friendUsername: String) -> Unit,
     val getRank: suspend (type: RankType) -> GetRankStatement,
     val searchUsers: suspend (searchedUser: String) -> SearchUsersStatement,
     val requestFriendship: suspend (username: String) -> RequestFriendshipStatement,
     val acceptFriendshipRequest: suspend (username: String) -> AcceptFriendshipRequestStatement,
     val deleteFriendshipRequest: suspend (username: String) -> DeleteFriendshipRequestStatement,
-    val deleteFriend: suspend (username: String) -> DeleteFriendStatement
+    val deleteFriend: suspend (username: String) -> DeleteFriendStatement,
+    val deleteAccount: suspend () -> DeleteByEmailStatement,
+    val getAddressByZipCode: suspend (zipCode: String) -> GetAddressByZipCodeStatement
 )
 
 val journeyHandlersMock = JourneyHandlers(
     setupUser = {},
+    updateXp = {
+        GetUserXpStatement(
+            status = HttpStatusCode.OK
+        )
+    },
     getAllFriendship = {
         GetAllFriendshipStatement(
             status = HttpStatusCode.OK
@@ -368,8 +497,22 @@ val journeyHandlersMock = JourneyHandlers(
     },
     getUserRelationByUsername = { EUserRelation.USER },
     getUserRelationByUser = { EUserRelation.USER },
-    updateProfilePicture = {},
-    updateUserData = {},
+    updateProfilePicture = {
+        UpdateProfilePictureStatement(
+            status = HttpStatusCode.OK
+        )
+    },
+    updateUserData = {
+        UpdateProfileStatement(
+            pictureStatus = HttpStatusCode.NotModified,
+            userDataStatus = HttpStatusCode.OK
+        )
+    },
+    updateSettings = {
+        UserFieldStatement(
+            status = HttpStatusCode.OK
+        )
+    },
     sendMessage = { _, _ -> },
     getRank = {
         GetRankStatement(
@@ -402,6 +545,16 @@ val journeyHandlersMock = JourneyHandlers(
         DeleteFriendStatement(
             status = HttpStatusCode.OK
         )
+    },
+    deleteAccount = {
+        DeleteByEmailStatement(
+            status = HttpStatusCode.OK
+        )
+    },
+    getAddressByZipCode = {
+        GetAddressByZipCodeStatement(
+            status = HttpStatusCode.OK
+        )
     }
 )
 
@@ -428,14 +581,33 @@ data class UserData(
     val password: String,
     val profilePicture: String? = null,
     val username: String,
-    val xp: Int
+    var xp: Int
+)
+
+data class UserDataPartial(
+    val biography: String? = null,
+    val birth: String? = null,
+    val cellPhone: String? = null,
+    val email: String? = null,
+    val firstName: String? = null,
+    val id: String? = null,
+    val lastName: String? = null,
+    val password: String? = null,
+    val profilePicture: String? = null,
+    val username: String? = null,
+    val xp: Int? = null
+)
+
+data class ProfilePicture(
+    val uri: Uri? = null,
+    val byteArray: ByteArray?
 )
 
 data class UserDataUpdate(
-    val bio: String? = "",
+    val bio: String? = null,
     val firstName: String,
     val lastName: String,
-    val profilePicture: Uri,
+    val profilePicture: ProfilePicture,
     val username: String
 )
 
@@ -474,6 +646,7 @@ object JourneyMappers {
 
     val userDataToUserSearch: (userData: UserData) -> UserSearch = {
         UserSearch(
+            biography = it.biography,
             firstName = it.firstName,
             lastName = it.lastName,
             profilePicture = it.profilePicture,

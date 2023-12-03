@@ -11,6 +11,11 @@ interface EUsersApi {
     suspend fun searchUsersByUsername(payload: SearchByUsernamePayload): SearchUsersStatement
     suspend fun searchUsersByFullName(payload: SearchByFullNamePayload): SearchUsersStatement
     suspend fun updateUserField(payload: UserFieldPayload): UserFieldStatement
+    suspend fun updateProfilePicture(
+        payload: UpdateProfilePicturePayload
+    ): UpdateProfilePictureStatement
+    suspend fun getAddressByZipCode(payload: GetAddressByZipCodePayload): GetAddressByZipCodeStatement
+
 
     companion object {
         fun create(sharedData: SharedData): EUsersApi {
