@@ -10,19 +10,19 @@ interface ETrainingsApi {
         payload: SearchTrainingsByCategoryPayload
     ): SearchTrainingsByCategoryStatement
 
-    suspend fun searchTrainingByUserId(): SearchTrainingsByUserIdStatement
+    suspend fun getUserTrainings(): GetUserTrainingsStatement
 
     suspend fun addTraining(
         payload: AddTrainingsPayload
-    ): AddTrainingsStatement
+    ): GenericTrainingUpdateStatement
 
     suspend fun deleteTraining(
         payload: DeleteTrainingPayload
-    ): DeleteTrainingStatement
+    ): GenericTrainingUpdateStatement
 
     suspend fun finishTraining(
         payload: FinishTrainingPayload
-    ): FinishTrainingStatement
+    ): GenericTrainingUpdateStatement
 
     suspend fun getTrainings(): GetTrainingsStatement
 

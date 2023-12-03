@@ -1,21 +1,28 @@
 package com.shapeup.api.services.trainings
 
+import com.shapeup.ui.viewModels.logged.Training
+import com.shapeup.ui.viewModels.logged.UserTrainingDay
 import io.ktor.http.HttpStatusCode
 
 data class SearchTrainingsStatement(
-    val data: List<Training>? = null,
+    val data: List<TrainingResponse>? = null,
     val content: String? = null,
     val status: HttpStatusCode
 )
 
 data class SearchTrainingsByCategoryStatement(
-    val data: List<Training>? = null,
+    val data: List<TrainingResponse>? = null,
     val content: String? = null,
     val status: HttpStatusCode
 )
 
-data class SearchTrainingsByUserIdStatement(
-    val data: List<TrainingByUserId>? = null,
+data class GetUserTrainingsStatement(
+    val data: List<UserTrainingDay>? = null,
+    val content: String? = null,
+    val status: HttpStatusCode
+)
+
+data class GenericTrainingUpdateStatement(
     val content: String? = null,
     val status: HttpStatusCode
 )

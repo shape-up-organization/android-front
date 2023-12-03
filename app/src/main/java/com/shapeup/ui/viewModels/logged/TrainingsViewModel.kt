@@ -6,11 +6,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.shapeup.R
+import com.shapeup.api.services.trainings.AddTrainingsPayload
+import com.shapeup.api.services.trainings.DeleteTrainingPayload
 import com.shapeup.api.services.trainings.ETrainingsApi
-import com.shapeup.api.services.trainings.getTrainingsMock
-import com.shapeup.api.services.trainings.getUserTrainingsMock
+import com.shapeup.api.services.trainings.FinishTrainingPayload
+import com.shapeup.api.services.trainings.GenericTrainingUpdateStatement
+import com.shapeup.api.services.trainings.GetTrainingsStatement
+import com.shapeup.api.services.trainings.GetUserTrainingsStatement
 import com.shapeup.api.utils.helpers.SharedData
 import com.shapeup.ui.utils.helpers.Navigator
+import io.ktor.http.HttpStatusCode
+import kotlinx.serialization.Serializable
 import java.time.DayOfWeek
 
 class TrainingsViewModel : ViewModel() {
@@ -19,32 +25,73 @@ class TrainingsViewModel : ViewModel() {
 
     val userTrainings = mutableStateOf<List<UserTrainingDay>>(emptyList())
 
-    private fun getUserTrainings(): List<UserTrainingDay> {
-        // TODO: implement getUserTrainings from service
-        userTrainings.value = getUserTrainingsMock
-        return userTrainings.value
+    private suspend fun getUserTrainings(): GetUserTrainingsStatement {
+        val trainingsApi = ETrainingsApi.create(sharedData)
+
+        val response = trainingsApi.getUserTrainings()
+
+        println(response)
+
+        if (response.status == HttpStatusCode.OK && response.data != null) {
+            userTrainings.value = response.data
+        }
+
+        return response
     }
 
-    private suspend fun getTrainingsPacks(): List<Training> {
+    private suspend fun getTrainingsPacks(): GetTrainingsStatement {
         val trainingsApi = ETrainingsApi.create(sharedData)
 
         val response = trainingsApi.getTrainings()
 
         println(response)
 
-        // TODO: implement getTrainings from service
-        return getTrainingsMock
+        return response
     }
 
-    private fun updateTraining(
+    private suspend fun updateTraining(
+        trainingId: String,
         dayOfWeek: DayOfWeek,
-        trainingPeriod: UserTrainingPeriod,
+        trainingPeriod: ETrainingPeriod,
         type: EUpdateTrainingType
-    ) {
-        println("update type: ${type.name}")
-        println("dayOfWeek: $dayOfWeek")
-        println("period: ${trainingPeriod.period.name}")
-        println("trainingId: ${trainingPeriod.training.id}")
+    ): GenericTrainingUpdateStatement {
+        val trainingsApi = ETrainingsApi.create(sharedData)
+
+        println("type: $type")
+
+        val response = when (type) {
+            EUpdateTrainingType.ADD -> trainingsApi.addTraining(
+                AddTrainingsPayload(
+                    dayOfWeek = dayOfWeek,
+                    period = trainingPeriod,
+                    trainingId = trainingId
+                )
+            )
+
+            EUpdateTrainingType.CHECK -> trainingsApi.finishTraining(
+                FinishTrainingPayload(
+                    dayOfWeek = dayOfWeek,
+                    period = trainingPeriod,
+                    trainingId = trainingId
+                )
+            )
+
+            EUpdateTrainingType.REMOVE -> trainingsApi.deleteTraining(
+                DeleteTrainingPayload(
+                    dayOfWeek = dayOfWeek,
+                    period = trainingPeriod,
+                    trainingId = trainingId
+                )
+            )
+        }
+
+        println(response)
+
+        if (response.status == HttpStatusCode.OK || response.status == HttpStatusCode.NoContent) {
+            getUserTrainings()
+        }
+
+        return response
     }
 
     val handlers = TrainingsHandlers(
@@ -63,20 +110,33 @@ val trainingsDataMock = TrainingsData(
 )
 
 data class TrainingsHandlers(
-    val getTrainingsPacks: suspend () -> List<Training>,
-    val getUserTrainings: () -> List<UserTrainingDay>,
-    val updateTraining: (
+    val getTrainingsPacks: suspend () -> GetTrainingsStatement,
+    val getUserTrainings: suspend () -> GetUserTrainingsStatement,
+    val updateTraining: suspend (
+        trainingId: String,
         dayOfWeek: DayOfWeek,
-        trainingPeriod: UserTrainingPeriod,
+        trainingPeriod: ETrainingPeriod,
         type: EUpdateTrainingType
-    ) -> Unit
+    ) -> GenericTrainingUpdateStatement
 
 )
 
 val trainingsHandlersMock = TrainingsHandlers(
-    getTrainingsPacks = { getTrainingsMock },
-    getUserTrainings = { getUserTrainingsMock },
-    updateTraining = { _, _, _ -> }
+    getTrainingsPacks = {
+        GetTrainingsStatement(
+            status = HttpStatusCode.OK
+        )
+    },
+    getUserTrainings = {
+        GetUserTrainingsStatement(
+            status = HttpStatusCode.OK
+        )
+    },
+    updateTraining = { _, _, _, _ ->
+        GenericTrainingUpdateStatement(
+            status = HttpStatusCode.OK
+        )
+    }
 )
 
 enum class ETrainingCategory(
@@ -155,6 +215,7 @@ enum class ETrainingStatus {
     UNCOMPLETED
 }
 
+@Serializable
 data class Training(
     val category: ETrainingCategory,
     val classification: ETrainingClassification,
@@ -174,11 +235,13 @@ enum class ETrainingPeriod(val value: Int) {
     NIGHT(value = R.string.txt_trainings_night)
 }
 
+@Serializable
 data class UserTrainingPeriod(
     val period: ETrainingPeriod,
     val training: Training
 )
 
+@Serializable
 data class UserTrainingDay(
     val trainings: List<UserTrainingPeriod>,
     val dayOfWeek: DayOfWeek

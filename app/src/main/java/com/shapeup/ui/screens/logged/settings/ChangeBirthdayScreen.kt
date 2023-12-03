@@ -85,7 +85,7 @@ fun ChangeBirthdayScreen(
                 UserFieldPayload(
                     birth = dateHelper.fromFormFieldDateStringToServiceDate(
                         value = birth,
-                        pattern = "dd/MM/yyyy"
+                        pattern = "yyyy-MM-dd"
                     )
                 )
             )

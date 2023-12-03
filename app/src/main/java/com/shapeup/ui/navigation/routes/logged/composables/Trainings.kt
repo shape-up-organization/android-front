@@ -12,6 +12,7 @@ import com.shapeup.ui.utils.helpers.navigator
 import com.shapeup.ui.utils.helpers.viewModel
 import com.shapeup.ui.viewModels.logged.JourneyData
 import com.shapeup.ui.viewModels.logged.JourneyViewModel
+import com.shapeup.ui.viewModels.logged.TrainingsData
 import com.shapeup.ui.viewModels.logged.TrainingsViewModel
 
 fun NavGraphBuilder.screenTrainings(
@@ -38,6 +39,9 @@ fun NavGraphBuilder.screenTrainings(
                 userData = journeyViewModel.userData
             ),
             navigator = navController.navigator,
+            trainingsData = TrainingsData(
+                userTrainings = trainingViewModel.userTrainings
+            ),
             trainingsHandlers = trainingViewModel.handlers
         )
     }

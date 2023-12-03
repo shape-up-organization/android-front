@@ -40,17 +40,21 @@ import com.shapeup.ui.viewModels.logged.ETrainingPeriod
 import com.shapeup.ui.viewModels.logged.ETrainingStatus
 import com.shapeup.ui.viewModels.logged.EUpdateTrainingType
 import com.shapeup.ui.viewModels.logged.Training
-import com.shapeup.ui.viewModels.logged.TrainingsHandlers
-import com.shapeup.ui.viewModels.logged.UserTrainingPeriod
 import java.time.DayOfWeek
 
 @Composable
 fun TrainingCard(
+    isLoading: Boolean = false,
     dayOfWeek: DayOfWeek,
     period: ETrainingPeriod,
     training: Training,
-    trainingsHandlers: TrainingsHandlers,
-    type: ETrainingCardType = ETrainingCardType.ADD
+    type: ETrainingCardType = ETrainingCardType.ADD,
+    updateTraining: ((
+        trainingId: String,
+        dayOfWeek: DayOfWeek,
+        period: ETrainingPeriod,
+        type: EUpdateTrainingType
+    ) -> Unit)? = null
 ) {
     var expandTrainingDetails by remember { mutableStateOf(false) }
     val expandTrainingDuration = 400
@@ -146,6 +150,7 @@ fun TrainingCard(
                         containerColor = MaterialTheme.colorScheme.primary,
                         labelColor = MaterialTheme.colorScheme.onPrimary
                     ),
+                    enabled = !isLoading,
                     label = {
                         Text(
                             style = MaterialTheme.typography.bodyMedium,
@@ -154,30 +159,30 @@ fun TrainingCard(
                     },
                     modifier = Modifier.padding(0.dp),
                     onClick = {
-                        trainingsHandlers.updateTraining(
-                            dayOfWeek,
-                            UserTrainingPeriod(
-                                period = period,
-                                training = training
-                            ),
-                            EUpdateTrainingType.ADD
-                        )
+                        if (updateTraining != null) {
+                            updateTraining(
+                                training.id,
+                                dayOfWeek,
+                                period,
+                                EUpdateTrainingType.ADD
+                            )
+                        }
                     },
                     shape = RoundedCornerShape(24.dp)
                 )
 
                 ETrainingCardType.EDIT -> Checkbox(
                     checked = training.status == ETrainingStatus.FINISHED,
-                    enabled = training.status == ETrainingStatus.PENDING,
+                    enabled = training.status == ETrainingStatus.PENDING && !isLoading,
                     onCheckedChange = {
-                        trainingsHandlers.updateTraining(
-                            dayOfWeek,
-                            UserTrainingPeriod(
-                                period = period,
-                                training = training
-                            ),
-                            EUpdateTrainingType.CHECK
-                        )
+                        if (updateTraining != null) {
+                            updateTraining(
+                                training.id,
+                                dayOfWeek,
+                                period,
+                                EUpdateTrainingType.CHECK
+                            )
+                        }
                     },
                 )
             }
@@ -247,6 +252,7 @@ fun TrainingCard(
                                     containerColor = MaterialTheme.colorScheme.error,
                                     labelColor = MaterialTheme.colorScheme.onError
                                 ),
+                                enabled = !isLoading,
                                 label = {
                                     Text(
                                         style = MaterialTheme.typography.bodyMedium,
@@ -255,14 +261,14 @@ fun TrainingCard(
                                 },
                                 modifier = Modifier.padding(0.dp),
                                 onClick = {
-                                    trainingsHandlers.updateTraining(
-                                        dayOfWeek,
-                                        UserTrainingPeriod(
-                                            period = period,
-                                            training = training
-                                        ),
-                                        EUpdateTrainingType.REMOVE
-                                    )
+                                    if (updateTraining != null) {
+                                        updateTraining(
+                                            training.id,
+                                            dayOfWeek,
+                                            period,
+                                            EUpdateTrainingType.REMOVE
+                                        )
+                                    }
                                 },
                                 shape = RoundedCornerShape(24.dp)
                             )
