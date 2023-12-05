@@ -50,6 +50,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import coil.compose.rememberAsyncImagePainter
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.shapeup.R
 import com.shapeup.api.services.friends.GenericFriendshipStatement
 import com.shapeup.api.services.posts.GetPostsByUsernamePayload
@@ -114,6 +117,7 @@ fun ProfileScreen(
     var openSnackbar by remember { mutableStateOf(false) }
     var snackbarMessage by remember { mutableStateOf("") }
 
+    val refreshState = rememberSwipeRefreshState(isRefreshing = loadingUser)
     val coroutine = rememberCoroutineScope()
 
     val context = LocalContext.current
@@ -393,6 +397,7 @@ fun ProfileScreen(
                                             width = 2.dp
                                         )
                                         .clip(CircleShape)
+                                        .background(XPUtils.getBorder(user!!.xp))
                                         .clickable {
                                             openProfileImageDialog = true
                                         }
@@ -515,6 +520,7 @@ fun ProfileScreen(
                                             width = 2.dp
                                         )
                                         .clip(CircleShape)
+                                        .background(XPUtils.getBorder(user!!.xp))
                                         .clickable {
                                             openProfileImageDialog = true
                                         }
@@ -683,71 +689,89 @@ fun ProfileScreen(
                     }
                 }
 
-                when (tabSelected) {
-                    0 -> LazyVerticalGrid(
-                        columns = GridCells.Fixed(3)
-                    ) {
-                        items(
-                            postsData.specificPosts.value.filter {
-                                it.photoUrls.isNotEmpty()
-                            }
+                SwipeRefresh(
+                    state = refreshState,
+                    modifier = Modifier.weight(1f),
+                    onRefresh = {
+                        coroutine.launch {
+                            getUser()
+                        }
+                    },
+                    indicator = { state, refreshTrigger ->
+                        SwipeRefreshIndicator(
+                            state = state,
+                            refreshTriggerDistance = refreshTrigger,
+                            backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            contentColor = MaterialTheme.colorScheme.primary,
+                        )
+                    }
+                ) {
+                    when (tabSelected) {
+                        0 -> LazyVerticalGrid(
+                            columns = GridCells.Fixed(3)
                         ) {
-                            Image(
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .clickable {
-                                        navigator.navigateArgs(
-                                            "${Screen.Post.value}/${user!!.username}/${it.id}"
+                            items(
+                                postsData.specificPosts.value.filter {
+                                    it.photoUrls.isNotEmpty()
+                                }
+                            ) {
+                                Image(
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .clickable {
+                                            navigator.navigateArgs(
+                                                "${Screen.Post.value}/${user!!.username}/${it.id}"
+                                            )
+                                        }
+                                        .height(imageSize),
+                                    painter = rememberAsyncImagePainter(model = it.photoUrls[0])
+                                )
+                            }
+                        }
+
+                        1 -> LazyVerticalGrid(
+                            columns = GridCells.Fixed(1)
+                        ) {
+                            items(
+                                postsData.specificPosts.value.filter {
+                                    it.photoUrls.isEmpty()
+                                }
+                            ) {
+                                CardPost(
+                                    compactPost = true,
+                                    deletePost = { postId -> deletePost(postId) },
+                                    navigator = navigator,
+                                    postData = it,
+                                    postsHandlers = postsHandlers,
+                                    journeyHandlers = journeyHandlers,
+                                    user = user!!,
+                                    userRelation = userRelation
+                                )
+
+                                Spacer(
+                                    modifier = with(Modifier) {
+                                        height(
+                                            when {
+                                                it.description.isNullOrBlank() ||
+                                                        it.photoUrls.isEmpty() -> 4.dp
+
+                                                else -> 32.dp
+                                            }
                                         )
                                     }
-                                    .height(imageSize),
-                                painter = rememberAsyncImagePainter(model = it.photoUrls[0])
-                            )
-                        }
-                    }
+                                )
 
-                    1 -> LazyVerticalGrid(
-                        columns = GridCells.Fixed(1)
-                    ) {
-                        items(
-                            postsData.specificPosts.value.filter {
-                                it.photoUrls.isEmpty()
+                                Divider(
+                                    color = MaterialTheme.colorScheme.tertiaryContainer,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 48.dp),
+                                    thickness = 1.dp
+                                )
+
+                                Spacer(modifier = Modifier.height(16.dp))
                             }
-                        ) {
-                            CardPost(
-                                compactPost = true,
-                                deletePost = { postId -> deletePost(postId) },
-                                navigator = navigator,
-                                postData = it,
-                                postsHandlers = postsHandlers,
-                                journeyHandlers = journeyHandlers,
-                                user = user!!,
-                                userRelation = userRelation
-                            )
-
-                            Spacer(
-                                modifier = with(Modifier) {
-                                    height(
-                                        when {
-                                            it.description.isNullOrBlank() ||
-                                                    it.photoUrls.isEmpty() -> 4.dp
-
-                                            else -> 32.dp
-                                        }
-                                    )
-                                }
-                            )
-
-                            Divider(
-                                color = MaterialTheme.colorScheme.tertiaryContainer,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 48.dp),
-                                thickness = 1.dp
-                            )
-
-                            Spacer(modifier = Modifier.height(16.dp))
                         }
                     }
                 }
@@ -773,6 +797,7 @@ fun ProfileScreen(
                         width = 2.dp
                     )
                     .clip(CircleShape)
+                    .background(XPUtils.getBorder(user!!.xp))
                     .height(expandedProfilePictureSize.dp)
                     .width(expandedProfilePictureSize.dp),
                 painter = rememberAsyncImagePainter(

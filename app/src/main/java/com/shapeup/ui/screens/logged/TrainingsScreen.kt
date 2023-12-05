@@ -38,6 +38,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.shapeup.R
 import com.shapeup.ui.components.BottomSheet
 import com.shapeup.ui.components.BottomSheetModes
@@ -101,6 +104,7 @@ fun TrainingsScreen(
     var openSnackbar by remember { mutableStateOf(false) }
     var snackbarMessage by remember { mutableStateOf("") }
 
+    val refreshState = rememberSwipeRefreshState(isRefreshing = loadingTrainings)
     val coroutine = rememberCoroutineScope()
 
     val context = LocalContext.current
@@ -245,15 +249,7 @@ fun TrainingsScreen(
                 }
             }
 
-            if (loadingTrainings) {
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Loading()
-                }
-            } else if (hasError) {
+            if (hasError) {
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier.fillMaxWidth(),
@@ -265,81 +261,99 @@ fun TrainingsScreen(
                     )
                 }
             } else {
-                LazyColumn(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                SwipeRefresh(
+                    state = refreshState,
+                    modifier = Modifier.weight(1f),
+                    onRefresh = {
+                        coroutine.launch {
+                            getUserTrainings()
+                        }
+                    },
+                    indicator = { state, refreshTrigger ->
+                        SwipeRefreshIndicator(
+                            state = state,
+                            refreshTriggerDistance = refreshTrigger,
+                            backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            contentColor = MaterialTheme.colorScheme.primary,
+                        )
+                    }
                 ) {
-                    items(ETrainingPeriod.values()) { period ->
-                        val training = trainings?.find { training ->
-                            training.period == period
-                        }?.training
+                    LazyColumn(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        items(ETrainingPeriod.values()) { period ->
+                            val training = trainings?.find { training ->
+                                training.period == period
+                            }?.training
 
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                color = MaterialTheme.colorScheme.tertiary,
-                                modifier = Modifier.padding(vertical = 16.dp),
-                                style = MaterialTheme.typography.labelSmall,
-                                text = stringResource(period.value)
-                            )
-
-                            if (training != null) {
-                                TrainingCard(
-                                    isLoading = loadingUpdate,
-                                    dayOfWeek = daySelected,
-                                    period = period,
-                                    training = training,
-                                    type = ETrainingCardType.EDIT,
-                                    updateTraining = { trainingId, dayOfWeek, period, type ->
-                                        updateTraining(
-                                            trainingId,
-                                            dayOfWeek,
-                                            period,
-                                            type
-                                        )
-                                    }
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    color = MaterialTheme.colorScheme.tertiary,
+                                    modifier = Modifier.padding(vertical = 16.dp),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    text = stringResource(period.value)
                                 )
-                            } else {
-                                Row(
-                                    horizontalArrangement = Arrangement.Center,
-                                    modifier = Modifier
-                                        .clip(RoundedCornerShape(16.dp))
-                                        .clickable {
-                                            if (!loadingUpdate) {
-                                                openTrainingsModal(period)
-                                            }
-                                        }
-                                        .background(MaterialTheme.colorScheme.primaryContainer)
-                                        .fillMaxWidth()
-                                        .padding(
-                                            horizontal = 24.dp,
-                                            vertical = 32.dp
-                                        ),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        contentDescription = stringResource(R.string.icon_add),
-                                        modifier = Modifier
-                                            .height(40.dp)
-                                            .width(40.dp),
-                                        painter = painterResource(R.drawable.icon_add),
-                                        tint = when (loadingUpdate) {
-                                            true -> MaterialTheme.colorScheme.tertiaryContainer
-                                            false -> MaterialTheme.colorScheme.primary
+
+                                if (training != null) {
+                                    TrainingCard(
+                                        isLoading = loadingUpdate,
+                                        dayOfWeek = daySelected,
+                                        period = period,
+                                        training = training,
+                                        type = ETrainingCardType.EDIT,
+                                        updateTraining = { trainingId, dayOfWeek, period, type ->
+                                            updateTraining(
+                                                trainingId,
+                                                dayOfWeek,
+                                                period,
+                                                type
+                                            )
                                         }
                                     )
+                                } else {
+                                    Row(
+                                        horizontalArrangement = Arrangement.Center,
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(16.dp))
+                                            .clickable {
+                                                if (!loadingUpdate) {
+                                                    openTrainingsModal(period)
+                                                }
+                                            }
+                                            .background(MaterialTheme.colorScheme.primaryContainer)
+                                            .fillMaxWidth()
+                                            .padding(
+                                                horizontal = 24.dp,
+                                                vertical = 32.dp
+                                            ),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            contentDescription = stringResource(R.string.icon_add),
+                                            modifier = Modifier
+                                                .height(40.dp)
+                                                .width(40.dp),
+                                            painter = painterResource(R.drawable.icon_add),
+                                            tint = when (loadingUpdate) {
+                                                true -> MaterialTheme.colorScheme.tertiaryContainer
+                                                false -> MaterialTheme.colorScheme.primary
+                                            }
+                                        )
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    item {
-                        Spacer(modifier = Modifier.height(8.dp))
+                        item {
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
                     }
                 }
             }

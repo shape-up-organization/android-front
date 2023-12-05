@@ -30,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,12 +45,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.shapeup.R
 import com.shapeup.api.utils.constants.WA_API_URL
-import com.shapeup.ui.components.ExpandableContent
 import com.shapeup.ui.components.FormField
 import com.shapeup.ui.components.FormFieldType
-import com.shapeup.ui.components.Loading
 import com.shapeup.ui.components.SnackbarHelper
 import com.shapeup.ui.components.SnackbarType
 import com.shapeup.ui.theme.ShapeUpTheme
@@ -63,6 +65,7 @@ import com.shapeup.ui.viewModels.logged.JourneyHandlers
 import com.shapeup.ui.viewModels.logged.journeyDataMock
 import com.shapeup.ui.viewModels.logged.journeyHandlersMock
 import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -99,6 +102,9 @@ fun FriendsListScreen(
             )
         }
     }
+
+    val refreshState = rememberSwipeRefreshState(isRefreshing = loadingFriends)
+    val coroutine = rememberCoroutineScope()
 
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
@@ -192,118 +198,123 @@ fun FriendsListScreen(
             )
         }
 
-        LazyColumn(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.background)
-                .fillMaxSize()
-        ) {
-            item {
-                ExpandableContent(
-                    visible = loadingFriends,
-                    content = {
-                        Row(
-                            horizontalArrangement = Arrangement.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Loading()
-                        }
-                    })
+        SwipeRefresh(
+            state = refreshState,
+            modifier = Modifier.weight(1f),
+            onRefresh = {
+                coroutine.launch {
+                    getFriends()
+                }
+            },
+            indicator = { state, refreshTrigger ->
+                SwipeRefreshIndicator(
+                    state = state,
+                    refreshTriggerDistance = refreshTrigger,
+                    backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    contentColor = MaterialTheme.colorScheme.primary,
+                )
             }
-            itemsIndexed(friendsFiltered) { index, it ->
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier
-                        .alpha(rowAlpha.value)
-                        .padding(
-                            horizontal = 24.dp,
-                            vertical = 12.dp
-                        ),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        contentDescription = stringResource(R.string.user_profile_pic),
-                        contentScale = ContentScale.Crop,
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
+                    .fillMaxSize()
+            ) {
+                itemsIndexed(friendsFiltered) { index, it ->
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
                         modifier = Modifier
-                            .clip(CircleShape)
-                            .border(
-                                brush = XPUtils.getBorder(it.user.xp),
-                                shape = CircleShape,
-                                width = 2.dp
-                            )
-                            .background(brush = XPUtils.getBorder(it.user.xp))
-                            .height(48.dp)
-                            .width(48.dp),
-                        painter = rememberAsyncImagePainter(it.user.profilePicture)
-                    )
-                    Column(
-                        modifier = Modifier.weight(1f)
+                            .alpha(rowAlpha.value)
+                            .padding(
+                                horizontal = 24.dp,
+                                vertical = 12.dp
+                            ),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            color = MaterialTheme.colorScheme.onBackground,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            style = MaterialTheme.typography.bodySmall,
-                            text = "${it.user.firstName} ${it.user.lastName}"
+                        Image(
+                            contentDescription = stringResource(R.string.user_profile_pic),
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .border(
+                                    brush = XPUtils.getBorder(it.user.xp),
+                                    shape = CircleShape,
+                                    width = 2.dp
+                                )
+                                .background(brush = XPUtils.getBorder(it.user.xp))
+                                .height(48.dp)
+                                .width(48.dp),
+                            painter = rememberAsyncImagePainter(it.user.profilePicture)
                         )
-                        if (it.messages.isNotEmpty()) {
-                            Spacer(modifier = Modifier.height(2.dp))
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) {
                             Text(
-                                color = MaterialTheme.colorScheme.tertiary,
+                                color = MaterialTheme.colorScheme.onBackground,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 style = MaterialTheme.typography.bodySmall,
-                                text = when (
-                                    it.messages.last().senderName ==
-                                            journeyData.userData.value.username
-                                ) {
-                                    true ->
-                                        "${
-                                            stringResource(
-                                                R.string.txt_chat_user_last_sender
-                                            )
-                                        } ${it.messages.last().message}"
+                                text = "${it.user.firstName} ${it.user.lastName}"
+                            )
+                            if (it.messages.isNotEmpty()) {
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    color = MaterialTheme.colorScheme.tertiary,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    text = when (
+                                        it.messages.last().senderName ==
+                                                journeyData.userData.value.username
+                                    ) {
+                                        true ->
+                                            "${
+                                                stringResource(
+                                                    R.string.txt_chat_user_last_sender
+                                                )
+                                            } ${it.messages.last().message}"
 
-                                    else -> it.messages.last().message
-                                }
+                                        else -> it.messages.last().message
+                                    }
+                                )
+                            }
+                        }
+
+                        IconButton(
+                            modifier = Modifier
+                                .height(40.dp)
+                                .width(40.dp),
+                            onClick = {
+                                navigator.navigateArgs("${Screen.Profile.value}/${it.user.username}")
+                            }
+                        ) {
+                            Icon(
+                                contentDescription = stringResource(Icon.User.description),
+                                modifier = Modifier
+                                    .height(24.dp)
+                                    .width(24.dp),
+                                painter = painterResource(Icon.User.value),
+                                tint = MaterialTheme.colorScheme.onBackground
                             )
                         }
-                    }
-
-                    IconButton(
-                        modifier = Modifier
-                            .height(40.dp)
-                            .width(40.dp),
-                        onClick = {
-                            navigator.navigateArgs("${Screen.Profile.value}/${it.user.username}")
-                        }
-                    ) {
-                        Icon(
-                            contentDescription = stringResource(Icon.User.description),
+                        IconButton(
                             modifier = Modifier
-                                .height(24.dp)
-                                .width(24.dp),
-                            painter = painterResource(Icon.User.value),
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                    IconButton(
-                        modifier = Modifier
-                            .height(40.dp)
-                            .width(40.dp),
-                        onClick = {
-                            if (loadingFriends) return@IconButton
-                            openChat(it.user.cellPhone)
+                                .height(40.dp)
+                                .width(40.dp),
+                            onClick = {
+                                if (loadingFriends) return@IconButton
+                                openChat(it.user.cellPhone)
+                            }
+                        ) {
+                            Icon(
+                                contentDescription = stringResource(Icon.WhatsApp.description),
+                                modifier = Modifier
+                                    .height(24.dp)
+                                    .width(24.dp),
+                                painter = painterResource(Icon.WhatsApp.value),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
                         }
-                    ) {
-                        Icon(
-                            contentDescription = stringResource(Icon.WhatsApp.description),
-                            modifier = Modifier
-                                .height(24.dp)
-                                .width(24.dp),
-                            painter = painterResource(Icon.WhatsApp.value),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
 //                    AssistChip(
 //                        border = AssistChipDefaults.assistChipBorder(
 //                            borderWidth = 0.dp
@@ -331,7 +342,7 @@ fun FriendsListScreen(
 //                        onClick = {},
 //                        shape = RoundedCornerShape(24.dp)
 //                    )
-                }
+                    }
 
 //                if (index != friendsFiltered.size - 1) {
                     Divider(
@@ -342,6 +353,7 @@ fun FriendsListScreen(
                             .padding(horizontal = 40.dp)
                     )
 //                }
+                }
             }
         }
     }
