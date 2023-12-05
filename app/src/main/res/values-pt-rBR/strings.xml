@@ -35,6 +35,8 @@
     <string name="icon_send">Enviar</string>
     <string name="icon_settings">Configurações</string>
     <string name="icon_text">Texto</string>
+    <string name="icon_user">Usuário</string>
+    <string name="icon_whatsapp">WhatsApp</string>
 
     <!-- COMPONENTS -->
     <string name="txt_form_field_password_icon">Senha</string>

@@ -12,7 +12,8 @@ data class UserSearch(
     val profilePicture: String? = null,
     val username: String,
     val xp: Int,
-    val friendshipStatus: FriendshipStatus? = null
+    val friendshipStatus: FriendshipStatus? = null,
+    val cellPhone: String
 )
 
 @Serializable

@@ -184,7 +184,7 @@ fun FeedScreen(
 
     LaunchedEffect(key1 = true) {
         if (journeyData.initialLoad.value) {
-            journeyHandlers.setupUser()
+            journeyHandlers.setupUser(null)
             getFriends()
             journeyData.initialLoad.value = false
         }
@@ -273,7 +273,7 @@ fun FeedScreen(
                 modifier = Modifier
                     .height(32.dp)
                     .width(32.dp),
-                onClick = { navigator.navigate(Screen.ChatsList) }
+                onClick = { navigator.navigate(Screen.FriendsList) }
             ) {
                 Icon(
                     contentDescription = stringResource(Icon.Chats.description),

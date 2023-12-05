@@ -42,14 +42,21 @@ import com.shapeup.api.services.users.getRankGlobalDataMock
 import com.shapeup.api.services.users.getUserDataEmpty
 import com.shapeup.api.services.users.getUserDataMock
 import com.shapeup.api.utils.constants.SharedDataValues
+import com.shapeup.api.utils.constants.WS_URL
 import com.shapeup.api.utils.helpers.SharedData
 import io.ktor.http.HttpStatusCode
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import ua.naiksoftware.stomp.Stomp
+import ua.naiksoftware.stomp.StompClient
 import java.time.LocalDateTime
 import kotlin.random.Random
 
 class JourneyViewModel : ViewModel() {
     lateinit var sharedData: SharedData
+
+    private var stompClient: StompClient? = null
 
     val initialLoad = mutableStateOf(true)
     val friends = mutableStateOf<List<Friend>>(emptyList())
@@ -76,6 +83,91 @@ class JourneyViewModel : ViewModel() {
                 username = partialData?.username ?: jwt.getClaim("username").asString() ?: "",
                 xp = partialData?.xp ?: jwt.getClaim("xp").asInt() ?: 0
             )
+        }
+
+//        setupChat()
+    }
+
+    private fun setupChat() {
+        if (!initialLoad.value || userData.value.username == "") return
+
+        try {
+            stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, WS_URL)
+            stompClient?.connect()
+
+            val publicSubscription = stompClient
+                ?.topic("/chatroom/public")
+                ?.subscribe { topicMessage ->
+                    println("PUBLIC: $topicMessage")
+                }
+
+            val privateSubscription = stompClient
+                ?.topic("/user/${userData.value.username}/private")
+                ?.subscribe { topicMessage ->
+                    val receivedMessage: ReceivedMessage =
+                        Json.decodeFromString(topicMessage.payload)
+                    println("receivedMessage: $receivedMessage")
+
+                    if (receivedMessage.status == "JOIN") return@subscribe
+
+                    val mountedMessage = Message(
+                        date = receivedMessage.date,
+                        message = receivedMessage.message,
+                        receiverName = receivedMessage.receiverName,
+                        senderName = receivedMessage.senderName
+                    )
+
+                    friends.value.forEach {
+                        if (it.user.username == receivedMessage.senderName) {
+                            it.messages.add(mountedMessage)
+                            println(it.messages.size)
+                        }
+                    }
+
+                }
+
+            stompClient?.send(
+                "/app/message", Json.encodeToString(
+                    PublicMessage(
+                        message = "JOINING PUBLIC CHANNEL",
+                        senderName = userData.value.username,
+                        status = MessageType.JOIN
+                    )
+                )
+            )?.subscribe()
+
+        } catch (e: Exception) {
+            println("ERROR (chat setup): $e")
+        }
+    }
+
+    fun disconnect() {
+        stompClient?.disconnect()
+    }
+
+    private fun sendMessage(message: String, receiverUsername: String) {
+        stompClient?.send(
+            "/app/private-message", Json.encodeToString(
+                PrivateMessage(
+                    message = message,
+                    receiverName = receiverUsername,
+                    senderName = userData.value.username,
+                    status = MessageType.MESSAGE
+                )
+            )
+        )?.subscribe()
+
+        val mountedMessage = Message(
+            date = LocalDateTime.now().toString(),
+            message = message,
+            receiverName = receiverUsername,
+            senderName = userData.value.username
+        )
+
+        friends.value.forEach {
+            if (it.user.username == receiverUsername) {
+                it.messages.add(mountedMessage)
+            }
         }
     }
 
@@ -269,24 +361,6 @@ class JourneyViewModel : ViewModel() {
         return response
     }
 
-    private fun sendMessage(messageText: String, friendUsername: String) {
-        println("message: $messageText")
-
-        val mountedMessage = Message(
-            date = LocalDateTime.now().toString(),
-            message = messageText,
-            receiverName = friendUsername,
-            senderName = userData.value.username
-        )
-
-        // TODO: send message service
-        friends.value.forEach {
-            if (it.user.username == friendUsername) {
-                it.messages.add(mountedMessage)
-            }
-        }
-    }
-
     private suspend fun getRank(type: RankType): GetRankStatement {
         val usersApi = EUsersApi.create(sharedData)
 
@@ -442,7 +516,7 @@ val journeyDataMock = JourneyData(
 )
 
 data class JourneyHandlers(
-    val setupUser: () -> Unit,
+    val setupUser: (partialData: UserDataPartial?) -> Unit,
     val updateXp: suspend () -> GetUserXpStatement,
     val getAllFriendship: suspend () -> GetAllFriendshipStatement,
     val setupFriends: suspend (friendsList: List<FriendBase>?) -> List<Friend>,
@@ -450,7 +524,9 @@ data class JourneyHandlers(
     val getUser: suspend (username: String) -> GetUserStatement,
     val getUserRelationByUsername: (username: String) -> EUserRelation,
     val getUserRelationByUser: (user: UserSearch) -> EUserRelation,
-    val updateProfilePicture: suspend (profilePicture: ProfilePicture) -> UpdateProfilePictureStatement,
+    val updateProfilePicture: suspend (
+        profilePicture: ProfilePicture
+    ) -> UpdateProfilePictureStatement,
     val updateUserData: suspend (newUserData: UserDataUpdate) -> UpdateProfileStatement,
     val updateSettings: suspend (data: UserFieldPayload) -> UserFieldStatement,
     val sendMessage: (messageText: String, friendUsername: String) -> Unit,
@@ -465,7 +541,7 @@ data class JourneyHandlers(
 )
 
 val journeyHandlersMock = JourneyHandlers(
-    setupUser = {},
+    setupUser = { _ -> },
     updateXp = {
         GetUserXpStatement(
             status = HttpStatusCode.OK
@@ -567,7 +643,8 @@ data class User(
     val profilePicture: String? = null,
     val username: String,
     val xp: Int,
-    val friendshipStatus: FriendshipStatus? = null
+    val friendshipStatus: FriendshipStatus? = null,
+    val cellPhone: String
 )
 
 data class UserData(
@@ -640,7 +717,8 @@ object JourneyMappers {
             online = true,
             profilePicture = it.profilePicture,
             username = it.username,
-            xp = it.xp
+            xp = it.xp,
+            cellPhone = it.cellPhone
         )
     }
 
@@ -651,7 +729,8 @@ object JourneyMappers {
             lastName = it.lastName,
             profilePicture = it.profilePicture,
             username = it.username,
-            xp = it.xp
+            xp = it.xp,
+            cellPhone = it.cellPhone
         )
     }
 
@@ -662,7 +741,8 @@ object JourneyMappers {
             profilePicture = it.profilePicture,
             username = it.username,
             xp = it.xp,
-            friendshipStatus = it.friendshipStatus
+            friendshipStatus = it.friendshipStatus,
+            cellPhone = it.cellPhone
         )
     }
 
@@ -675,6 +755,7 @@ object JourneyMappers {
             username = it.username,
             xp = it.xp,
             profilePicture = it.profilePicture,
+            cellPhone = it.cellPhone,
         )
     }
 }
@@ -686,3 +767,32 @@ enum class EUserRelation {
     NON_FRIEND_RECEIVED,
     NON_FRIEND_REQUESTED
 }
+
+enum class MessageType {
+    JOIN,
+    MESSAGE
+}
+
+@Serializable
+data class PublicMessage(
+    val message: String,
+    val senderName: String,
+    val status: MessageType
+)
+
+@Serializable
+data class PrivateMessage(
+    val message: String,
+    val receiverName: String,
+    val senderName: String,
+    val status: MessageType
+)
+
+@Serializable
+data class ReceivedMessage(
+    val senderName: String,
+    val receiverName: String,
+    val message: String,
+    val date: String,
+    val status: String
+)

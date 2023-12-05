@@ -27,4 +27,5 @@ data class FriendBase(
     val username: String,
     val xp: Int,
     val profilePicture: String? = null,
+    val cellPhone: String
 )

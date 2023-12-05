@@ -405,6 +405,10 @@ fun ProfileScreen(
 
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier
+                                        .clickable {
+                                            navigator.navigate(Screen.Trainings)
+                                        },
                                     verticalArrangement = Arrangement.Center
                                 ) {
                                     Text(
@@ -428,6 +432,10 @@ fun ProfileScreen(
 
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier
+                                        .clickable {
+                                            navigator.navigate(Screen.FriendsList)
+                                        },
                                     verticalArrangement = Arrangement.Center
                                 ) {
                                     Text(

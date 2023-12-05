@@ -64,7 +64,6 @@ android {
 //tasks.getByPath("preBuild").dependsOn("ktlintFormat")
 
 dependencies {
-
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation("androidx.activity:activity-compose:1.7.2")
@@ -86,6 +85,8 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.5")
     implementation("org.jetbrains.kotlin:kotlin-serialization:1.8.10")
     implementation("com.auth0.android:jwtdecode:2.0.2")
+    implementation("com.github.NaikSoftware:StompProtocolAndroid:1.6.6")
+    implementation("io.reactivex.rxjava2:rxandroid:2.1.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
