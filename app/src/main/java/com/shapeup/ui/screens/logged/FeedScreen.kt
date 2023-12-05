@@ -218,23 +218,23 @@ fun FeedScreen(
                 ),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(
-                modifier = Modifier
-                    .height(32.dp)
-                    .width(32.dp),
-                onClick = { navigator.navigate(Screen.Notification) }
-            ) {
-                Icon(
-                    contentDescription = stringResource(Icon.Notifications.description),
-                    modifier = Modifier
-                        .height(24.dp)
-                        .width(24.dp),
-                    painter = painterResource(Icon.Notifications.value),
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-
-            Spacer(modifier = Modifier.width(24.dp))
+//            IconButton(
+//                modifier = Modifier
+//                    .height(32.dp)
+//                    .width(32.dp),
+//                onClick = { navigator.navigate(Screen.Notification) }
+//            ) {
+//                Icon(
+//                    contentDescription = stringResource(Icon.Notifications.description),
+//                    modifier = Modifier
+//                        .height(24.dp)
+//                        .width(24.dp),
+//                    painter = painterResource(Icon.Notifications.value),
+//                    tint = MaterialTheme.colorScheme.primary
+//                )
+//            }
+//
+//            Spacer(modifier = Modifier.width(24.dp))
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -243,7 +243,7 @@ fun FeedScreen(
                         color = MaterialTheme.colorScheme.primaryContainer,
                         shape = RoundedCornerShape(size = 16.dp)
                     )
-                    .width(240.dp)
+                    .weight(1f)
                     .height(60.dp)
                     .padding(start = 16.dp)
                     .clickable {
@@ -268,7 +268,7 @@ fun FeedScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.width(24.dp))
+            Spacer(modifier = Modifier.width(16.dp))
 
             IconButton(
                 modifier = Modifier
