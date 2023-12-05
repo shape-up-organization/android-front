@@ -34,12 +34,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.shapeup.R
 import com.shapeup.api.services.posts.GetPostsPaginatedPayload
 import com.shapeup.ui.components.CardPost
 import com.shapeup.ui.components.EPageButtons
-import com.shapeup.ui.components.ExpandableContent
-import com.shapeup.ui.components.Loading
 import com.shapeup.ui.components.Navbar
 import com.shapeup.ui.components.SnackbarHelper
 import com.shapeup.ui.components.SnackbarType
@@ -87,10 +88,11 @@ fun FeedScreen(
     postsData: PostsData,
     postsHandlers: PostsHandlers
 ) {
-    var loadingPosts by remember { mutableStateOf(journeyData.initialLoad.value) }
+    var loadingPosts by remember { mutableStateOf(true) }
     var openSnackbar by remember { mutableStateOf(false) }
     var snackbarMessage by remember { mutableStateOf("") }
 
+    val refreshState = rememberSwipeRefreshState(isRefreshing = loadingPosts)
     val coroutine = rememberCoroutineScope()
     val context = LocalContext.current
 
@@ -191,7 +193,6 @@ fun FeedScreen(
         getPosts()
     }
 
-
     BackHandler {
         journeyData.initialLoad.value = true
         authHandlers.signOut()
@@ -217,23 +218,23 @@ fun FeedScreen(
                 ),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(
-                modifier = Modifier
-                    .height(32.dp)
-                    .width(32.dp),
-                onClick = { navigator.navigate(Screen.Notification) }
-            ) {
-                Icon(
-                    contentDescription = stringResource(Icon.Notifications.description),
-                    modifier = Modifier
-                        .height(24.dp)
-                        .width(24.dp),
-                    painter = painterResource(Icon.Notifications.value),
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-
-            Spacer(modifier = Modifier.width(24.dp))
+//            IconButton(
+//                modifier = Modifier
+//                    .height(32.dp)
+//                    .width(32.dp),
+//                onClick = { navigator.navigate(Screen.Notification) }
+//            ) {
+//                Icon(
+//                    contentDescription = stringResource(Icon.Notifications.description),
+//                    modifier = Modifier
+//                        .height(24.dp)
+//                        .width(24.dp),
+//                    painter = painterResource(Icon.Notifications.value),
+//                    tint = MaterialTheme.colorScheme.primary
+//                )
+//            }
+//
+//            Spacer(modifier = Modifier.width(24.dp))
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -242,7 +243,7 @@ fun FeedScreen(
                         color = MaterialTheme.colorScheme.primaryContainer,
                         shape = RoundedCornerShape(size = 16.dp)
                     )
-                    .width(240.dp)
+                    .weight(1f)
                     .height(60.dp)
                     .padding(start = 16.dp)
                     .clickable {
@@ -267,7 +268,7 @@ fun FeedScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.width(24.dp))
+            Spacer(modifier = Modifier.width(16.dp))
 
             IconButton(
                 modifier = Modifier
@@ -286,52 +287,63 @@ fun FeedScreen(
             }
         }
 
-        LazyColumn(modifier = Modifier.weight(1f)) {
-            item {
-                ExpandableContent(
-                    visible = loadingPosts,
-                    content = {
-                        Row(
-                            horizontalArrangement = Arrangement.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Loading()
-                        }
-                    })
+        SwipeRefresh(
+            state = refreshState,
+            modifier = Modifier.weight(1f),
+            onRefresh = {
+                coroutine.launch {
+                    getPosts()
+                }
+            },
+            indicator = { state, refreshTrigger ->
+                SwipeRefreshIndicator(
+                    state = state,
+                    refreshTriggerDistance = refreshTrigger,
+                    backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    contentColor = MaterialTheme.colorScheme.primary,
+                )
             }
-            items(postsData.posts.value) {
-                CardPost(
-                    deletePost = { postId -> deletePost(postId) },
-                    navigator = navigator,
-                    postData = it.post,
-                    postsHandlers = postsHandlers,
-                    journeyHandlers = journeyHandlers,
-                    user = it.user,
-                    userRelation = journeyHandlers.getUserRelationByUsername(it.post.username)
-                )
+        ) {
+            LazyColumn(modifier = Modifier.weight(1f)) {
+                items(postsData.posts.value) {
+                    CardPost(
+                        deletePost = { postId -> deletePost(postId) },
+                        navigator = navigator,
+                        postData = it.post,
+                        postsHandlers = postsHandlers,
+                        journeyHandlers = journeyHandlers,
+                        user = it.user,
+                        userRelation = journeyHandlers.getUserRelationByUsername(it.post.username)
+                    )
 
-                Spacer(
-                    modifier = with(Modifier) {
-                        height(
-                            when {
-                                it.post.description.isNullOrBlank() ||
-                                        it.post.photoUrls.isEmpty() -> 4.dp
+                    Spacer(
+                        modifier = with(Modifier) {
+                            height(
+                                when {
+                                    it.post.description.isNullOrBlank() ||
+                                            it.post.photoUrls.isEmpty() -> 4.dp
 
-                                else -> 32.dp
-                            }
-                        )
+                                    else -> 32.dp
+                                }
+                            )
+                        }
+                    )
+
+                    Divider(
+                        color = MaterialTheme.colorScheme.tertiaryContainer,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 48.dp),
+                        thickness = 1.dp
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+                item {
+                    LaunchedEffect(key1 = true) {
+                        println("END")
                     }
-                )
-
-                Divider(
-                    color = MaterialTheme.colorScheme.tertiaryContainer,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 48.dp),
-                    thickness = 1.dp
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
+                }
             }
         }
 

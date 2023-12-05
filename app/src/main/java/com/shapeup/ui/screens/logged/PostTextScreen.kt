@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.shapeup.R
 import com.shapeup.ui.components.FormField
 import com.shapeup.ui.components.Header
+import com.shapeup.ui.components.Loading
 import com.shapeup.ui.components.SnackbarHelper
 import com.shapeup.ui.components.SnackbarType
 import com.shapeup.ui.theme.ShapeUpTheme
@@ -142,11 +143,15 @@ fun PostTextScreen(
             modifier = Modifier.fillMaxWidth(),
             onClick = { createPost() }
         ) {
-            Text(
-                modifier = Modifier.padding(vertical = 12.dp),
-                style = MaterialTheme.typography.bodyLarge,
-                text = stringResource(R.string.txt_post_button)
-            )
+            if (loading) {
+                Loading()
+            } else {
+                Text(
+                    modifier = Modifier.padding(vertical = 12.dp),
+                    style = MaterialTheme.typography.bodyLarge,
+                    text = stringResource(R.string.txt_post_button)
+                )
+            }
         }
     }
 

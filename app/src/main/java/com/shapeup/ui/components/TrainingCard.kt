@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -92,6 +93,16 @@ fun TrainingCard(
             Column(
                 modifier = Modifier.weight(1f)
             ) {
+                if (training.status == ETrainingStatus.UNCOMPLETED) {
+                    Text(
+                        color = MaterialTheme.colorScheme.error,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.bodySmall,
+                        text = stringResource(R.string.txt_trainings_uncompleted)
+                    )
+                }
+
                 Text(
                     color = training.classification.backgroundColor,
                     maxLines = 1,
@@ -173,6 +184,12 @@ fun TrainingCard(
 
                 ETrainingCardType.EDIT -> Checkbox(
                     checked = training.status == ETrainingStatus.FINISHED,
+                    colors = CheckboxDefaults.colors(
+                        disabledCheckedColor = when (training.status) {
+                            ETrainingStatus.UNCOMPLETED -> MaterialTheme.colorScheme.errorContainer
+                            else -> MaterialTheme.colorScheme.primary
+                        }
+                    ),
                     enabled = training.status == ETrainingStatus.PENDING && !isLoading,
                     onCheckedChange = {
                         if (updateTraining != null) {

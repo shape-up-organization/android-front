@@ -154,6 +154,7 @@
     <string name="txt_rank_tab_friend_title">Amigos</string>
     <string name="txt_rank_error">Ocorreu algum erro ao obter as classificaçôes</string>
     <!-- TRAININGS -->
+    <string name="txt_trainings_uncompleted">INCOMPLETO</string>
     <string name="txt_trainings_title">Treinos</string>
     <string name="txt_trainings_your_xp">seu xp:</string>
     <string name="txt_trainings_category">categoria:</string>

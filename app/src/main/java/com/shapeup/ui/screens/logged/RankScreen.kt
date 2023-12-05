@@ -38,12 +38,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.shapeup.R
 import com.shapeup.api.services.users.RankType
 import com.shapeup.api.services.users.UserRank
 import com.shapeup.ui.components.EPageButtons
 import com.shapeup.ui.components.ExpandableContent
-import com.shapeup.ui.components.Loading
 import com.shapeup.ui.components.Navbar
 import com.shapeup.ui.components.SnackbarHelper
 import com.shapeup.ui.components.SnackbarType
@@ -84,6 +86,7 @@ fun RankScreen(
     var openSnackbar by remember { mutableStateOf(false) }
     var snackbarMessage by remember { mutableStateOf("") }
 
+    val refreshState = rememberSwipeRefreshState(isRefreshing = loadingRank)
     val coroutine = rememberCoroutineScope()
 
     val context = LocalContext.current
@@ -157,95 +160,104 @@ fun RankScreen(
                 }
             }
 
-            LazyColumn(modifier = Modifier.weight(1f)) {
-                item {
-                    ExpandableContent(
-                        visible = loadingRank,
-                        content = {
-                            Row(
-                                horizontalArrangement = Arrangement.Center,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 16.dp)
-                            ) {
-                                Loading()
-                            }
-                        })
-                }
-                item {
-                    ExpandableContent(
-                        visible = !loadingRank && ranks.isEmpty(),
-                        content = {
-                            Row(
-                                horizontalArrangement = Arrangement.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(text = stringResource(R.string.txt_rank_error))
-                            }
-                        })
-                }
-                itemsIndexed(ranks) { index, it ->
-                    Spacer(
-                        modifier = Modifier
-                            .height(16.dp)
-                            .background(color = Color.Blue)
+            SwipeRefresh(
+                state = refreshState,
+                modifier = Modifier.weight(1f),
+                onRefresh = {
+                    coroutine.launch {
+                        when (tabSelected) {
+                            0 -> getRank(RankType.GLOBAL)
+                            1 -> getRank(RankType.FRIENDS)
+                            else -> getRank(RankType.GLOBAL)
+                        }
+                    }
+                },
+                indicator = { state, refreshTrigger ->
+                    SwipeRefreshIndicator(
+                        state = state,
+                        refreshTriggerDistance = refreshTrigger,
+                        backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        contentColor = MaterialTheme.colorScheme.primary,
                     )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(color = MaterialTheme.colorScheme.primaryContainer)
-                            .padding(24.dp, 8.dp)
-                            .clickable {
-                                navigator.navigateArgs("${Screen.Profile.value}/${it.username}")
-                            },
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            color = MaterialTheme.colorScheme.primary,
-                            style = MaterialTheme.typography.bodyMedium,
-                            text = "${index + 1}º"
+                }
+            ) {
+                LazyColumn(modifier = Modifier.weight(1f)) {
+                    item {
+                        ExpandableContent(
+                            visible = !loadingRank && ranks.isEmpty(),
+                            content = {
+                                Row(
+                                    horizontalArrangement = Arrangement.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(text = stringResource(R.string.txt_rank_error))
+                                }
+                            })
+                    }
+                    itemsIndexed(ranks) { index, it ->
+                        Spacer(
+                            modifier = Modifier
+                                .height(16.dp)
+                                .background(color = Color.Blue)
                         )
-
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Start,
                             modifier = Modifier
-                                .width(220.dp)
+                                .fillMaxWidth()
+                                .background(color = MaterialTheme.colorScheme.primaryContainer)
+                                .padding(24.dp, 8.dp)
+                                .clickable {
+                                    navigator.navigateArgs("${Screen.Profile.value}/${it.username}")
+                                },
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Image(
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .border(
-                                        brush = XPUtils.getBorder(it.xp),
-                                        shape = CircleShape,
-                                        width = 2.dp
-                                    )
-                                    .clip(CircleShape)
-                                    .height(48.dp)
-                                    .width(48.dp),
-                                painter = rememberAsyncImagePainter(
-                                    model = it.profilePicture
-                                )
+                            Text(
+                                color = MaterialTheme.colorScheme.primary,
+                                style = MaterialTheme.typography.bodyMedium,
+                                text = "${index + 1}º"
                             )
 
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Start,
+                                modifier = Modifier
+                                    .width(220.dp)
+                            ) {
+                                Image(
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .border(
+                                            brush = XPUtils.getBorder(it.xp),
+                                            shape = CircleShape,
+                                            width = 2.dp
+                                        )
+                                        .clip(CircleShape)
+                                        .background(XPUtils.getBorder(it.xp))
+                                        .height(48.dp)
+                                        .width(48.dp),
+                                    painter = rememberAsyncImagePainter(
+                                        model = it.profilePicture
+                                    )
+                                )
+
+                                Spacer(modifier = Modifier.width(8.dp))
+
+                                Text(
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    text = "${it.firstName} ${it.lastName}",
+                                    overflow = TextOverflow.Ellipsis,
+                                    maxLines = 2
+                                )
+                            }
 
                             Text(
-                                color = MaterialTheme.colorScheme.onBackground,
+                                color = MaterialTheme.colorScheme.primary,
                                 style = MaterialTheme.typography.labelMedium,
-                                text = "${it.firstName} ${it.lastName}",
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 2
+                                text = "${it.xp}xp"
                             )
                         }
-
-                        Text(
-                            color = MaterialTheme.colorScheme.primary,
-                            style = MaterialTheme.typography.labelMedium,
-                            text = "${it.xp}xp"
-                        )
                     }
                 }
             }

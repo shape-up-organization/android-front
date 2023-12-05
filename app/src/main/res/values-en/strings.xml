@@ -154,6 +154,7 @@
     <string name="rank_tab_friend_title">Friends</string>
     <string name="txt_rank_error">Some error occurred while getting the rank</string>
     <!-- TRAININGS -->
+    <string name="txt_trainings_uncompleted">UNCOMPLETED</string>
     <string name="txt_trainings_title">Trainings</string>
     <string name="txt_trainings_your_xp">your xp:</string>
     <string name="txt_trainings_category">category:</string>
