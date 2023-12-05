@@ -215,6 +215,7 @@ fun Navbar(
                         width = 2.dp
                     )
                     .clip(CircleShape)
+                    .background(XPUtils.getBorder(data.userData.value.xp))
                     .height(24.dp)
                     .width(24.dp),
                 painter = rememberAsyncImagePainter(data.userData.value.profilePicture)

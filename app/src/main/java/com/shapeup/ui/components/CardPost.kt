@@ -595,6 +595,7 @@ fun CommentsBottomSheet(
                                         width = 2.dp
                                     )
                                     .clip(CircleShape)
+                                    .background(XPUtils.getBorder(it.xp))
                                     .clickable {
                                         userCommentProfilePicture = it.profilePicture
                                         userCommentXp = it.xp
@@ -648,6 +649,7 @@ fun CommentsBottomSheet(
                                             width = 2.dp
                                         )
                                         .clip(CircleShape)
+                                        .background(XPUtils.getBorder(userCommentXp))
                                         .height(expandedProfilePictureSize.dp)
                                         .width(expandedProfilePictureSize.dp),
                                     painter = rememberAsyncImagePainter(
