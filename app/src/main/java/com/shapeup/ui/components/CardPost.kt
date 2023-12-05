@@ -313,61 +313,61 @@ fun CardPost(
                             )
                         }
 
-                        if (userRelation == EUserRelation.FRIEND) {
-                            DropdownMenuItem(
-                                onClick = { /*TODO: */ },
-                                text = {
-                                    Text(
-                                        color = MaterialTheme.colorScheme.error,
-                                        text = stringResource(
-                                            R.string.txt_profile_remove_friend
-                                        )
-                                    )
-                                }
-                            )
-                        }
-
-                        if (userRelation == EUserRelation.NON_FRIEND) {
-                            DropdownMenuItem(
-                                onClick = { /*TODO: */ },
-                                text = {
-                                    Text(
-                                        color = MaterialTheme.colorScheme.primary,
-                                        text = stringResource(
-                                            R.string.txt_profile_add_friend
-                                        )
-                                    )
-                                }
-                            )
-                        }
-
-                        if (userRelation == EUserRelation.NON_FRIEND_RECEIVED) {
-                            DropdownMenuItem(
-                                onClick = { /*TODO: */ },
-                                text = {
-                                    Text(
-                                        color = MaterialTheme.colorScheme.error,
-                                        text = stringResource(
-                                            R.string.txt_profile_refuse_friend
-                                        )
-                                    )
-                                }
-                            )
-                        }
-
-                        if (userRelation == EUserRelation.NON_FRIEND_REQUESTED) {
-                            DropdownMenuItem(
-                                onClick = { /*TODO: */ },
-                                text = {
-                                    Text(
-                                        color = MaterialTheme.colorScheme.error,
-                                        text = stringResource(
-                                            R.string.txt_profile_cancel_friend
-                                        )
-                                    )
-                                }
-                            )
-                        }
+//                        if (userRelation == EUserRelation.FRIEND) {
+//                            DropdownMenuItem(
+//                                onClick = { /*TODO: */ },
+//                                text = {
+//                                    Text(
+//                                        color = MaterialTheme.colorScheme.error,
+//                                        text = stringResource(
+//                                            R.string.txt_profile_remove_friend
+//                                        )
+//                                    )
+//                                }
+//                            )
+//                        }
+//
+//                        if (userRelation == EUserRelation.NON_FRIEND) {
+//                            DropdownMenuItem(
+//                                onClick = { /*TODO: */ },
+//                                text = {
+//                                    Text(
+//                                        color = MaterialTheme.colorScheme.primary,
+//                                        text = stringResource(
+//                                            R.string.txt_profile_add_friend
+//                                        )
+//                                    )
+//                                }
+//                            )
+//                        }
+//
+//                        if (userRelation == EUserRelation.NON_FRIEND_RECEIVED) {
+//                            DropdownMenuItem(
+//                                onClick = { /*TODO: */ },
+//                                text = {
+//                                    Text(
+//                                        color = MaterialTheme.colorScheme.error,
+//                                        text = stringResource(
+//                                            R.string.txt_profile_refuse_friend
+//                                        )
+//                                    )
+//                                }
+//                            )
+//                        }
+//
+//                        if (userRelation == EUserRelation.NON_FRIEND_REQUESTED) {
+//                            DropdownMenuItem(
+//                                onClick = { /*TODO: */ },
+//                                text = {
+//                                    Text(
+//                                        color = MaterialTheme.colorScheme.error,
+//                                        text = stringResource(
+//                                            R.string.txt_profile_cancel_friend
+//                                        )
+//                                    )
+//                                }
+//                            )
+//                        }
                     }
                 }
             }

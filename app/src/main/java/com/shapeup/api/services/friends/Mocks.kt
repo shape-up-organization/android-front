@@ -11,7 +11,8 @@ val getAllFriendshipMock = listOf(
         online = true,
         profilePicture = "https://picsum.photos/id/57/2448/3264",
         username = "barto",
-        xp = 120
+        xp = 120,
+        cellPhone = "11983838834"
     ),
     User(
         firstName = "Fred",
@@ -20,7 +21,8 @@ val getAllFriendshipMock = listOf(
         online = false,
         profilePicture = null,
         username = "fffred",
-        xp = 450
+        xp = 450,
+        cellPhone = "11983838834"
     ),
     User(
         firstName = "Will",
@@ -29,7 +31,8 @@ val getAllFriendshipMock = listOf(
         online = true,
         profilePicture = "https://picsum.photos/id/56/2880/1920",
         username = "will_sigma",
-        xp = 890
+        xp = 890,
+        cellPhone = "11983838834"
     )
 )
 

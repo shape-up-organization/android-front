@@ -123,5 +123,13 @@ enum class Icon(@DrawableRes val value: Int, val description: Int) {
     Text(
         description = R.string.icon_text,
         value = R.drawable.icon_text
+    ),
+    User(
+        description = R.string.icon_user,
+        value = R.drawable.icon_user
+    ),
+    WhatsApp(
+        description = R.string.icon_whatsapp,
+        value = R.drawable.icon_whatsapp
     )
 }

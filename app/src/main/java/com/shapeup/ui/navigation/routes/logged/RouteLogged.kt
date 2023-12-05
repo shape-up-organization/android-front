@@ -11,7 +11,7 @@ import com.shapeup.ui.navigation.routes.logged.composables.settings.screenChange
 import com.shapeup.ui.navigation.routes.logged.composables.settings.screenChangeNumber
 import com.shapeup.ui.navigation.routes.logged.composables.settings.screenChangePasswordSettings
 import com.shapeup.ui.navigation.routes.logged.composables.screenChat
-import com.shapeup.ui.navigation.routes.logged.composables.screenChatsList
+import com.shapeup.ui.navigation.routes.logged.composables.screenFriendsList
 import com.shapeup.ui.navigation.routes.logged.composables.screenEditProfile
 import com.shapeup.ui.navigation.routes.logged.composables.screenFeed
 import com.shapeup.ui.navigation.routes.logged.composables.screenFriendshipRequest
@@ -39,9 +39,9 @@ fun NavGraphBuilder.routeLogged(
 
         screenNotification(navController)
 
-        screenChatsList(navController)
+        screenFriendsList(navController, sharedData)
 
-        screenChat(navController)
+        screenChat(navController, sharedData)
 
         screenFriendshipRequest(navController)
 

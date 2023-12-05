@@ -63,6 +63,7 @@ import com.shapeup.ui.viewModels.logged.JourneyHandlers
 import com.shapeup.ui.viewModels.logged.journeyDataMock
 import com.shapeup.ui.viewModels.logged.journeyHandlersMock
 
+
 @Preview
 @Composable
 fun ChatScreenPreview() {
@@ -86,17 +87,19 @@ fun ChatScreen(
     var expandOptionsMenu by remember { mutableStateOf(false) }
     var messageText by remember { mutableStateOf("") }
 
+    val messagesColumnState = rememberLazyListState()
+
     val userData = journeyData.friends.value.find { friend ->
         friend.user.username == username
     }!!
     val messages = userData.messages
 
-    val messagesColumnState = rememberLazyListState()
-
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(messages.size) {
-        messagesColumnState.animateScrollToItem(messages.size - 1)
+        if (messages.size > 0) {
+            messagesColumnState.animateScrollToItem(messages.size - 1)
+        }
     }
 
     BackHandler {
@@ -326,7 +329,7 @@ fun ChatScreen(
                     .height(40.dp)
                     .width(40.dp),
                 onClick = {
-                    journeyHandlers.sendMessage(messageText, userData.user.username)
+//                    journeyHandlers.sendMessage(messageText, userData.user.username)
                     messageText = ""
                 }
             ) {

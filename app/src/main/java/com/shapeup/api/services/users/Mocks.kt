@@ -42,7 +42,8 @@ val getAllSearchUserDataMock = listOf(
             haveFriendRequest = true,
             isFriend = false,
             userSenderFriendshipRequest = ""
-        )
+        ),
+        cellPhone = "11983838834"
     ),
     UserSearch(
         firstName = "Georgia",
@@ -54,7 +55,8 @@ val getAllSearchUserDataMock = listOf(
             haveFriendRequest = false,
             isFriend = true,
             userSenderFriendshipRequest = ""
-        )
+        ),
+        cellPhone = "11983838834"
     )
 )
 
